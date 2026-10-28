@@ -39,4 +39,9 @@ return [
     'choose' => 'Alege software-ul și versiunea',
     'loader' => 'Software',
     'minecraft' => 'Versiune Minecraft',
+    'watched' => 'verificat la următoarea pornire',
+    'switched_off_after_start' => ':name a fost oprit',
+    'off_after_start' => 'Oprit după ultima pornire',
+    'show_log' => 'Linii din jurnal',
+    'close' => 'Închide',
 ];

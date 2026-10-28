@@ -39,4 +39,9 @@ return [
     'choose' => 'ソフトウェアとバージョンを選ぶ',
     'loader' => 'ソフトウェア',
     'minecraft' => 'Minecraft のバージョン',
+    'watched' => '次回の起動時に確認されます',
+    'switched_off_after_start' => ':name をオフにしました',
+    'off_after_start' => '前回の起動後にオフにしました',
+    'show_log' => 'ログの行',
+    'close' => '閉じる',
 ];

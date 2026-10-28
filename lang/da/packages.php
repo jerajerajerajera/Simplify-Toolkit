@@ -39,4 +39,9 @@ return [
     'choose' => 'Vælg software og version',
     'loader' => 'Software',
     'minecraft' => 'Minecraft-version',
+    'watched' => 'tjekkes ved næste start',
+    'switched_off_after_start' => ':name blev slået fra',
+    'off_after_start' => 'Slået fra efter sidste start',
+    'show_log' => 'Loglinjer',
+    'close' => 'Luk',
 ];

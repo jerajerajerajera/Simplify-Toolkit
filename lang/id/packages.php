@@ -39,4 +39,9 @@ return [
     'choose' => 'Pilih software dan versi',
     'loader' => 'Software',
     'minecraft' => 'Versi Minecraft',
+    'watched' => 'diperiksa saat mulai berikutnya',
+    'switched_off_after_start' => ':name dimatikan',
+    'off_after_start' => 'Dimatikan setelah mulai terakhir',
+    'show_log' => 'Baris log',
+    'close' => 'Tutup',
 ];

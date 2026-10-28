@@ -39,4 +39,9 @@ return [
     'choose' => 'Välj mjukvara och version',
     'loader' => 'Mjukvara',
     'minecraft' => 'Minecraft-version',
+    'watched' => 'kontrolleras vid nästa start',
+    'switched_off_after_start' => ':name stängdes av',
+    'off_after_start' => 'Avstängd efter senaste starten',
+    'show_log' => 'Loggrader',
+    'close' => 'Stäng',
 ];

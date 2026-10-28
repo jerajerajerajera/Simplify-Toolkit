@@ -39,4 +39,9 @@ return [
     'choose' => 'Software en versie kiezen',
     'loader' => 'Software',
     'minecraft' => 'Minecraft-versie',
+    'watched' => 'wordt gecontroleerd bij de volgende start',
+    'switched_off_after_start' => ':name is uitgezet',
+    'off_after_start' => 'Uitgezet na de laatste start',
+    'show_log' => 'Logregels',
+    'close' => 'Sluiten',
 ];

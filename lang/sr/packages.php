@@ -39,4 +39,9 @@ return [
     'choose' => 'Izaberi softver i verziju',
     'loader' => 'Softver',
     'minecraft' => 'Verzija Minecraft-a',
+    'watched' => 'proverava se pri sledećem pokretanju',
+    'switched_off_after_start' => ':name je isključen',
+    'off_after_start' => 'Isključen posle poslednjeg pokretanja',
+    'show_log' => 'Redovi loga',
+    'close' => 'Zatvori',
 ];

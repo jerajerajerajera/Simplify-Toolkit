@@ -39,4 +39,9 @@ return [
     'choose' => 'Абраць ПЗ і версію',
     'loader' => 'ПЗ',
     'minecraft' => 'Версія Minecraft',
+    'watched' => 'правяраецца пры наступным запуску',
+    'switched_off_after_start' => ':name выключаны',
+    'off_after_start' => 'Выключаны пасля апошняга запуску',
+    'show_log' => 'Радкі журнала',
+    'close' => 'Закрыць',
 ];

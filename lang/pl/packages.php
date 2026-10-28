@@ -39,4 +39,9 @@ return [
     'choose' => 'Wybierz oprogramowanie i wersję',
     'loader' => 'Oprogramowanie',
     'minecraft' => 'Wersja Minecrafta',
+    'watched' => 'sprawdzany przy następnym starcie',
+    'switched_off_after_start' => ':name został wyłączony',
+    'off_after_start' => 'Wyłączony po ostatnim starcie',
+    'show_log' => 'Wiersze logu',
+    'close' => 'Zamknij',
 ];

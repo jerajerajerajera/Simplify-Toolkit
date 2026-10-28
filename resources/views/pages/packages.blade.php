@@ -72,36 +72,47 @@
             @endif
         </x-filament::section>
 
-        <x-filament::section class="lg:col-span-2" :heading="__('simplify-mods::packages.'.($mods ? 'installed_mods' : 'installed_plugins'))" :description="__('simplify-mods::packages.restart_help')">
-            <ul class="divide-y divide-gray-200 dark:divide-white/10">
-                @forelse ($installed as $item)
-                    <li class="flex items-center gap-3 py-2" wire:key="file-{{ $item['file'] }}">
-                        <div @class(['min-w-0 flex-1', 'opacity-50' => ! $item['enabled']])>
-                            <p class="truncate text-sm font-medium text-gray-950 dark:text-white">
-                                @if ($item['page'])
-                                    <a href="{{ $item['page'] }}" target="_blank" rel="noopener" class="hover:underline">{{ $item['title'] }}</a>
-                                @else
-                                    {{ $item['title'] }}
+        <div class="lg:col-span-2" @if ($watching) wire:poll.15s="checkStart" @endif>
+            <x-filament::section :heading="__('simplify-mods::packages.'.($mods ? 'installed_mods' : 'installed_plugins'))" :description="__('simplify-mods::packages.restart_help')">
+                <ul class="divide-y divide-gray-200 dark:divide-white/10">
+                    @forelse ($installed as $item)
+                        <li class="flex items-center gap-3 py-2" wire:key="file-{{ $item['file'] }}">
+                            <div @class(['min-w-0 flex-1', 'opacity-50' => ! $item['enabled']])>
+                                <p class="truncate text-sm font-medium text-gray-950 dark:text-white">
+                                    @if ($item['page'])
+                                        <a href="{{ $item['page'] }}" target="_blank" rel="noopener" class="hover:underline">{{ $item['title'] }}</a>
+                                    @else
+                                        {{ $item['title'] }}
+                                    @endif
+                                </p>
+                                <p class="truncate text-xs text-gray-500">
+                                    {{ $item['version'] ?: $item['file'] }}
+                                    · {{ $item['source'] ? ($sites[$item['source']] ?? $item['source']) : __('simplify-mods::packages.by_hand') }}
+                                    @unless ($item['enabled'])
+                                        · {{ __('simplify-mods::packages.off') }}
+                                    @endunless
+                                    @if ($item['watched'])
+                                        · {{ __('simplify-mods::packages.watched') }}
+                                    @endif
+                                </p>
+                                @if ($item['off_reason'])
+                                    <p class="mt-0.5 line-clamp-2 text-xs text-warning-600 dark:text-warning-400">{{ __('simplify-mods::packages.off_after_start') }}: {{ $item['off_reason'] }}</p>
                                 @endif
-                            </p>
-                            <p class="truncate text-xs text-gray-500">
-                                {{ $item['version'] ?: $item['file'] }}
-                                · {{ $item['source'] ? ($sites[$item['source']] ?? $item['source']) : __('simplify-mods::packages.by_hand') }}
-                                @unless ($item['enabled'])
-                                    · {{ __('simplify-mods::packages.off') }}
-                                @endunless
-                            </p>
-                        </div>
-                        <div class="flex flex-none items-center">
-                            {{ ($this->toggleAction)(['file' => $item['file'], 'enabled' => $item['enabled']]) }}
-                            {{ ($this->removeAction)(['file' => $item['file']]) }}
-                        </div>
-                    </li>
-                @empty
-                    <li class="py-6 text-center text-sm text-gray-500">{{ __('simplify-mods::packages.'.($mods ? 'no_mods' : 'no_plugins')) }}</li>
-                @endforelse
-            </ul>
-        </x-filament::section>
+                            </div>
+                            <div class="flex flex-none items-center">
+                                @if ($item['off_reason'])
+                                    {{ ($this->offLogAction)(['file' => $item['file']]) }}
+                                @endif
+                                {{ ($this->toggleAction)(['file' => $item['file'], 'enabled' => $item['enabled']]) }}
+                                {{ ($this->removeAction)(['file' => $item['file']]) }}
+                            </div>
+                        </li>
+                    @empty
+                        <li class="py-6 text-center text-sm text-gray-500">{{ __('simplify-mods::packages.'.($mods ? 'no_mods' : 'no_plugins')) }}</li>
+                    @endforelse
+                </ul>
+            </x-filament::section>
+        </div>
     </div>
 
     <x-filament-actions::modals />

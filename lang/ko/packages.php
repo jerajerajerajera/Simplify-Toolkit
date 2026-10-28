@@ -39,4 +39,9 @@ return [
     'choose' => '소프트웨어와 버전 선택',
     'loader' => '소프트웨어',
     'minecraft' => 'Minecraft 버전',
+    'watched' => '다음 시작 때 확인됩니다',
+    'switched_off_after_start' => ':name을(를) 껐습니다',
+    'off_after_start' => '마지막 시작 후 꺼짐',
+    'show_log' => '로그 줄',
+    'close' => '닫기',
 ];

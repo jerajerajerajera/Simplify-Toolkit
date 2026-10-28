@@ -7,6 +7,7 @@ namespace Simplify\Mods\Models;
 use App\Models\Server;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Carbon;
 
 /**
  * A plugin or mod installed through Simplify Mods.
@@ -23,6 +24,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string $icon
  * @property string $page
  * @property bool $fits
+ * @property Carbon|null $watch_since set from the install until the next start was checked
+ * @property string $off_reason the log line when Simplify Mods switched it off after a start
+ * @property list<string>|null $off_lines that line and the lines around it
  */
 final class Package extends Model
 {
@@ -30,7 +34,7 @@ final class Package extends Model
 
     protected $guarded = ['id'];
 
-    protected $casts = ['fits' => 'boolean'];
+    protected $casts = ['fits' => 'boolean', 'watch_since' => 'datetime', 'off_lines' => 'array'];
 
     /** @return BelongsTo<Server, $this> */
     public function server(): BelongsTo

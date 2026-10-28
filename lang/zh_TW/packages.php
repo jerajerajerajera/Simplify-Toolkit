@@ -39,4 +39,9 @@ return [
     'choose' => '選擇軟體和版本',
     'loader' => '軟體',
     'minecraft' => 'Minecraft 版本',
+    'watched' => '下次啟動時檢查',
+    'switched_off_after_start' => '已關閉 :name',
+    'off_after_start' => '上次啟動後已關閉',
+    'show_log' => '日誌行',
+    'close' => '關閉',
 ];

@@ -30,7 +30,9 @@ written through Wings, like Pelican's own file manager. Outside services, only w
 Installing a plugin or mod asks Wings to download the file itself, only from `cdn.modrinth.com`,
 `hangarcdn.papermc.io`, `api.spiget.org`, `edge.forgecdn.net` or `mediafilez.forgecdn.net`. A plugin that the site
 only offers as a link to another website is not installed; the page links to the site instead.
-Replaced and removed files are moved to `.simplify-mods-backups` on the server, never deleted.
+Replaced and removed files are moved to `.simplify-mods-backups` on the server, never deleted. After installing a
+plugin, the Plugins page reads `logs/latest.log` of the next start and switches the plugin off (`.jar.disabled`) when
+it failed to load.
 
 CurseForge only answers apps with an API key. An admin can save one for the whole panel under Advanced → Simplify
 Mods, and every user can save their own from the Plugins or Mods page; a user's own key goes first. Keys are tested
