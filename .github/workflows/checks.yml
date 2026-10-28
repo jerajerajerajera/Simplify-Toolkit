@@ -70,7 +70,10 @@ jobs:
           grep -E 'Simplify Mods .*\| enabled' plugins.txt || { echo 'Simplify Mods did not install'; exit 1; }
       - name: Open the pages
         working-directory: panel
-        run: php plugins/simplify-mods/tests/panel/smoke.php
+        # The output is checked as well as the exit code: a crash during Laravel's bootstrap can still exit with 0.
+        run: |
+          php plugins/simplify-mods/tests/panel/smoke.php | tee smoke.txt
+          grep -q '^All steps passed$' smoke.txt
       - name: Laravel log
         if: failure()
         run: grep -h -E '^\[[0-9-]+ [0-9:]+\]' panel/storage/logs/*.log | cut -c1-600 | tail -n 12 || true
