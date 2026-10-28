@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Simplify\Mods\Services;
 
 use Closure;
+use Illuminate\Http\Client\Pool;
+use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 use Throwable;
 
@@ -28,6 +30,45 @@ final class Web
         $data = $body === null ? null : json_decode($body, true);
 
         return is_array($data) ? $data : null;
+    }
+
+    /**
+     * Several JSON requests at once. A site that fails or is slow gives null instead of failing the rest.
+     *
+     * @param  array<string, array{0: string, 1: array<string, string>}>  $requests  name => [url, headers]
+     * @return array<string, array<mixed>|null>
+     */
+    public static function many(array $requests): array
+    {
+        $requests = array_filter($requests, fn (array $request) => self::https($request[0]) !== null);
+        if (self::$transport !== null) {
+            return array_map(function (array $request): ?array {
+                $data = json_decode((string) (self::$transport)($request[0], $request[1]), true);
+
+                return is_array($data) ? $data : null;
+            }, $requests);
+        }
+        if ($requests === []) {
+            return [];
+        }
+        try {
+            $responses = Http::pool(fn (Pool $pool) => array_map(
+                fn (string $name) => $pool->as($name)->acceptJson()
+                    ->withHeaders(['User-Agent' => self::USER_AGENT, ...$requests[$name][1]])
+                    ->connectTimeout(3)->timeout(8)->get($requests[$name][0]),
+                array_map('strval', array_keys($requests)),
+            ));
+        } catch (Throwable) {
+            return array_map(fn () => null, $requests);
+        }
+        $out = [];
+        foreach ($requests as $name => $_) {
+            $response = $responses[$name] ?? null;
+            $data = $response instanceof Response && $response->successful() ? $response->json() : null;
+            $out[$name] = is_array($data) ? $data : null;
+        }
+
+        return $out;
     }
 
     /** @param  array<string, string>  $headers */

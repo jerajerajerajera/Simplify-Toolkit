@@ -18,8 +18,11 @@ use Illuminate\Http\Client\Response;
 use Illuminate\Testing\TestResponse;
 use Livewire\Livewire;
 use Simplify\Mods\Filament\Server\Pages\Minecraft;
+use Simplify\Mods\Filament\Server\Pages\Packages;
+use Simplify\Mods\Models\Package;
 use Simplify\Mods\ModsAddon;
 use Simplify\Mods\Services\ServerKind;
+use Simplify\Mods\Services\Web;
 
 define('LARAVEL_START', microtime(true));
 require getcwd().'/vendor/autoload.php';
@@ -75,6 +78,42 @@ final class FakeFiles extends DaemonFileRepository
         foreach ($files as $file) {
             unset(self::$files[rtrim((string) $root, '/').'/'.$file]);
         }
+
+        return new Response(new Psr7Response(204));
+    }
+
+    public function getDirectory(string $path): array
+    {
+        $path = '/'.trim($path, '/');
+        $entries = [];
+        foreach (self::$files as $name => $content) {
+            if (dirname($name) === $path) {
+                $entries[] = ['name' => basename($name), 'file' => true, 'size' => strlen($content)];
+            }
+        }
+
+        return $entries;
+    }
+
+    public function createDirectory(string $name, string $path): Response
+    {
+        return new Response(new Psr7Response(204));
+    }
+
+    public function renameFiles(?string $root, array $files): Response
+    {
+        $root = rtrim('/'.trim((string) $root, '/'), '/');
+        foreach ($files as $move) {
+            self::$files[$root.'/'.$move['to']] = self::$files[$root.'/'.$move['from']] ?? throw new RuntimeException('no '.$move['from']);
+            unset(self::$files[$root.'/'.$move['from']]);
+        }
+
+        return new Response(new Psr7Response(204));
+    }
+
+    public function pull(string $url, ?string $directory, array $params = []): Response
+    {
+        self::$files[rtrim((string) $directory, '/').'/'.$params['filename']] = 'downloaded from '.$url;
 
         return new Response(new Psr7Response(204));
     }
@@ -164,8 +203,55 @@ step('other games have no Minecraft page', function () use ($admin) {
         throw new RuntimeException('Rust got a Minecraft page');
     }
 });
+// The plugin sites answer from here, so the steps below need no network.
+Web::$transport = fn (string $url) => json_encode(match (true) {
+    str_contains($url, 'api.modrinth.com/v2/search') => ['hits' => [
+        ['project_id' => 'AAAA1111', 'title' => 'Smoke Edit', 'description' => 'Edits', 'author' => 'Smoke', 'downloads' => 5, 'slug' => 'smoke-edit', 'project_type' => 'plugin', 'versions' => ['1.21.4']],
+    ]],
+    str_contains($url, 'api.modrinth.com/v2/project/AAAA1111/version') => [
+        ['id' => 'ver1', 'version_number' => '1.0', 'version_type' => 'release', 'game_versions' => ['1.21.4'], 'loaders' => ['paper'],
+            'files' => [['filename' => 'SmokeEdit-1.0.jar', 'url' => 'https://cdn.modrinth.com/data/AAAA1111/SmokeEdit-1.0.jar', 'primary' => true]]],
+    ],
+    default => null,
+});
+step('the Plugins page finds plugins for the version the server runs', function () use ($admin, $paper) {
+    FakeFiles::$files = [
+        '/version_history.json' => '{"currentVersion":"git-Paper-100 (MC: 1.21.4)"}',
+        '/plugins/Chunky-1.4.jar' => 'jar',
+    ];
+    Filament::setTenant($paper);
+    $page = Livewire::actingAs($admin)->test(Packages::class)
+        ->assertSet('context.loader', 'paper')->assertSet('context.minecraft', '1.21.4')->assertSet('unreachable', false)
+        ->assertSee('Smoke Edit')->assertSee('Chunky');
+    if (count($page->get('installed')) !== 1) {
+        throw new RuntimeException('installed: '.json_encode($page->get('installed')));
+    }
+});
+step('installing, switching off and removing a plugin goes through Wings', function () use ($admin, $paper) {
+    $page = Livewire::actingAs($admin)->test(Packages::class)
+        ->callAction('install', arguments: ['key' => 'modrinth:AAAA1111', 'fits' => true]);
+    if (! isset(FakeFiles::$files['/plugins/SmokeEdit-1.0.jar']) || ! Package::query()->where('server_id', $paper->id)->where('key', 'modrinth:AAAA1111')->exists()) {
+        throw new RuntimeException('not installed: '.json_encode(array_keys(FakeFiles::$files)));
+    }
+    $page->callAction('toggle', arguments: ['file' => 'SmokeEdit-1.0.jar', 'enabled' => true]);
+    if (! isset(FakeFiles::$files['/plugins/SmokeEdit-1.0.jar.disabled'])) {
+        throw new RuntimeException('not switched off: '.json_encode(array_keys(FakeFiles::$files)));
+    }
+    $page->callAction('remove', arguments: ['file' => 'SmokeEdit-1.0.jar.disabled']);
+    $backups = array_filter(array_keys(FakeFiles::$files), fn (string $name) => str_starts_with($name, '/.simplify-mods-backups/'));
+    if (isset(FakeFiles::$files['/plugins/SmokeEdit-1.0.jar.disabled']) || count($backups) !== 1 || Package::query()->where('server_id', $paper->id)->exists()) {
+        throw new RuntimeException('not removed to the backup folder: '.json_encode(array_keys(FakeFiles::$files)));
+    }
+});
+step('servers without plugins or mods have no Plugins page', function () use ($admin) {
+    $rust = Server::factory()->create(['owner_id' => $admin->id, 'egg_id' => Egg::factory()->create(['name' => 'Rust', 'features' => []])->id]);
+    Filament::setTenant($rust);
+    if (Packages::canAccess()) {
+        throw new RuntimeException('Rust got a Plugins page');
+    }
+});
 // Every step must have run: a step that never ran is a failure too.
-$expected = 7;
+$expected = 10;
 if ($passed !== $expected) {
     echo "FAIL $passed of $expected steps passed\n";
     exit(1);
