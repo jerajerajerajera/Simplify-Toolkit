@@ -28,6 +28,8 @@ final class ModsSettings extends Page implements HasSchemas
 
     protected static string|\BackedEnum|null $navigationIcon = 'tabler-cube';
 
+    protected static ?int $navigationSort = 60;
+
     protected static ?string $slug = 'simplify-mods';
 
     protected string $view = 'simplify-mods::pages.form';
@@ -42,9 +44,10 @@ final class ModsSettings extends Page implements HasSchemas
         return (bool) user()?->can('view settings');
     }
 
+    /** In the Simplify group of Pelican's menu, with the other Simplify add-ons (Simplify's ADDONS.md, "Admin menu"). */
     public static function getNavigationGroup(): ?string
     {
-        return trans('admin/dashboard.advanced');
+        return 'Simplify';
     }
 
     public static function getNavigationLabel(): string
