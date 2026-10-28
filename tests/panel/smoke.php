@@ -119,7 +119,7 @@ step('the Minecraft page renders while Wings is offline', function () use ($admi
     if ($response->getStatusCode() !== 200) {
         throw new RuntimeException('HTTP '.$response->getStatusCode().' at '.$url.($response->exception ? ': '.$response->exception->getMessage() : ''));
     }
-    if (! str_contains($response->getContent(), __('simplify-mods::minecraft.unreachable'))) {
+    if (! str_contains($response->getContent(), e(__('simplify-mods::minecraft.unreachable')))) {
         throw new RuntimeException('the page does not say the files cannot be reached');
     }
 });
