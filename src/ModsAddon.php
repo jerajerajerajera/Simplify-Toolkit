@@ -23,7 +23,7 @@ final class ModsAddon extends Addon
 
     public function name(): string
     {
-        return 'Simplify Mods';
+        return 'Mods';
     }
 
     public function description(): string

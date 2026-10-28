@@ -49,12 +49,12 @@ final class ModsSettings extends Page implements HasSchemas
 
     public static function getNavigationLabel(): string
     {
-        return 'Simplify Mods';
+        return 'Mods';
     }
 
     public function getTitle(): string
     {
-        return 'Simplify Mods';
+        return 'Mods';
     }
 
     public function canChange(): bool
