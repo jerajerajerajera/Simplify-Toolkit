@@ -47,6 +47,17 @@ final class MinecraftFiles
         $this->write(self::EULA, PropertiesFile::merge($this->read(self::EULA), ['eula' => 'true']));
     }
 
+    public function saveIcon(string $png): void
+    {
+        $this->write(ServerIcon::FILE, $png);
+    }
+
+    public function removeIcon(): void
+    {
+        $this->files()->deleteFiles('/', [ltrim(ServerIcon::FILE, '/')])->throw();
+        Activity::event('server:file.delete')->subject($this->server)->property('directory', '/')->property('files', [ltrim(ServerIcon::FILE, '/')])->log();
+    }
+
     private function write(string $path, string $content): void
     {
         $this->files()->putContent($path, $content)->throw();

@@ -9,6 +9,7 @@ use App\Models\Server;
 use App\Repositories\Daemon\DaemonServerRepository;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -22,11 +23,14 @@ use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Illuminate\Support\HtmlString;
 use Livewire\Attributes\On;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Simplify\Mods\Filament\Components\MotdEditor;
 use Simplify\Mods\Services\GameSettings;
 use Simplify\Mods\Services\MinecraftFiles;
 use Simplify\Mods\Services\PropertiesFile;
+use Simplify\Mods\Services\ServerIcon;
 use Simplify\Mods\Services\ServerKind;
+use Simplify\Mods\Services\Web;
 use Throwable;
 
 /**
@@ -53,6 +57,9 @@ final class Minecraft extends Page implements HasSchemas
     public array $current = [];
 
     public bool $eulaAccepted = false;
+
+    /** The current server-icon.png as a data URL, '' without one. */
+    public string $icon = '';
 
     /** Wings could not be reached: nothing is saved, so the file is never overwritten with defaults. */
     public bool $unreachable = false;
@@ -98,6 +105,7 @@ final class Minecraft extends Page implements HasSchemas
         try {
             $this->current = PropertiesFile::parse($files->read(MinecraftFiles::PROPERTIES));
             $this->eulaAccepted = GameSettings::eulaAccepted($files->read(MinecraftFiles::EULA));
+            $this->icon = ServerIcon::dataUrl($files->read(ServerIcon::FILE));
         } catch (Throwable $error) {
             report($error);
             $this->unreachable = true;
@@ -112,7 +120,27 @@ final class Minecraft extends Page implements HasSchemas
             Section::make(__('simplify-mods::minecraft.motd'))
                 ->description(__('simplify-mods::minecraft.motd_help'))
                 ->schema([
-                    MotdEditor::make('motd')->hiddenLabel()->serverName(fn () => (string) $this->server()->name),
+                    MotdEditor::make('motd')->hiddenLabel()->serverName(fn () => (string) $this->server()->name)->iconUrl(fn () => $this->icon),
+                ]),
+            Section::make(__('simplify-mods::minecraft.icon'))
+                ->description(__('simplify-mods::minecraft.icon_help'))
+                ->schema([
+                    Text::make(fn () => $this->icon !== ''
+                        ? new HtmlString('<img src="'.e($this->icon).'" alt="" width="64" height="64" style="image-rendering: pixelated; border-radius: .25rem">')
+                        : __('simplify-mods::minecraft.no_icon')),
+                    Actions::make([
+                        Action::make('uploadIcon')->label(__('simplify-mods::minecraft.icon_upload'))->icon('tabler-upload')
+                            ->schema([
+                                FileUpload::make('picture')->hiddenLabel()->image()->maxSize(8192)->storeFiles(false)->required(),
+                            ])
+                            ->action(fn (array $data) => $this->saveIcon($data['picture'] ?? null)),
+                        Action::make('modpackIcon')->label(__('simplify-mods::minecraft.icon_modpack'))->icon('tabler-package')->color('gray')
+                            ->visible(fn () => in_array(ServerKind::forServer($this->server())['modpack'], ['modrinth', 'ftb'], true))
+                            ->action(fn () => $this->useModpackIcon()),
+                        Action::make('removeIcon')->label(__('simplify-mods::minecraft.icon_remove'))->icon('tabler-trash')->color('danger')
+                            ->requiresConfirmation()->visible(fn () => $this->icon !== '')
+                            ->action(fn () => $this->removeIcon()),
+                    ])->visible(fn () => $this->canChange()),
                 ]),
             Section::make(__('simplify-mods::minecraft.game'))
                 ->description(__('simplify-mods::minecraft.restart_help'))
@@ -194,6 +222,66 @@ final class Minecraft extends Page implements HasSchemas
         }
         $this->eulaAccepted = true;
         $this->savedNotification(__('simplify-mods::minecraft.eula_saved'));
+    }
+
+    public function saveIcon(mixed $picture): void
+    {
+        abort_unless($this->canChange(), 403);
+        $file = is_array($picture) ? reset($picture) : $picture;
+        $png = $file instanceof TemporaryUploadedFile ? ServerIcon::fromImage((string) $file->get()) : null;
+        if ($png === null) {
+            Notification::make()->title(__('simplify-mods::minecraft.icon_not_a_picture'))->danger()->send();
+
+            return;
+        }
+        $this->writeIcon($png);
+    }
+
+    public function useModpackIcon(): void
+    {
+        abort_unless($this->canChange(), 403);
+        $server = $this->server();
+        $variables = [];
+        foreach ($server->variables as $variable) {
+            $variables[$variable->env_variable] = (string) ($variable->server_value ?? $variable->default_value);
+        }
+        $url = ServerIcon::modpackIconUrl(ServerKind::forServer($server)['modpack'], $variables);
+        $png = $url !== null ? ServerIcon::fromImage((string) Web::get($url)) : null;
+        if ($png === null) {
+            Notification::make()->title(__('simplify-mods::minecraft.icon_no_modpack'))->warning()->send();
+
+            return;
+        }
+        $this->writeIcon($png);
+    }
+
+    public function removeIcon(): void
+    {
+        abort_unless($this->canChange(), 403);
+        try {
+            (new MinecraftFiles($this->server()))->removeIcon();
+        } catch (Throwable $error) {
+            report($error);
+            $this->failedNotification();
+
+            return;
+        }
+        $this->icon = '';
+        $this->savedNotification(__('simplify-mods::minecraft.icon_removed'));
+    }
+
+    private function writeIcon(string $png): void
+    {
+        try {
+            (new MinecraftFiles($this->server()))->saveIcon($png);
+        } catch (Throwable $error) {
+            report($error);
+            $this->failedNotification();
+
+            return;
+        }
+        $this->icon = ServerIcon::dataUrl($png);
+        $this->savedNotification(__('simplify-mods::minecraft.icon_saved'));
     }
 
     private function failedNotification(): void

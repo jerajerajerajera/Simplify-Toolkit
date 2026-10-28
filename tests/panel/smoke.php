@@ -3,6 +3,7 @@
 // Loads Simplify Mods inside a real Pelican panel. Run from the panel folder after
 // `php artisan p:plugin:install simplify-mods`: php plugins/simplify-mods/tests/panel/smoke.php
 use App\Models\Egg;
+use App\Models\Role;
 use App\Models\Server;
 use App\Models\User;
 use App\Repositories\Daemon\DaemonFileRepository;
@@ -31,6 +32,7 @@ function step(string $what, callable $run): void
     global $failed;
     try {
         $run();
+        $GLOBALS['passed']++;
         echo "PASS $what\n";
     } catch (Throwable $e) {
         $failed = true;
@@ -67,10 +69,27 @@ final class FakeFiles extends DaemonFileRepository
 
         return new Response(new Psr7Response(204));
     }
+
+    public function deleteFiles(?string $root, array $files): Response
+    {
+        foreach ($files as $file) {
+            unset(self::$files[rtrim((string) $root, '/').'/'.$file]);
+        }
+
+        return new Response(new Psr7Response(204));
+    }
 }
 
+// Laravel's console bootstrap turns an uncaught error into output with exit code 0, so every error fails here.
+set_exception_handler(function (Throwable $e): void {
+    echo 'FAIL outside a step: '.get_class($e).': '.substr($e->getMessage(), 0, 400).' ('.basename($e->getFile()).':'.$e->getLine().")\n";
+    exit(1);
+});
+$passed = 0;
+
 $admin = User::where('email', 'smoke-mods@example.com')->first()
-    ?? User::factory()->create(['email' => 'smoke-mods@example.com', 'root_admin' => true]);
+    ?? User::factory()->create(['email' => 'smoke-mods@example.com']);
+$admin->syncRoles(Role::getRootAdmin());
 
 step('the add-on is tagged for Simplify without loading its class', function () use ($app) {
     $tags = (fn () => $this->tags['simplify.addons'] ?? [])->call($app);
@@ -124,6 +143,20 @@ step('saving changes only the chosen lines of server.properties', function () us
         throw new RuntimeException('the EULA was not accepted');
     }
 });
+step('the server icon shows and can be removed', function () use ($admin) {
+    $picture = imagecreatetruecolor(64, 64);
+    ob_start();
+    imagepng($picture);
+    FakeFiles::$files['/server-icon.png'] = (string) ob_get_clean();
+    $page = Livewire::actingAs($admin)->test(Minecraft::class);
+    if (! str_starts_with((string) $page->get('icon'), 'data:image/png;base64,')) {
+        throw new RuntimeException('the icon is not shown');
+    }
+    $page->call('removeIcon')->assertSet('icon', '');
+    if (isset(FakeFiles::$files['/server-icon.png'])) {
+        throw new RuntimeException('the icon was not removed');
+    }
+});
 step('other games have no Minecraft page', function () use ($admin) {
     $rust = Server::factory()->create(['owner_id' => $admin->id, 'egg_id' => Egg::factory()->create(['name' => 'Rust', 'features' => []])->id]);
     Filament::setTenant($rust);
@@ -131,4 +164,11 @@ step('other games have no Minecraft page', function () use ($admin) {
         throw new RuntimeException('Rust got a Minecraft page');
     }
 });
-exit($failed ? 1 : 0);
+// Every step must have run: a step that never ran is a failure too.
+$expected = 7;
+if ($passed !== $expected) {
+    echo "FAIL $passed of $expected steps passed\n";
+    exit(1);
+}
+echo "All steps passed\n";
+exit(0);

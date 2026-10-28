@@ -16,7 +16,13 @@ Install Simplify Mods from the [Pelican Hub](https://hub.pelican.dev). Updates c
 
 ## What it sends where
 
-Nothing yet. Each outside service is listed here when it is added.
+Server files (`server.properties`, `eula.txt`, `server-icon.png`) are read and written through Wings, like
+Pelican's own file manager. Outside services, only when you use the feature:
+
+| Service | When | What is sent |
+| --- | --- | --- |
+| `api.modrinth.com`, `cdn.modrinth.com` | "Use the modpack's icon" on a Modrinth modpack | the modpack's project id |
+| `api.feed-the-beast.com` and its image host | "Use the modpack's icon" on an FTB modpack | the modpack's id |
 
 ## Development
 
