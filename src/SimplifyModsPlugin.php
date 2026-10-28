@@ -6,6 +6,7 @@ namespace Simplify\Mods;
 
 use Filament\Contracts\Plugin;
 use Filament\Panel;
+use Simplify\Mods\Filament\Server\Pages\Minecraft;
 
 final class SimplifyModsPlugin implements Plugin
 {
@@ -16,7 +17,12 @@ final class SimplifyModsPlugin implements Plugin
         return self::ID;
     }
 
-    public function register(Panel $panel): void {}
+    public function register(Panel $panel): void
+    {
+        if ($panel->getId() === 'server') {
+            $panel->pages([Minecraft::class]);
+        }
+    }
 
     public function boot(Panel $panel): void {}
 }
