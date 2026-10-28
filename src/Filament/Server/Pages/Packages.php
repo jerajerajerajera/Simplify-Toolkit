@@ -128,7 +128,7 @@ final class Packages extends Page implements HasActions
         if (! $this->ready()) {
             return;
         }
-        $found = (new Catalog(Keys::curseForge()))
+        $found = (new Catalog(Keys::curseForge(user())))
             ->search($this->query, $this->context['kind'], $this->context['loader'], $this->context['minecraft']);
         $this->results = $found['items'];
         $this->offline = $found['offline'];
@@ -209,6 +209,42 @@ final class Packages extends Page implements HasActions
                 fn () => $this->packages()->remove((string) ($arguments['file'] ?? '')),
                 __('simplify-mods::packages.removed'),
             ));
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [$this->ownKeyAction()];
+    }
+
+    /** A user's own CurseForge key: CurseForge results for whoever has one, also when the panel has none. */
+    public function ownKeyAction(): Action
+    {
+        return Action::make('ownKey')
+            ->label(__('simplify-mods::settings.own_key'))->icon('tabler-key')->color('gray')
+            ->modalDescription(fn () => __('simplify-mods::settings.'.(Keys::has(Keys::CURSEFORGE, user()) ? 'own_key_saved' : 'own_key_help')))
+            ->schema([
+                TextInput::make('key')->label(__('simplify-mods::settings.key'))->password()->autocomplete('off')->required()->maxLength(200),
+            ])
+            ->modalSubmitActionLabel(__('simplify-mods::settings.save'))
+            ->extraModalFooterActions(fn () => Keys::has(Keys::CURSEFORGE, user()) ? [
+                Action::make('forgetOwnKey')->label(__('simplify-mods::settings.remove'))->color('danger')->cancelParentActions()
+                    ->action(function (): void {
+                        Keys::forget(Keys::CURSEFORGE, user());
+                        Notification::make()->title(__('simplify-mods::settings.removed'))->success()->send();
+                        $this->search();
+                    }),
+            ] : [])
+            ->action(function (array $data): void {
+                $key = trim((string) $data['key']);
+                if (! Keys::curseForgeWorks($key)) {
+                    Notification::make()->title(__('simplify-mods::settings.key_refused'))->danger()->send();
+
+                    return;
+                }
+                Keys::save(Keys::CURSEFORGE, user(), $key);
+                Notification::make()->title(__('simplify-mods::settings.key_works'))->success()->send();
+                $this->search();
+            });
     }
 
     /** Asks for the loader and Minecraft version when the egg does not tell them. */

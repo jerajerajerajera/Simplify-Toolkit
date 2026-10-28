@@ -32,6 +32,10 @@ Installing a plugin or mod asks Wings to download the file itself, only from `cd
 only offers as a link to another website is not installed; the page links to the site instead.
 Replaced and removed files are moved to `.simplify-mods-backups` on the server, never deleted.
 
+CurseForge only answers apps with an API key. An admin can save one for the whole panel under Advanced → Simplify
+Mods, and every user can save their own from the Plugins or Mods page; a user's own key goes first. Keys are tested
+with CurseForge before they are saved, stored encrypted with the panel's `APP_KEY`, and never shown again.
+
 ## Development
 
 - `bash tests/run.sh` runs the checks that need no panel, including `tests/hub-check.py`.

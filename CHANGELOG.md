@@ -13,3 +13,5 @@
   release made for the server's version. A release for another version can be installed after a warning. Switch
   installed plugins off and on, or remove them; replaced and removed files go to a backup folder. When the egg does
   not say which loader or version the server runs, the page asks once.
+- CurseForge on the Plugins and Mods pages once a CurseForge API key is saved: by an admin for the whole panel, or by
+  a user for themselves. Keys are tested before saving, stored encrypted and never shown again.

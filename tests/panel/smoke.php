@@ -17,10 +17,13 @@ use Illuminate\Foundation\Testing\Concerns\MakesHttpRequests;
 use Illuminate\Http\Client\Response;
 use Illuminate\Testing\TestResponse;
 use Livewire\Livewire;
+use Simplify\Mods\Filament\Admin\Pages\ModsSettings;
 use Simplify\Mods\Filament\Server\Pages\Minecraft;
 use Simplify\Mods\Filament\Server\Pages\Packages;
+use Simplify\Mods\Models\ApiKey;
 use Simplify\Mods\Models\Package;
 use Simplify\Mods\ModsAddon;
+use Simplify\Mods\Services\Keys;
 use Simplify\Mods\Services\ServerKind;
 use Simplify\Mods\Services\Web;
 
@@ -148,6 +151,14 @@ step('a server is classified', function () use ($admin) {
         throw new RuntimeException('unexpected result: '.json_encode($kind));
     }
 });
+// Before any page of the server panel: Filament keeps the current panel for the whole process.
+step('the admin settings page renders', function () use ($admin) {
+    $url = ModsSettings::getUrl(panel: 'admin');
+    $response = visit($admin, $url);
+    if ($response->getStatusCode() !== 200 || ! str_contains($response->getContent(), e(__('simplify-mods::settings.no_key')))) {
+        throw new RuntimeException('HTTP '.$response->getStatusCode().' at '.$url.($response->exception ? ': '.$response->exception->getMessage() : ''));
+    }
+});
 $paper = Server::factory()->create([
     'owner_id' => $admin->id,
     'egg_id' => Egg::factory()->create(['name' => 'Paper', 'features' => ['eula', 'java_version']])->id,
@@ -204,7 +215,8 @@ step('other games have no Minecraft page', function () use ($admin) {
     }
 });
 // The plugin sites answer from here, so the steps below need no network.
-Web::$transport = fn (string $url) => json_encode(match (true) {
+Web::$transport = fn (string $url, array $headers = []) => json_encode(match (true) {
+    str_contains($url, 'api.curseforge.com/v1/games/432') => ($headers['x-api-key'] ?? '') === 'good-key' ? ['data' => ['id' => 432]] : null,
     str_contains($url, 'api.modrinth.com/v2/search') => ['hits' => [
         ['project_id' => 'AAAA1111', 'title' => 'Smoke Edit', 'description' => 'Edits', 'author' => 'Smoke', 'downloads' => 5, 'slug' => 'smoke-edit', 'project_type' => 'plugin', 'versions' => ['1.21.4']],
     ]],
@@ -243,6 +255,25 @@ step('installing, switching off and removing a plugin goes through Wings', funct
         throw new RuntimeException('not removed to the backup folder: '.json_encode(array_keys(FakeFiles::$files)));
     }
 });
+step('CurseForge keys are tested, stored encrypted, and a user\'s own key goes first', function () use ($admin) {
+    if (Keys::curseForgeWorks('bad-key') || ! Keys::curseForgeWorks('good-key')) {
+        throw new RuntimeException('the key test does not tell good from bad');
+    }
+    Keys::save(Keys::CURSEFORGE, null, 'good-key');
+    $raw = (string) ApiKey::query()->toBase()->whereNull('user_id')->value('secret');
+    if ($raw === '' || str_contains($raw, 'good-key') || Keys::curseForge($admin) !== 'good-key') {
+        throw new RuntimeException('the panel key is not stored encrypted or not used');
+    }
+    Keys::save(Keys::CURSEFORGE, $admin, 'own-key');
+    if (Keys::curseForge($admin) !== 'own-key' || Keys::curseForge(null) !== 'good-key') {
+        throw new RuntimeException('the user\'s own key does not go first');
+    }
+    Keys::forget(Keys::CURSEFORGE, $admin);
+    Keys::forget(Keys::CURSEFORGE, null);
+    if (Keys::curseForge($admin) !== '' || ApiKey::query()->exists()) {
+        throw new RuntimeException('keys were not removed');
+    }
+});
 step('servers without plugins or mods have no Plugins page', function () use ($admin) {
     $rust = Server::factory()->create(['owner_id' => $admin->id, 'egg_id' => Egg::factory()->create(['name' => 'Rust', 'features' => []])->id]);
     Filament::setTenant($rust);
@@ -251,7 +282,7 @@ step('servers without plugins or mods have no Plugins page', function () use ($a
     }
 });
 // Every step must have run: a step that never ran is a failure too.
-$expected = 10;
+$expected = 12;
 if ($passed !== $expected) {
     echo "FAIL $passed of $expected steps passed\n";
     exit(1);
