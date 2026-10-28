@@ -18,6 +18,7 @@ use Simplify\Mods\Services\Keys;
 use Simplify\Mods\Services\Packages as ServerPackages;
 use Simplify\Mods\Services\ServerKind;
 use Simplify\Mods\Services\Sources\Catalog;
+use Simplify\Mods\Services\StartCheck;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Throwable;
 
@@ -54,6 +55,9 @@ final class Packages extends Page implements HasActions
     public array $context = ['kind' => '', 'loader' => '', 'minecraft' => '', 'directory' => '', 'detected' => false];
 
     public bool $unreachable = false;
+
+    /** A plugin installed here waits for its first start; the page then checks the log now and then. */
+    public bool $watching = false;
 
     public static function canAccess(): bool
     {
@@ -98,7 +102,7 @@ final class Packages extends Page implements HasActions
     public function mount(): void
     {
         abort_unless(self::canAccess(), 403);
-        $this->refresh();
+        $this->checkStart();
         if ($this->ready()) {
             $this->search();
         }
@@ -116,11 +120,22 @@ final class Packages extends Page implements HasActions
             $packages = $this->packages();
             $this->context = $packages->context();
             $this->installed = $packages->installed();
+            $this->watching = StartCheck::watching($this->server());
             $this->unreachable = false;
         } catch (Throwable $error) {
             report($error);
             $this->unreachable = true;
         }
+    }
+
+    /** Switches off plugins that failed on the last start, and says so. Polled while a plugin is watched. */
+    public function checkStart(): void
+    {
+        foreach (StartCheck::run($this->server()) as $off) {
+            Notification::make()->title(__('simplify-mods::packages.switched_off_after_start', ['name' => $off['title']]))
+                ->body($off['reason'])->warning()->persistent()->send();
+        }
+        $this->refresh();
     }
 
     public function search(): void
@@ -245,6 +260,19 @@ final class Packages extends Page implements HasActions
                 Notification::make()->title(__('simplify-mods::settings.key_works'))->success()->send();
                 $this->search();
             });
+    }
+
+    /** The log lines of a plugin that was switched off after a start. */
+    public function offLogAction(): Action
+    {
+        return Action::make('offLog')
+            ->iconButton()->color('warning')->icon('tabler-alert-triangle')
+            ->tooltip(__('simplify-mods::packages.show_log'))
+            ->modalHeading(__('simplify-mods::packages.show_log'))
+            ->modalContent(fn (array $arguments) => view('simplify-mods::components.log-lines', [
+                'lines' => $this->packages()->offLines((string) ($arguments['file'] ?? '')),
+            ]))
+            ->modalSubmitAction(false)->modalCancelActionLabel(__('simplify-mods::packages.close'));
     }
 
     /** Asks for the loader and Minecraft version when the egg does not tell them. */

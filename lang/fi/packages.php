@@ -39,4 +39,9 @@ return [
     'choose' => 'Valitse ohjelmisto ja versio',
     'loader' => 'Ohjelmisto',
     'minecraft' => 'Minecraft-versio',
+    'watched' => 'tarkistetaan seuraavassa käynnistyksessä',
+    'switched_off_after_start' => ':name poistettiin käytöstä',
+    'off_after_start' => 'Poistettu käytöstä viime käynnistyksen jälkeen',
+    'show_log' => 'Lokirivit',
+    'close' => 'Sulje',
 ];

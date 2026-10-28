@@ -39,4 +39,9 @@ return [
     'choose' => 'Chọn phần mềm và phiên bản',
     'loader' => 'Phần mềm',
     'minecraft' => 'Phiên bản Minecraft',
+    'watched' => 'sẽ được kiểm tra ở lần khởi động tới',
+    'switched_off_after_start' => 'Đã tắt :name',
+    'off_after_start' => 'Đã tắt sau lần khởi động gần nhất',
+    'show_log' => 'Các dòng nhật ký',
+    'close' => 'Đóng',
 ];

@@ -39,4 +39,9 @@ return [
     'choose' => 'اختيار البرنامج والإصدار',
     'loader' => 'البرنامج',
     'minecraft' => 'إصدار Minecraft',
+    'watched' => 'يُفحص عند التشغيل التالي',
+    'switched_off_after_start' => 'أُوقف :name',
+    'off_after_start' => 'أُوقف بعد آخر تشغيل',
+    'show_log' => 'أسطر السجل',
+    'close' => 'إغلاق',
 ];

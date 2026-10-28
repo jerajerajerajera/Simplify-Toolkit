@@ -39,4 +39,9 @@ return [
     'choose' => 'Szoftver és verzió kiválasztása',
     'loader' => 'Szoftver',
     'minecraft' => 'Minecraft-verzió',
+    'watched' => 'a következő indításkor ellenőrizzük',
+    'switched_off_after_start' => ':name ki lett kapcsolva',
+    'off_after_start' => 'Kikapcsolva az utolsó indítás után',
+    'show_log' => 'Naplósorok',
+    'close' => 'Bezárás',
 ];

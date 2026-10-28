@@ -7,6 +7,7 @@ php tests/server-kind.php
 php tests/game-settings.php
 php tests/server-icon.php
 php tests/sources.php
+php tests/start-check.php
 php tests/addon.php
 php tests/lang.php
 python3 tests/hub-check.py

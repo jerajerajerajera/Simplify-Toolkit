@@ -15,3 +15,6 @@
   not say which loader or version the server runs, the page asks once.
 - CurseForge on the Plugins and Mods pages once a CurseForge API key is saved: by an admin for the whole panel, or by
   a user for themselves. Keys are tested before saving, stored encrypted and never shown again.
+- Protection after a start: a plugin installed through Simplify Mods is checked on the server's next start. When the
+  log says it failed to load, it is switched off so the start after that is clean, with the log line and the lines
+  around it on the Plugins page.

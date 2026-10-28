@@ -39,4 +39,9 @@ return [
     'choose' => 'Pasirinkti programinę įrangą ir versiją',
     'loader' => 'Programinė įranga',
     'minecraft' => 'Minecraft versija',
+    'watched' => 'tikrinama kito paleidimo metu',
+    'switched_off_after_start' => ':name išjungtas',
+    'off_after_start' => 'Išjungta po paskutinio paleidimo',
+    'show_log' => 'Žurnalo eilutės',
+    'close' => 'Uždaryti',
 ];

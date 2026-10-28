@@ -154,6 +154,8 @@ final class Packages
                 'icon' => $package?->icon ?? '',
                 'page' => $package?->page ?? '',
                 'size' => (int) ($file['size'] ?? 0),
+                'off_reason' => $package?->off_reason ?? '',
+                'watched' => $package?->watch_since !== null,
             ];
         }
         usort($items, fn (array $a, array $b) => strcasecmp($a['title'], $b['title']));
@@ -197,6 +199,10 @@ final class Packages
             'icon' => Web::https($card['icon'] ?? null) ?? ($old?->icon ?? ''),
             'page' => Web::https($card['page'] ?? null) ?? Web::https($release['page']) ?? ($old?->page ?? ''),
             'fits' => $release['fits'],
+            // Watched until the next start: a plugin that fails to load then is switched off (StartCheck).
+            'watch_since' => $context['kind'] === 'plugins' ? now() : null,
+            'off_reason' => '',
+            'off_lines' => null,
         ]);
 
         return $release;
@@ -233,6 +239,22 @@ final class Packages
         $this->files()->renameFiles('/', [['from' => $directory.'/'.$file, 'to' => $directory.'/'.$target]])->throw();
         Activity::event('server:file.rename')->subject($this->server)->property('directory', '/'.$directory)
             ->property('files', [['from' => $file, 'to' => $target]])->log();
+        // Switched on by hand: watched again on the next start, and the old reason is gone.
+        Package::query()->where('server_id', $this->server->id)->where('filename', $base)->update([
+            'watch_since' => $on && $directory === 'plugins' ? now() : null, 'off_reason' => '', 'off_lines' => null,
+        ]);
+    }
+
+    /**
+     * The log lines saved when a plugin was switched off after a start.
+     *
+     * @return list<string>
+     */
+    public function offLines(string $file): array
+    {
+        $base = (string) preg_replace('/\.disabled$/i', '', self::checkName($file));
+
+        return (array) (Package::query()->where('server_id', $this->server->id)->where('filename', $base)->value('off_lines') ?? []);
     }
 
     /** Moves the file to the backup folder and forgets it. */

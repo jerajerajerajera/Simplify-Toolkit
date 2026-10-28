@@ -39,4 +39,9 @@ return [
     'choose' => 'Выбрать ПО и версию',
     'loader' => 'ПО',
     'minecraft' => 'Версия Minecraft',
+    'watched' => 'проверяется при следующем запуске',
+    'switched_off_after_start' => ':name выключен',
+    'off_after_start' => 'Выключен после последнего запуска',
+    'show_log' => 'Строки лога',
+    'close' => 'Закрыть',
 ];

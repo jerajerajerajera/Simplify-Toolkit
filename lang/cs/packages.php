@@ -39,4 +39,9 @@ return [
     'choose' => 'Vybrat software a verzi',
     'loader' => 'Software',
     'minecraft' => 'Verze Minecraftu',
+    'watched' => 'zkontroluje se při příštím startu',
+    'switched_off_after_start' => ':name byl vypnut',
+    'off_after_start' => 'Vypnuto po posledním startu',
+    'show_log' => 'Řádky logu',
+    'close' => 'Zavřít',
 ];

@@ -108,7 +108,7 @@ final class FakeFiles extends DaemonFileRepository
         $entries = [];
         foreach (self::$files as $name => $content) {
             if (dirname($name) === $path) {
-                $entries[] = ['name' => basename($name), 'file' => true, 'size' => strlen($content)];
+                $entries[] = ['name' => basename($name), 'file' => true, 'size' => strlen($content), 'modified' => now()->addMinute()->toIso8601String()];
             }
         }
 
@@ -266,6 +266,21 @@ step('installing, switching off and removing a plugin goes through Wings', funct
         throw new RuntimeException('not removed to the backup folder: '.json_encode(array_keys(FakeFiles::$files)));
     }
 });
+step('a plugin that fails on the next start is switched off with its log line', function () use ($admin, $paper) {
+    $page = Livewire::actingAs($admin)->test(Packages::class)
+        ->callAction('install', arguments: ['key' => 'modrinth:AAAA1111', 'fits' => true])
+        ->assertSet('watching', true);
+    FakeFiles::$files['/logs/latest.log'] = "[12:00:01 INFO]: Starting\n[12:00:02 ERROR]: Could not load 'plugins/SmokeEdit-1.0.jar' in folder 'plugins'\n[12:00:03 INFO]: Done (2.0s)!\n";
+    $page->call('checkStart')->assertSet('watching', false);
+    $package = Package::query()->where('server_id', $paper->id)->where('key', 'modrinth:AAAA1111')->firstOrFail();
+    if (! isset(FakeFiles::$files['/plugins/SmokeEdit-1.0.jar.disabled']) || ! str_starts_with($package->off_reason, 'Could not load') || count((array) $package->off_lines) < 2) {
+        throw new RuntimeException('not switched off: '.json_encode([array_keys(FakeFiles::$files), $package->off_reason]));
+    }
+    $page->callAction('toggle', arguments: ['file' => 'SmokeEdit-1.0.jar.disabled', 'enabled' => false]);
+    if ($package->refresh()->off_reason !== '' || $package->watch_since === null) {
+        throw new RuntimeException('switching it on again does not watch it again');
+    }
+});
 step('CurseForge keys are tested, stored encrypted, and a user\'s own key goes first', function () use ($admin) {
     if (Keys::curseForgeWorks('bad-key') || ! Keys::curseForgeWorks('good-key')) {
         throw new RuntimeException('the key test does not tell good from bad');
@@ -293,7 +308,7 @@ step('servers without plugins or mods have no Plugins page', function () use ($a
     }
 });
 // Every step must have run: a step that never ran is a failure too.
-$expected = 12;
+$expected = 13;
 if ($passed !== $expected) {
     echo "FAIL $passed of $expected steps passed\n";
     exit(1);

@@ -39,4 +39,9 @@ return [
     'choose' => 'Избери софтуер и версия',
     'loader' => 'Софтуер',
     'minecraft' => 'Версия на Minecraft',
+    'watched' => 'проверява се при следващото стартиране',
+    'switched_off_after_start' => ':name е изключен',
+    'off_after_start' => 'Изключен след последното стартиране',
+    'show_log' => 'Редове от лога',
+    'close' => 'Затвори',
 ];

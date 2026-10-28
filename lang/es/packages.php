@@ -39,4 +39,9 @@ return [
     'choose' => 'Elegir software y versión',
     'loader' => 'Software',
     'minecraft' => 'Versión de Minecraft',
+    'watched' => 'se comprueba en el próximo arranque',
+    'switched_off_after_start' => ':name se ha desactivado',
+    'off_after_start' => 'Desactivado tras el último arranque',
+    'show_log' => 'Líneas del registro',
+    'close' => 'Cerrar',
 ];

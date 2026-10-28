@@ -39,4 +39,9 @@ return [
     'choose' => 'Yazılım ve sürüm seç',
     'loader' => 'Yazılım',
     'minecraft' => 'Minecraft sürümü',
+    'watched' => 'bir sonraki başlatmada kontrol edilir',
+    'switched_off_after_start' => ':name kapatıldı',
+    'off_after_start' => 'Son başlatmadan sonra kapatıldı',
+    'show_log' => 'Günlük satırları',
+    'close' => 'Kapat',
 ];
