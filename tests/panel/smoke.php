@@ -10,6 +10,7 @@ use App\Repositories\Daemon\DaemonFileRepository;
 use Filament\Facades\Filament;
 use GuzzleHttp\Psr7\Response as Psr7Response;
 use Illuminate\Contracts\Console\Kernel;
+use Illuminate\Foundation\Application;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Foundation\Testing\Concerns\InteractsWithAuthentication;
 use Illuminate\Foundation\Testing\Concerns\InteractsWithSession;
@@ -29,8 +30,24 @@ use Simplify\Mods\Services\Web;
 
 define('LARAVEL_START', microtime(true));
 require getcwd().'/vendor/autoload.php';
-$app = require getcwd().'/bootstrap/app.php';
-$app->make(Kernel::class)->bootstrap();
+
+/**
+ * A fresh panel. Filament keeps the current panel for the whole process, so a page of another panel opened after it
+ * fails with "Plugin [global-search-modal] is not registered"; every page visit gets its own application.
+ */
+function boot(): Application
+{
+    $app = require getcwd().'/bootstrap/app.php';
+    $app->make(Kernel::class)->bootstrap();
+    // Laravel's console bootstrap turns an uncaught error into output with exit code 0, so every error fails here.
+    set_exception_handler(function (Throwable $e): void {
+        echo 'FAIL outside a step: '.get_class($e).': '.substr($e->getMessage(), 0, 400).' ('.basename($e->getFile()).':'.$e->getLine().")\n";
+        exit(1);
+    });
+
+    return $app;
+}
+boot();
 
 $failed = false;
 function step(string $what, callable $run): void
@@ -48,7 +65,7 @@ function step(string $what, callable $run): void
 
 function visit(User $user, string $url): TestResponse
 {
-    $client = new class(app())
+    $client = new class(boot())
     {
         use InteractsWithAuthentication, InteractsWithSession, MakesHttpRequests;
 
@@ -122,19 +139,14 @@ final class FakeFiles extends DaemonFileRepository
     }
 }
 
-// Laravel's console bootstrap turns an uncaught error into output with exit code 0, so every error fails here.
-set_exception_handler(function (Throwable $e): void {
-    echo 'FAIL outside a step: '.get_class($e).': '.substr($e->getMessage(), 0, 400).' ('.basename($e->getFile()).':'.$e->getLine().")\n";
-    exit(1);
-});
 $passed = 0;
 
 $admin = User::where('email', 'smoke-mods@example.com')->first()
     ?? User::factory()->create(['email' => 'smoke-mods@example.com']);
 $admin->syncRoles(Role::getRootAdmin());
 
-step('the add-on is tagged for Simplify without loading its class', function () use ($app) {
-    $tags = (fn () => $this->tags['simplify.addons'] ?? [])->call($app);
+step('the add-on is tagged for Simplify without loading its class', function () {
+    $tags = (fn () => $this->tags['simplify.addons'] ?? [])->call(app());
     if (! in_array(ModsAddon::class, $tags, true)) {
         throw new RuntimeException('ModsAddon is not tagged: '.json_encode($tags));
     }
@@ -151,7 +163,6 @@ step('a server is classified', function () use ($admin) {
         throw new RuntimeException('unexpected result: '.json_encode($kind));
     }
 });
-// Before any page of the server panel: Filament keeps the current panel for the whole process.
 step('the admin settings page renders', function () use ($admin) {
     $url = ModsSettings::getUrl(panel: 'admin');
     $response = visit($admin, $url);
@@ -173,8 +184,8 @@ step('the Minecraft page renders while Wings is offline', function () use ($admi
         throw new RuntimeException('the page does not say the files cannot be reached');
     }
 });
-step('saving changes only the chosen lines of server.properties', function () use ($admin, $paper, $app) {
-    $app->bind(DaemonFileRepository::class, FakeFiles::class);
+step('saving changes only the chosen lines of server.properties', function () use ($admin, $paper) {
+    app()->bind(DaemonFileRepository::class, FakeFiles::class);
     FakeFiles::$files = ['/server.properties' => "#Minecraft server properties\nmax-players=20\ndifficulty=easy\nlevel-seed=oak\n"];
     Filament::setCurrentPanel(Filament::getPanel('server'));
     Filament::setTenant($paper);
