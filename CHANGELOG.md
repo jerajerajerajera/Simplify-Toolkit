@@ -18,3 +18,6 @@
 - Protection after a start: a plugin installed through Simplify Mods is checked on the server's next start. When the
   log says it failed to load, it is switched off so the start after that is clean, with the log line and the lines
   around it on the Plugins page.
+- With Simplify: players online, software, modpack and plugins on the server page, the software on the server tile,
+  and a Settings button in the add-on list. With Simplify Embed: software, version, modpack, players and MOTD in the
+  public server list.

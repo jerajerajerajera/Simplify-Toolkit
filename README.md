@@ -10,6 +10,13 @@ It works on its own, and shows up inside [Simplify](https://github.com/jerajeraj
 
 Simplify Mods is being built for version 1.0. This list grows with each change.
 
+## With other Simplify plugins
+
+- [Simplify](https://github.com/jerajerajerajera/Simplify): a Minecraft part on the server page (players online,
+  software, modpack, plugins), "Paper 1.21.4" on the server tile, and a Settings button in the add-on list.
+- [Simplify Embed](https://github.com/jerajerajerajera/Simplify-embed): software, version, modpack, and players and
+  MOTD while the server runs, in the public server list (event `simplify.embed.server`).
+
 ## Install
 
 Install Simplify Mods from the [Pelican Hub](https://hub.pelican.dev). Updates come from the Hub only.
@@ -25,7 +32,10 @@ written through Wings, like Pelican's own file manager. Outside services, only w
 | `hangar.papermc.io` | Plugins page on Paper, Purpur, Folia, Velocity and Waterfall | the search text, platform and version; the plugin's name |
 | `api.spiget.org` (SpigotMC) | Plugins page on Paper, Spigot, Bukkit and BungeeCord | the search text; the resource id |
 | `api.curseforge.com` | Plugins or Mods page, only when a CurseForge API key is set | the search text, loader and version; the project id; the key |
-| `api.feed-the-beast.com` and its image host | "Use the modpack's icon" on an FTB modpack | the modpack's id |
+| `api.feed-the-beast.com` and its image host | "Use the modpack's icon"; the name and version of an FTB modpack | the modpack's id |
+
+The player count comes from the Minecraft server itself: the panel asks the server's own port what every Minecraft
+client asks it for the server list, at most every 30 seconds.
 
 Installing a plugin or mod asks Wings to download the file itself, only from `cdn.modrinth.com`,
 `hangarcdn.papermc.io`, `api.spiget.org`, `edge.forgecdn.net` or `mediafilez.forgecdn.net`. A plugin that the site

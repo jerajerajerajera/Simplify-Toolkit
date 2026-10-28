@@ -21,11 +21,13 @@ use Livewire\Livewire;
 use Simplify\Mods\Filament\Admin\Pages\ModsSettings;
 use Simplify\Mods\Filament\Server\Pages\Minecraft;
 use Simplify\Mods\Filament\Server\Pages\Packages;
+use Simplify\Mods\Livewire\ServerSummary;
 use Simplify\Mods\Models\ApiKey;
 use Simplify\Mods\Models\Package;
 use Simplify\Mods\ModsAddon;
 use Simplify\Mods\Services\Keys;
 use Simplify\Mods\Services\ServerKind;
+use Simplify\Mods\Services\Software;
 use Simplify\Mods\Services\Web;
 
 define('LARAVEL_START', microtime(true));
@@ -281,6 +283,21 @@ step('a plugin that fails on the next start is switched off with its log line', 
         throw new RuntimeException('switching it on again does not watch it again');
     }
 });
+step('Simplify Embed gets the software of Minecraft servers, and nothing for other games', function () use ($admin, $paper) {
+    $answers = event('simplify.embed.server', [$paper, false]);
+    if (! in_array(['game' => 'Minecraft', 'software' => 'Paper'], $answers, true)) {
+        throw new RuntimeException('unexpected: '.json_encode($answers));
+    }
+    $rust = Server::factory()->create(['owner_id' => $admin->id, 'egg_id' => Egg::factory()->create(['name' => 'Rust', 'features' => []])->id]);
+    if (array_filter(event('simplify.embed.server', [$rust, true])) !== [] || Software::label($rust) !== '' || Software::label($paper) !== 'Paper') {
+        throw new RuntimeException('other games got Minecraft details');
+    }
+});
+step('the Minecraft part of Simplify\'s server page renders and loads the player count', function () use ($admin, $paper) {
+    Livewire::actingAs($admin)->test(ServerSummary::class, ['server' => $paper])
+        ->assertSee('Paper')->assertSee(e(__('simplify-mods::minecraft.title')))
+        ->call('loadStatus')->assertSee(e(__('simplify-mods::mods.summary.not_answering')));
+});
 step('CurseForge keys are tested, stored encrypted, and a user\'s own key goes first', function () use ($admin) {
     if (Keys::curseForgeWorks('bad-key') || ! Keys::curseForgeWorks('good-key')) {
         throw new RuntimeException('the key test does not tell good from bad');
@@ -308,7 +325,7 @@ step('servers without plugins or mods have no Plugins page', function () use ($a
     }
 });
 // Every step must have run: a step that never ran is a failure too.
-$expected = 13;
+$expected = 15;
 if ($passed !== $expected) {
     echo "FAIL $passed of $expected steps passed\n";
     exit(1);
