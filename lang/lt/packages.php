@@ -44,4 +44,5 @@ return [
     'off_after_start' => 'Išjungta po paskutinio paleidimo',
     'show_log' => 'Žurnalo eilutės',
     'close' => 'Uždaryti',
+    'show_more' => 'Rodyti daugiau',
 ];

@@ -44,4 +44,5 @@ return [
     'off_after_start' => 'Kikapcsolva az utolsó indítás után',
     'show_log' => 'Naplósorok',
     'close' => 'Bezárás',
+    'show_more' => 'Több mutatása',
 ];

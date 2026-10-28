@@ -44,4 +44,5 @@ return [
     'off_after_start' => 'أُوقف بعد آخر تشغيل',
     'show_log' => 'أسطر السجل',
     'close' => 'إغلاق',
+    'show_more' => 'عرض المزيد',
 ];

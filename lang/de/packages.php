@@ -44,4 +44,5 @@ return [
     'off_after_start' => 'Nach dem letzten Start ausgeschaltet',
     'show_log' => 'Logzeilen',
     'close' => 'Schließen',
+    'show_more' => 'Mehr anzeigen',
 ];

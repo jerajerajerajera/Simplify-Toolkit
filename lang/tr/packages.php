@@ -44,4 +44,5 @@ return [
     'off_after_start' => 'Son başlatmadan sonra kapatıldı',
     'show_log' => 'Günlük satırları',
     'close' => 'Kapat',
+    'show_more' => 'Daha fazla göster',
 ];

@@ -44,4 +44,5 @@ return [
     'off_after_start' => 'Uitgezet na de laatste start',
     'show_log' => 'Logregels',
     'close' => 'Sluiten',
+    'show_more' => 'Meer tonen',
 ];

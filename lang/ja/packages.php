@@ -44,4 +44,5 @@ return [
     'off_after_start' => '前回の起動後にオフにしました',
     'show_log' => 'ログの行',
     'close' => '閉じる',
+    'show_more' => 'さらに表示',
 ];

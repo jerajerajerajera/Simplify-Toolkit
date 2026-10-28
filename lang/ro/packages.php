@@ -44,4 +44,5 @@ return [
     'off_after_start' => 'Oprit după ultima pornire',
     'show_log' => 'Linii din jurnal',
     'close' => 'Închide',
+    'show_more' => 'Arată mai multe',
 ];

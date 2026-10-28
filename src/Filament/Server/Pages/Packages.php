@@ -48,6 +48,9 @@ final class Packages extends Page implements HasActions
 
     public bool $searched = false;
 
+    /** How many results are shown; "Show more" adds a page. */
+    public int $shown = 10;
+
     /** @var list<array<string, mixed>> */
     public array $installed = [];
 
@@ -146,8 +149,14 @@ final class Packages extends Page implements HasActions
         $found = (new Catalog(Keys::curseForge(user())))
             ->search($this->query, $this->context['kind'], $this->context['loader'], $this->context['minecraft']);
         $this->results = $found['items'];
+        $this->shown = 10;
         $this->offline = $found['offline'];
         $this->searched = true;
+    }
+
+    public function showMore(): void
+    {
+        $this->shown += 10;
     }
 
     public function updatedQuery(): void
@@ -182,7 +191,7 @@ final class Packages extends Page implements HasActions
     {
         return Action::make('install')
             ->label(fn (array $arguments) => __('simplify-mods::packages.'.(($arguments['fits'] ?? true) ? 'install' : 'install_anyway')))
-            ->icon('tabler-download')->size('sm')
+            ->icon('tabler-download')->size('sm')->button()
             ->color(fn (array $arguments) => ($arguments['fits'] ?? true) ? 'primary' : 'gray')
             ->visible(fn () => $this->can(SubuserPermission::FileCreate) && $this->ready())
             // A release that is not made for this version may still work; installing it is the owner's choice.
@@ -235,7 +244,7 @@ final class Packages extends Page implements HasActions
     public function ownKeyAction(): Action
     {
         return Action::make('ownKey')
-            ->label(__('simplify-mods::settings.own_key'))->icon('tabler-key')->color('gray')
+            ->label(__('simplify-mods::settings.own_key'))->icon('tabler-key')->color('gray')->button()
             ->modalDescription(fn () => __('simplify-mods::settings.'.(Keys::has(Keys::CURSEFORGE, user()) ? 'own_key_saved' : 'own_key_help')))
             ->schema([
                 TextInput::make('key')->label(__('simplify-mods::settings.key'))->password()->autocomplete('off')->required()->maxLength(200),
@@ -281,7 +290,7 @@ final class Packages extends Page implements HasActions
         $loaders = $this->context['kind'] === 'plugins' ? ServerKind::PLUGIN_LOADERS : ServerKind::MOD_LOADERS;
 
         return Action::make('choose')
-            ->label(__('simplify-mods::packages.choose'))->icon('tabler-adjustments')
+            ->label(__('simplify-mods::packages.choose'))->icon('tabler-adjustments')->button()
             ->visible(fn () => $this->can(SubuserPermission::StartupUpdate) || $this->can(SubuserPermission::FileUpdate))
             ->fillForm(fn () => ['loader' => $this->context['loader'], 'minecraft' => $this->context['minecraft']])
             ->schema([

@@ -80,11 +80,11 @@ final class ModsSettings extends Page implements HasSchemas
                     TextInput::make('curseforge')->label(__('simplify-mods::settings.'.($this->hasKey ? 'new_key' : 'key')))
                         ->password()->autocomplete('off')->maxLength(200),
                     Actions::make([
-                        Action::make('saveKey')->label(__('simplify-mods::settings.save'))->icon('tabler-device-floppy')
+                        Action::make('saveKey')->label(__('simplify-mods::settings.save'))->icon('tabler-device-floppy')->button()
                             ->action(fn () => $this->saveKey()),
-                        Action::make('testKey')->label(__('simplify-mods::settings.test'))->icon('tabler-plug-connected')->color('gray')
+                        Action::make('testKey')->label(__('simplify-mods::settings.test'))->icon('tabler-plug-connected')->color('gray')->button()
                             ->visible(fn () => $this->hasKey)->action(fn () => $this->testKey()),
-                        Action::make('removeKey')->label(__('simplify-mods::settings.remove'))->icon('tabler-trash')->color('danger')
+                        Action::make('removeKey')->label(__('simplify-mods::settings.remove'))->icon('tabler-trash')->color('danger')->button()
                             ->requiresConfirmation()->visible(fn () => $this->hasKey)->action(fn () => $this->removeKey()),
                     ])->visible(fn () => $this->canChange()),
                 ]),

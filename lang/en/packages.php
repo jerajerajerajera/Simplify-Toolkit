@@ -44,4 +44,5 @@ return [
     'off_after_start' => 'Switched off after the last start',
     'show_log' => 'Log lines',
     'close' => 'Close',
+    'show_more' => 'Show more',
 ];

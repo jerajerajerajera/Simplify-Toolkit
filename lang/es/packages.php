@@ -44,4 +44,5 @@ return [
     'off_after_start' => 'Desactivado tras el último arranque',
     'show_log' => 'Líneas del registro',
     'close' => 'Cerrar',
+    'show_more' => 'Mostrar más',
 ];

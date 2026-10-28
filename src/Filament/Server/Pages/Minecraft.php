@@ -129,15 +129,15 @@ final class Minecraft extends Page implements HasSchemas
                         ? new HtmlString('<img src="'.e($this->icon).'" alt="" width="64" height="64" style="image-rendering: pixelated; border-radius: .25rem">')
                         : __('simplify-mods::minecraft.no_icon')),
                     Actions::make([
-                        Action::make('uploadIcon')->label(__('simplify-mods::minecraft.icon_upload'))->icon('tabler-upload')
+                        Action::make('uploadIcon')->label(__('simplify-mods::minecraft.icon_upload'))->icon('tabler-upload')->button()
                             ->schema([
                                 FileUpload::make('picture')->hiddenLabel()->image()->maxSize(8192)->storeFiles(false)->required(),
                             ])
                             ->action(fn (array $data) => $this->saveIcon($data['picture'] ?? null)),
-                        Action::make('modpackIcon')->label(__('simplify-mods::minecraft.icon_modpack'))->icon('tabler-package')->color('gray')
+                        Action::make('modpackIcon')->label(__('simplify-mods::minecraft.icon_modpack'))->icon('tabler-package')->color('gray')->button()
                             ->visible(fn () => in_array(ServerKind::forServer($this->server())['modpack'], ['modrinth', 'ftb'], true))
                             ->action(fn () => $this->useModpackIcon()),
-                        Action::make('removeIcon')->label(__('simplify-mods::minecraft.icon_remove'))->icon('tabler-trash')->color('danger')
+                        Action::make('removeIcon')->label(__('simplify-mods::minecraft.icon_remove'))->icon('tabler-trash')->color('danger')->button()
                             ->requiresConfirmation()->visible(fn () => $this->icon !== '')
                             ->action(fn () => $this->removeIcon()),
                     ])->visible(fn () => $this->canChange()),
@@ -168,7 +168,7 @@ final class Minecraft extends Page implements HasSchemas
                         ? __('simplify-mods::minecraft.eula_accepted')
                         : new HtmlString(e(__('simplify-mods::minecraft.eula_help')).' <a href="https://aka.ms/MinecraftEULA" target="_blank" rel="noopener" class="underline">aka.ms/MinecraftEULA</a>')),
                     Actions::make([
-                        Action::make('acceptEula')->label(__('simplify-mods::minecraft.eula_accept'))->icon('tabler-check')
+                        Action::make('acceptEula')->label(__('simplify-mods::minecraft.eula_accept'))->icon('tabler-check')->button()
                             ->requiresConfirmation()->modalDescription(__('simplify-mods::minecraft.eula_confirm'))
                             ->action(fn () => $this->acceptEula()),
                     ])->visible(fn () => ! $this->eulaAccepted && $this->canChange()),

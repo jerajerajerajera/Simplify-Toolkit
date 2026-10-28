@@ -44,4 +44,5 @@ return [
     'off_after_start' => 'Poistettu käytöstä viime käynnistyksen jälkeen',
     'show_log' => 'Lokirivit',
     'close' => 'Sulje',
+    'show_more' => 'Näytä lisää',
 ];
