@@ -44,4 +44,5 @@ return [
     'off_after_start' => 'Vypnuté po poslednom štarte',
     'show_log' => 'Riadky logu',
     'close' => 'Zavrieť',
+    'show_more' => 'Zobraziť ďalšie',
 ];

@@ -44,4 +44,5 @@ return [
     'off_after_start' => 'Dimatikan setelah mulai terakhir',
     'show_log' => 'Baris log',
     'close' => 'Tutup',
+    'show_more' => 'Tampilkan lebih banyak',
 ];

@@ -44,4 +44,5 @@ return [
     'off_after_start' => '上次啟動後已關閉',
     'show_log' => '日誌行',
     'close' => '關閉',
+    'show_more' => '顯示更多',
 ];

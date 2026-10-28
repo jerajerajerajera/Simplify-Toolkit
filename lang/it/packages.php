@@ -44,4 +44,5 @@ return [
     'off_after_start' => 'Disattivato dopo l\'ultimo avvio',
     'show_log' => 'Righe del log',
     'close' => 'Chiudi',
+    'show_more' => 'Mostra altri',
 ];

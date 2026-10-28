@@ -44,4 +44,5 @@ return [
     'off_after_start' => 'Avstängd efter senaste starten',
     'show_log' => 'Loggrader',
     'close' => 'Stäng',
+    'show_more' => 'Visa fler',
 ];

@@ -44,4 +44,5 @@ return [
     'off_after_start' => 'Slået fra efter sidste start',
     'show_log' => 'Loglinjer',
     'close' => 'Luk',
+    'show_more' => 'Vis flere',
 ];

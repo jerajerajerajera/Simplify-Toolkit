@@ -44,4 +44,5 @@ return [
     'off_after_start' => 'Đã tắt sau lần khởi động gần nhất',
     'show_log' => 'Các dòng nhật ký',
     'close' => 'Đóng',
+    'show_more' => 'Hiện thêm',
 ];

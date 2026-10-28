@@ -44,4 +44,5 @@ return [
     'off_after_start' => 'Wyłączony po ostatnim starcie',
     'show_log' => 'Wiersze logu',
     'close' => 'Zamknij',
+    'show_more' => 'Pokaż więcej',
 ];

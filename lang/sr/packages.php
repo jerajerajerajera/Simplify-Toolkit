@@ -44,4 +44,5 @@ return [
     'off_after_start' => 'Isključen posle poslednjeg pokretanja',
     'show_log' => 'Redovi loga',
     'close' => 'Zatvori',
+    'show_more' => 'Prikaži još',
 ];

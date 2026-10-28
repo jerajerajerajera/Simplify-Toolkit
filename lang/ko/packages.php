@@ -44,4 +44,5 @@ return [
     'off_after_start' => '마지막 시작 후 꺼짐',
     'show_log' => '로그 줄',
     'close' => '닫기',
+    'show_more' => '더 보기',
 ];
