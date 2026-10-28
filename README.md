@@ -16,13 +16,21 @@ Install Simplify Mods from the [Pelican Hub](https://hub.pelican.dev). Updates c
 
 ## What it sends where
 
-Server files (`server.properties`, `eula.txt`, `server-icon.png`) are read and written through Wings, like
-Pelican's own file manager. Outside services, only when you use the feature:
+Server files (`server.properties`, `eula.txt`, `server-icon.png`, the `plugins` and `mods` folders) are read and
+written through Wings, like Pelican's own file manager. Outside services, only when you use the feature:
 
 | Service | When | What is sent |
 | --- | --- | --- |
-| `api.modrinth.com`, `cdn.modrinth.com` | "Use the modpack's icon" on a Modrinth modpack | the modpack's project id |
+| `api.modrinth.com` | Plugins or Mods page: searching, installing; "Use the modpack's icon"; the version of a Modrinth modpack | the search text, loader and Minecraft version; project and version ids |
+| `hangar.papermc.io` | Plugins page on Paper, Purpur, Folia, Velocity and Waterfall | the search text, platform and version; the plugin's name |
+| `api.spiget.org` (SpigotMC) | Plugins page on Paper, Spigot, Bukkit and BungeeCord | the search text; the resource id |
+| `api.curseforge.com` | Plugins or Mods page, only when a CurseForge API key is set | the search text, loader and version; the project id; the key |
 | `api.feed-the-beast.com` and its image host | "Use the modpack's icon" on an FTB modpack | the modpack's id |
+
+Installing a plugin or mod asks Wings to download the file itself, only from `cdn.modrinth.com`,
+`hangarcdn.papermc.io`, `api.spiget.org`, `edge.forgecdn.net` or `mediafilez.forgecdn.net`. A plugin that the site
+only offers as a link to another website is not installed; the page links to the site instead.
+Replaced and removed files are moved to `.simplify-mods-backups` on the server, never deleted.
 
 ## Development
 
