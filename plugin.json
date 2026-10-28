@@ -1,0 +1,17 @@
+{
+    "id": "simplify-mods",
+    "name": "Simplify Mods",
+    "author": "jera",
+    "version": "1.0.0-dev",
+    "description": "Minecraft made easy: add plugins and mods from Modrinth, Hangar, SpigotMC and CurseForge, and change the MOTD, server settings and icon without editing files.",
+    "category": "plugin",
+    "namespace": "Simplify\\Mods",
+    "class": "SimplifyModsPlugin",
+    "panels": [
+        "admin",
+        "server"
+    ],
+    "panel_version": "^1.0.0-beta38",
+    "api_version": 1,
+    "update_url": "https://hub.pelican.dev/plugins/simplify-mods/update.json"
+}
