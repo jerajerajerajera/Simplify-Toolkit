@@ -27,7 +27,7 @@ final class Packages
 
     public static function for(Server $server): self
     {
-        return new self($server, new Catalog(Keys::curseForge()));
+        return new self($server, new Catalog(Keys::curseForge(user())));
     }
 
     /**

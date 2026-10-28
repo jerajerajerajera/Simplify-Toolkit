@@ -11,23 +11,43 @@ use Filament\Facades\Filament;
 use GuzzleHttp\Psr7\Response as Psr7Response;
 use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
+use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Testing\Concerns\InteractsWithAuthentication;
 use Illuminate\Foundation\Testing\Concerns\InteractsWithSession;
 use Illuminate\Foundation\Testing\Concerns\MakesHttpRequests;
 use Illuminate\Http\Client\Response;
 use Illuminate\Testing\TestResponse;
 use Livewire\Livewire;
+use Simplify\Mods\Filament\Admin\Pages\ModsSettings;
 use Simplify\Mods\Filament\Server\Pages\Minecraft;
 use Simplify\Mods\Filament\Server\Pages\Packages;
+use Simplify\Mods\Models\ApiKey;
 use Simplify\Mods\Models\Package;
 use Simplify\Mods\ModsAddon;
+use Simplify\Mods\Services\Keys;
 use Simplify\Mods\Services\ServerKind;
 use Simplify\Mods\Services\Web;
 
 define('LARAVEL_START', microtime(true));
 require getcwd().'/vendor/autoload.php';
-$app = require getcwd().'/bootstrap/app.php';
-$app->make(Kernel::class)->bootstrap();
+
+/**
+ * A fresh panel. Filament keeps the current panel for the whole process, so a page of another panel opened after it
+ * fails with "Plugin [global-search-modal] is not registered"; every page visit gets its own application.
+ */
+function boot(): Application
+{
+    $app = require getcwd().'/bootstrap/app.php';
+    $app->make(Kernel::class)->bootstrap();
+    // Laravel's console bootstrap turns an uncaught error into output with exit code 0, so every error fails here.
+    set_exception_handler(function (Throwable $e): void {
+        echo 'FAIL outside a step: '.get_class($e).': '.substr($e->getMessage(), 0, 400).' ('.basename($e->getFile()).':'.$e->getLine().")\n";
+        exit(1);
+    });
+
+    return $app;
+}
+boot();
 
 $failed = false;
 function step(string $what, callable $run): void
@@ -45,7 +65,7 @@ function step(string $what, callable $run): void
 
 function visit(User $user, string $url): TestResponse
 {
-    $client = new class(app())
+    $client = new class(boot())
     {
         use InteractsWithAuthentication, InteractsWithSession, MakesHttpRequests;
 
@@ -119,19 +139,14 @@ final class FakeFiles extends DaemonFileRepository
     }
 }
 
-// Laravel's console bootstrap turns an uncaught error into output with exit code 0, so every error fails here.
-set_exception_handler(function (Throwable $e): void {
-    echo 'FAIL outside a step: '.get_class($e).': '.substr($e->getMessage(), 0, 400).' ('.basename($e->getFile()).':'.$e->getLine().")\n";
-    exit(1);
-});
 $passed = 0;
 
 $admin = User::where('email', 'smoke-mods@example.com')->first()
     ?? User::factory()->create(['email' => 'smoke-mods@example.com']);
 $admin->syncRoles(Role::getRootAdmin());
 
-step('the add-on is tagged for Simplify without loading its class', function () use ($app) {
-    $tags = (fn () => $this->tags['simplify.addons'] ?? [])->call($app);
+step('the add-on is tagged for Simplify without loading its class', function () {
+    $tags = (fn () => $this->tags['simplify.addons'] ?? [])->call(app());
     if (! in_array(ModsAddon::class, $tags, true)) {
         throw new RuntimeException('ModsAddon is not tagged: '.json_encode($tags));
     }
@@ -148,6 +163,13 @@ step('a server is classified', function () use ($admin) {
         throw new RuntimeException('unexpected result: '.json_encode($kind));
     }
 });
+step('the admin settings page renders', function () use ($admin) {
+    $url = ModsSettings::getUrl(panel: 'admin');
+    $response = visit($admin, $url);
+    if ($response->getStatusCode() !== 200 || ! str_contains($response->getContent(), e(__('simplify-mods::settings.no_key')))) {
+        throw new RuntimeException('HTTP '.$response->getStatusCode().' at '.$url.($response->exception ? ': '.$response->exception->getMessage() : ''));
+    }
+});
 $paper = Server::factory()->create([
     'owner_id' => $admin->id,
     'egg_id' => Egg::factory()->create(['name' => 'Paper', 'features' => ['eula', 'java_version']])->id,
@@ -162,8 +184,8 @@ step('the Minecraft page renders while Wings is offline', function () use ($admi
         throw new RuntimeException('the page does not say the files cannot be reached');
     }
 });
-step('saving changes only the chosen lines of server.properties', function () use ($admin, $paper, $app) {
-    $app->bind(DaemonFileRepository::class, FakeFiles::class);
+step('saving changes only the chosen lines of server.properties', function () use ($admin, $paper) {
+    app()->bind(DaemonFileRepository::class, FakeFiles::class);
     FakeFiles::$files = ['/server.properties' => "#Minecraft server properties\nmax-players=20\ndifficulty=easy\nlevel-seed=oak\n"];
     Filament::setCurrentPanel(Filament::getPanel('server'));
     Filament::setTenant($paper);
@@ -204,7 +226,8 @@ step('other games have no Minecraft page', function () use ($admin) {
     }
 });
 // The plugin sites answer from here, so the steps below need no network.
-Web::$transport = fn (string $url) => json_encode(match (true) {
+Web::$transport = fn (string $url, array $headers = []) => json_encode(match (true) {
+    str_contains($url, 'api.curseforge.com/v1/games/432') => ($headers['x-api-key'] ?? '') === 'good-key' ? ['data' => ['id' => 432]] : null,
     str_contains($url, 'api.modrinth.com/v2/search') => ['hits' => [
         ['project_id' => 'AAAA1111', 'title' => 'Smoke Edit', 'description' => 'Edits', 'author' => 'Smoke', 'downloads' => 5, 'slug' => 'smoke-edit', 'project_type' => 'plugin', 'versions' => ['1.21.4']],
     ]],
@@ -243,6 +266,25 @@ step('installing, switching off and removing a plugin goes through Wings', funct
         throw new RuntimeException('not removed to the backup folder: '.json_encode(array_keys(FakeFiles::$files)));
     }
 });
+step('CurseForge keys are tested, stored encrypted, and a user\'s own key goes first', function () use ($admin) {
+    if (Keys::curseForgeWorks('bad-key') || ! Keys::curseForgeWorks('good-key')) {
+        throw new RuntimeException('the key test does not tell good from bad');
+    }
+    Keys::save(Keys::CURSEFORGE, null, 'good-key');
+    $raw = (string) ApiKey::query()->toBase()->whereNull('user_id')->value('secret');
+    if ($raw === '' || str_contains($raw, 'good-key') || Keys::curseForge($admin) !== 'good-key') {
+        throw new RuntimeException('the panel key is not stored encrypted or not used');
+    }
+    Keys::save(Keys::CURSEFORGE, $admin, 'own-key');
+    if (Keys::curseForge($admin) !== 'own-key' || Keys::curseForge(null) !== 'good-key') {
+        throw new RuntimeException('the user\'s own key does not go first');
+    }
+    Keys::forget(Keys::CURSEFORGE, $admin);
+    Keys::forget(Keys::CURSEFORGE, null);
+    if (Keys::curseForge($admin) !== '' || ApiKey::query()->exists()) {
+        throw new RuntimeException('keys were not removed');
+    }
+});
 step('servers without plugins or mods have no Plugins page', function () use ($admin) {
     $rust = Server::factory()->create(['owner_id' => $admin->id, 'egg_id' => Egg::factory()->create(['name' => 'Rust', 'features' => []])->id]);
     Filament::setTenant($rust);
@@ -251,7 +293,7 @@ step('servers without plugins or mods have no Plugins page', function () use ($a
     }
 });
 // Every step must have run: a step that never ran is a failure too.
-$expected = 10;
+$expected = 12;
 if ($passed !== $expected) {
     echo "FAIL $passed of $expected steps passed\n";
     exit(1);
