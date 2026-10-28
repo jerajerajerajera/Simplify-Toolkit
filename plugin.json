@@ -2,7 +2,7 @@
     "id": "simplify-mods",
     "name": "Simplify Mods",
     "author": "jera",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "Minecraft made easy: add plugins and mods from Modrinth, Hangar, SpigotMC and CurseForge, and change the MOTD, server settings and icon without editing files.",
     "category": "plugin",
     "namespace": "Simplify\\Mods",
