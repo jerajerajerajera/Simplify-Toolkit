@@ -44,12 +44,8 @@ Replaced and removed files are moved to `.simplify-mods-backups` on the server, 
 plugin, the Plugins page reads `logs/latest.log` of the next start and switches the plugin off (`.jar.disabled`) when
 it failed to load.
 
-CurseForge only answers apps with an API key. An admin can save one for the whole panel under Advanced → Simplify
-Mods, and every user can save their own from the Plugins or Mods page; a user's own key goes first. Keys are tested
-with CurseForge before they are saved, stored encrypted with the panel's `APP_KEY`, and never shown again.
-
-CurseForge only answers apps with an API key. An admin can save one for the whole panel under Advanced → Simplify
-Mods, and every user can save their own from the Plugins or Mods page; a user's own key goes first. Keys are tested
+CurseForge only answers apps with an API key. An admin can save one for the whole panel under Simplify → Mods,
+and every user can save their own from the Plugins or Mods page; a user's own key goes first. Keys are tested
 with CurseForge before they are saved, stored encrypted with the panel's `APP_KEY`, and never shown again.
 
 ## Development
