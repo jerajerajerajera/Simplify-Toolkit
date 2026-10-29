@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.2
+
+- Simplify 1.3's setup now also asks for the panel's CurseForge key, so a new panel is set up in one go. The key is checked with CurseForge before it is saved. On older Simplify versions, or without Simplify, nothing changes.
+
 ## 1.1.1
 
 - Toolkit moves to the end of the Simplify group in the admin menu, which is now in A-Z order.

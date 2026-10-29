@@ -5,9 +5,12 @@ declare(strict_types=1);
 namespace Simplify\Toolkit;
 
 use App\Models\Server;
+use Closure;
+use Filament\Forms\Components\TextInput;
 use Simplify\Core\Addons\Addon;
 use Simplify\Toolkit\Filament\Admin\Pages\ToolkitSettings;
 use Simplify\Toolkit\Livewire\ServerSummary;
+use Simplify\Toolkit\Services\Keys;
 use Simplify\Toolkit\Services\ServerInfo;
 use Simplify\Toolkit\Services\ServerKind;
 use Simplify\Toolkit\Services\Software;
@@ -59,5 +62,34 @@ final class ToolkitAddon extends Addon
     public function serverSections(Server $server): array
     {
         return ServerKind::forServer($server)['minecraft'] ? [ServerSummary::class] : [];
+    }
+
+    /** In Simplify's setup (Simplify 1.3+, add-on API 3): the panel's CurseForge key, checked with CurseForge first. */
+    public function setupFields(): array
+    {
+        if (! user()?->can('update settings')) {
+            return [];
+        }
+        $saved = Keys::has(Keys::CURSEFORGE, null);
+
+        return [
+            TextInput::make('curseforge')->label('CurseForge: '.__('simplify-toolkit::settings.'.($saved ? 'new_key' : 'key')))
+                ->helperText(__('simplify-toolkit::settings.'.($saved ? 'key_saved' : 'no_key')).' '.__('simplify-toolkit::settings.curseforge_help').' console.curseforge.com')
+                ->password()->autocomplete('off')->maxLength(200)
+                ->rule(fn () => function (string $attribute, mixed $value, Closure $fail): void {
+                    if (trim((string) $value) !== '' && ! Keys::curseForgeWorks(trim((string) $value))) {
+                        $fail(__('simplify-toolkit::settings.key_refused'));
+                    }
+                }),
+        ];
+    }
+
+    /** An empty key keeps the saved one; a key is only saved when CurseForge accepts it. */
+    public function saveSetup(array $state): void
+    {
+        $key = trim((string) ($state['curseforge'] ?? ''));
+        if ($key !== '' && user()?->can('update settings') && Keys::curseForgeWorks($key)) {
+            Keys::save(Keys::CURSEFORGE, null, $key);
+        }
     }
 }
