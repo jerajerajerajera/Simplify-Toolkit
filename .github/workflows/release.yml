@@ -21,4 +21,4 @@ jobs:
           if gh release view "v$version" >/dev/null 2>&1; then echo "Release v$version already exists."; exit 0; fi
           zip=$(python3 scripts/build-package.py)
           awk -v head="## $version" 'index($0, head) == 1 {on = 1; next} on && /^## / {exit} on' CHANGELOG.md > notes.md
-          gh release create "v$version" "$zip" --target "$GITHUB_SHA" --title "Simplify Mods $version" --notes-file notes.md --latest
+          gh release create "v$version" "$zip" --target "$GITHUB_SHA" --title "Simplify Toolkit $version" --notes-file notes.md --latest

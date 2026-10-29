@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Simplify\Mods\Services;
+namespace Simplify\Toolkit\Services;
 
 /**
  * The server.properties settings the Minecraft page shows, converted between the file and the form.

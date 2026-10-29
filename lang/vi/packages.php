@@ -27,7 +27,7 @@ return [
     'switched_off' => 'Đã tắt',
     'switched_on' => 'Đã bật',
     'remove' => 'Gỡ',
-    'remove_help' => 'Tệp được chuyển vào thư mục .simplify-mods-backups để bạn có thể khôi phục.',
+    'remove_help' => 'Tệp được chuyển vào thư mục .simplify-toolkit-backups để bạn có thể khôi phục.',
     'removed' => 'Đã gỡ',
     'restart_help' => 'Thay đổi có hiệu lực khi máy chủ khởi động lại.',
     'not_done' => 'Không thành công',

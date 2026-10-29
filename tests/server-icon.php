@@ -6,8 +6,8 @@ declare(strict_types=1);
 require __DIR__.'/../src/Services/Web.php';
 require __DIR__.'/../src/Services/ServerIcon.php';
 
-use Simplify\Mods\Services\ServerIcon;
-use Simplify\Mods\Services\Web;
+use Simplify\Toolkit\Services\ServerIcon;
+use Simplify\Toolkit\Services\Web;
 
 $failures = [];
 function check(bool $ok, string $what): void

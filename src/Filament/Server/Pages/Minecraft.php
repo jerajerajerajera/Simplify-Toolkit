@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Simplify\Mods\Filament\Server\Pages;
+namespace Simplify\Toolkit\Filament\Server\Pages;
 
 use App\Enums\SubuserPermission;
 use App\Models\Server;
@@ -24,13 +24,13 @@ use Filament\Schemas\Schema;
 use Illuminate\Support\HtmlString;
 use Livewire\Attributes\On;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
-use Simplify\Mods\Filament\Components\MotdEditor;
-use Simplify\Mods\Services\GameSettings;
-use Simplify\Mods\Services\MinecraftFiles;
-use Simplify\Mods\Services\PropertiesFile;
-use Simplify\Mods\Services\ServerIcon;
-use Simplify\Mods\Services\ServerKind;
-use Simplify\Mods\Services\Web;
+use Simplify\Toolkit\Filament\Components\MotdEditor;
+use Simplify\Toolkit\Services\GameSettings;
+use Simplify\Toolkit\Services\MinecraftFiles;
+use Simplify\Toolkit\Services\PropertiesFile;
+use Simplify\Toolkit\Services\ServerIcon;
+use Simplify\Toolkit\Services\ServerKind;
+use Simplify\Toolkit\Services\Web;
 use Throwable;
 
 /**
@@ -48,7 +48,7 @@ final class Minecraft extends Page implements HasSchemas
 
     protected static ?string $slug = 'minecraft';
 
-    protected string $view = 'simplify-mods::pages.form';
+    protected string $view = 'simplify-toolkit::pages.form';
 
     /** @var array<string, mixed>|null */
     public ?array $data = [];
@@ -77,12 +77,12 @@ final class Minecraft extends Page implements HasSchemas
 
     public static function getNavigationLabel(): string
     {
-        return __('simplify-mods::minecraft.title');
+        return __('simplify-toolkit::minecraft.title');
     }
 
     public function getTitle(): string
     {
-        return __('simplify-mods::minecraft.title');
+        return __('simplify-toolkit::minecraft.title');
     }
 
     public function server(): Server
@@ -116,60 +116,60 @@ final class Minecraft extends Page implements HasSchemas
     public function form(Schema $schema): Schema
     {
         return $schema->statePath('data')->disabled(fn () => ! $this->canChange())->components([
-            Text::make(__('simplify-mods::minecraft.unreachable'))->color('danger')->visible(fn () => $this->unreachable),
-            Section::make(__('simplify-mods::minecraft.motd'))
-                ->description(__('simplify-mods::minecraft.motd_help'))
+            Text::make(__('simplify-toolkit::minecraft.unreachable'))->color('danger')->visible(fn () => $this->unreachable),
+            Section::make(__('simplify-toolkit::minecraft.motd'))
+                ->description(__('simplify-toolkit::minecraft.motd_help'))
                 ->schema([
                     MotdEditor::make('motd')->hiddenLabel()->serverName(fn () => (string) $this->server()->name)->iconUrl(fn () => $this->icon),
                 ]),
-            Section::make(__('simplify-mods::minecraft.icon'))
-                ->description(__('simplify-mods::minecraft.icon_help'))
+            Section::make(__('simplify-toolkit::minecraft.icon'))
+                ->description(__('simplify-toolkit::minecraft.icon_help'))
                 ->schema([
                     Text::make(fn () => $this->icon !== ''
                         ? new HtmlString('<img src="'.e($this->icon).'" alt="" width="64" height="64" style="image-rendering: pixelated; border-radius: .25rem">')
-                        : __('simplify-mods::minecraft.no_icon')),
+                        : __('simplify-toolkit::minecraft.no_icon')),
                     Actions::make([
-                        Action::make('uploadIcon')->label(__('simplify-mods::minecraft.icon_upload'))->icon('tabler-upload')->button()
+                        Action::make('uploadIcon')->label(__('simplify-toolkit::minecraft.icon_upload'))->icon('tabler-upload')->button()
                             ->schema([
                                 FileUpload::make('picture')->hiddenLabel()->image()->maxSize(8192)->storeFiles(false)->required(),
                             ])
                             ->action(fn (array $data) => $this->saveIcon($data['picture'] ?? null)),
-                        Action::make('modpackIcon')->label(__('simplify-mods::minecraft.icon_modpack'))->icon('tabler-package')->color('gray')->button()
+                        Action::make('modpackIcon')->label(__('simplify-toolkit::minecraft.icon_modpack'))->icon('tabler-package')->color('gray')->button()
                             ->visible(fn () => in_array(ServerKind::forServer($this->server())['modpack'], ['modrinth', 'ftb'], true))
                             ->action(fn () => $this->useModpackIcon()),
-                        Action::make('removeIcon')->label(__('simplify-mods::minecraft.icon_remove'))->icon('tabler-trash')->color('danger')->button()
+                        Action::make('removeIcon')->label(__('simplify-toolkit::minecraft.icon_remove'))->icon('tabler-trash')->color('danger')->button()
                             ->requiresConfirmation()->visible(fn () => $this->icon !== '')
                             ->action(fn () => $this->removeIcon()),
                     ])->visible(fn () => $this->canChange()),
                 ]),
-            Section::make(__('simplify-mods::minecraft.game'))
-                ->description(__('simplify-mods::minecraft.restart_help'))
+            Section::make(__('simplify-toolkit::minecraft.game'))
+                ->description(__('simplify-toolkit::minecraft.restart_help'))
                 ->columns(['default' => 1, 'sm' => 2, 'lg' => 3])
                 ->schema([
-                    Select::make('gamemode')->label(__('simplify-mods::minecraft.gamemode'))
+                    Select::make('gamemode')->label(__('simplify-toolkit::minecraft.gamemode'))
                         ->options(self::choices('gamemodes', GameSettings::GAMEMODES))->selectablePlaceholder(false)->required(),
-                    Select::make('difficulty')->label(__('simplify-mods::minecraft.difficulty'))
+                    Select::make('difficulty')->label(__('simplify-toolkit::minecraft.difficulty'))
                         ->options(self::choices('difficulties', GameSettings::DIFFICULTIES))->selectablePlaceholder(false)->required(),
                     ...array_map(
-                        fn (string $field) => TextInput::make($field)->label(__("simplify-mods::minecraft.$field"))
+                        fn (string $field) => TextInput::make($field)->label(__("simplify-toolkit::minecraft.$field"))
                             ->integer()->required()
                             ->minValue(GameSettings::NUMBERS[$field][2])->maxValue(GameSettings::NUMBERS[$field][3]),
                         array_keys(GameSettings::NUMBERS),
                     ),
                     ...array_map(
-                        fn (string $field) => Toggle::make($field)->label(__("simplify-mods::minecraft.$field"))
-                            ->helperText(__("simplify-mods::minecraft.{$field}_help")),
+                        fn (string $field) => Toggle::make($field)->label(__("simplify-toolkit::minecraft.$field"))
+                            ->helperText(__("simplify-toolkit::minecraft.{$field}_help")),
                         array_keys(GameSettings::SWITCHES),
                     ),
                 ]),
-            Section::make(__('simplify-mods::minecraft.eula'))
+            Section::make(__('simplify-toolkit::minecraft.eula'))
                 ->schema([
                     Text::make(fn () => $this->eulaAccepted
-                        ? __('simplify-mods::minecraft.eula_accepted')
-                        : new HtmlString(e(__('simplify-mods::minecraft.eula_help')).' <a href="https://aka.ms/MinecraftEULA" target="_blank" rel="noopener" class="underline">aka.ms/MinecraftEULA</a>')),
+                        ? __('simplify-toolkit::minecraft.eula_accepted')
+                        : new HtmlString(e(__('simplify-toolkit::minecraft.eula_help')).' <a href="https://aka.ms/MinecraftEULA" target="_blank" rel="noopener" class="underline">aka.ms/MinecraftEULA</a>')),
                     Actions::make([
-                        Action::make('acceptEula')->label(__('simplify-mods::minecraft.eula_accept'))->icon('tabler-check')->button()
-                            ->requiresConfirmation()->modalDescription(__('simplify-mods::minecraft.eula_confirm'))
+                        Action::make('acceptEula')->label(__('simplify-toolkit::minecraft.eula_accept'))->icon('tabler-check')->button()
+                            ->requiresConfirmation()->modalDescription(__('simplify-toolkit::minecraft.eula_confirm'))
                             ->action(fn () => $this->acceptEula()),
                     ])->visible(fn () => ! $this->eulaAccepted && $this->canChange()),
                 ]),
@@ -182,13 +182,13 @@ final class Minecraft extends Page implements HasSchemas
      */
     private static function choices(string $group, array $keys): array
     {
-        return array_combine($keys, array_map(fn (string $key) => __("simplify-mods::minecraft.$group.$key"), $keys));
+        return array_combine($keys, array_map(fn (string $key) => __("simplify-toolkit::minecraft.$group.$key"), $keys));
     }
 
     protected function getHeaderActions(): array
     {
         return [
-            Action::make('save')->hiddenLabel()->icon('tabler-device-floppy')->tooltip(__('simplify-mods::minecraft.save'))
+            Action::make('save')->hiddenLabel()->icon('tabler-device-floppy')->tooltip(__('simplify-toolkit::minecraft.save'))
                 ->action('save')->keyBindings(['mod+s'])->visible(fn () => $this->canChange()),
         ];
     }
@@ -206,7 +206,7 @@ final class Minecraft extends Page implements HasSchemas
             return;
         }
         $this->current = [...$this->current, ...$values];
-        $this->savedNotification(__('simplify-mods::minecraft.saved'));
+        $this->savedNotification(__('simplify-toolkit::minecraft.saved'));
     }
 
     public function acceptEula(): void
@@ -221,7 +221,7 @@ final class Minecraft extends Page implements HasSchemas
             return;
         }
         $this->eulaAccepted = true;
-        $this->savedNotification(__('simplify-mods::minecraft.eula_saved'));
+        $this->savedNotification(__('simplify-toolkit::minecraft.eula_saved'));
     }
 
     public function saveIcon(mixed $picture): void
@@ -230,7 +230,7 @@ final class Minecraft extends Page implements HasSchemas
         $file = is_array($picture) ? reset($picture) : $picture;
         $png = $file instanceof TemporaryUploadedFile ? ServerIcon::fromImage((string) $file->get()) : null;
         if ($png === null) {
-            Notification::make()->title(__('simplify-mods::minecraft.icon_not_a_picture'))->danger()->send();
+            Notification::make()->title(__('simplify-toolkit::minecraft.icon_not_a_picture'))->danger()->send();
 
             return;
         }
@@ -248,7 +248,7 @@ final class Minecraft extends Page implements HasSchemas
         $url = ServerIcon::modpackIconUrl(ServerKind::forServer($server)['modpack'], $variables);
         $png = $url !== null ? ServerIcon::fromImage((string) Web::get($url)) : null;
         if ($png === null) {
-            Notification::make()->title(__('simplify-mods::minecraft.icon_no_modpack'))->warning()->send();
+            Notification::make()->title(__('simplify-toolkit::minecraft.icon_no_modpack'))->warning()->send();
 
             return;
         }
@@ -267,7 +267,7 @@ final class Minecraft extends Page implements HasSchemas
             return;
         }
         $this->icon = '';
-        $this->savedNotification(__('simplify-mods::minecraft.icon_removed'));
+        $this->savedNotification(__('simplify-toolkit::minecraft.icon_removed'));
     }
 
     private function writeIcon(string $png): void
@@ -281,28 +281,28 @@ final class Minecraft extends Page implements HasSchemas
             return;
         }
         $this->icon = ServerIcon::dataUrl($png);
-        $this->savedNotification(__('simplify-mods::minecraft.icon_saved'));
+        $this->savedNotification(__('simplify-toolkit::minecraft.icon_saved'));
     }
 
     private function failedNotification(): void
     {
-        Notification::make()->title(__('simplify-mods::minecraft.not_saved'))->body(__('simplify-mods::minecraft.unreachable'))->danger()->send();
+        Notification::make()->title(__('simplify-toolkit::minecraft.not_saved'))->body(__('simplify-toolkit::minecraft.unreachable'))->danger()->send();
     }
 
     /** Settings take effect on the next start, so the notification offers a restart to whoever may restart. */
     private function savedNotification(string $title): void
     {
         $restart = (bool) user()?->can(SubuserPermission::ControlRestart, $this->server());
-        Notification::make()->title($title)->body(__('simplify-mods::minecraft.restart_help'))->success()
-            ->actions($restart ? [Action::make('restart')->label(__('simplify-mods::minecraft.restart'))->button()->dispatch('simplify-mods-restart')] : [])
+        Notification::make()->title($title)->body(__('simplify-toolkit::minecraft.restart_help'))->success()
+            ->actions($restart ? [Action::make('restart')->label(__('simplify-toolkit::minecraft.restart'))->button()->dispatch('simplify-toolkit-restart')] : [])
             ->send();
     }
 
-    #[On('simplify-mods-restart')]
+    #[On('simplify-toolkit-restart')]
     public function restart(): void
     {
         abort_unless(user()?->can(SubuserPermission::ControlRestart, $this->server()), 403);
         app(DaemonServerRepository::class)->setServer($this->server())->power('restart')->throw();
-        Notification::make()->title(__('simplify-mods::minecraft.restarting'))->success()->send();
+        Notification::make()->title(__('simplify-toolkit::minecraft.restarting'))->success()->send();
     }
 }

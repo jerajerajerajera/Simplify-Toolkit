@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Simplify\Mods\Services\Sources;
+namespace Simplify\Toolkit\Services\Sources;
 
 /** modrinth.com: plugins and mods for every loader. */
 final class Modrinth implements Source

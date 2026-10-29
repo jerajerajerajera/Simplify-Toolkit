@@ -27,7 +27,7 @@ return [
     'switched_off' => 'Switched off',
     'switched_on' => 'Switched on',
     'remove' => 'Remove',
-    'remove_help' => 'The file is moved to the .simplify-mods-backups folder, so you can put it back.',
+    'remove_help' => 'The file is moved to the .simplify-toolkit-backups folder, so you can put it back.',
     'removed' => 'Removed',
     'restart_help' => 'Changes take effect when the server starts again.',
     'not_done' => 'That did not work',

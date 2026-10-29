@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Simplify\Mods\Services\Sources;
+namespace Simplify\Toolkit\Services\Sources;
 
 /** hangar.papermc.io: plugins for Paper, Velocity and Waterfall. */
 final class Hangar implements Source

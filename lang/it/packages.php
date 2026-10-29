@@ -27,7 +27,7 @@ return [
     'switched_off' => 'Spento',
     'switched_on' => 'Acceso',
     'remove' => 'Rimuovi',
-    'remove_help' => 'Il file viene spostato nella cartella .simplify-mods-backups, così puoi rimetterlo.',
+    'remove_help' => 'Il file viene spostato nella cartella .simplify-toolkit-backups, così puoi rimetterlo.',
     'removed' => 'Rimosso',
     'restart_help' => 'Le modifiche valgono al prossimo avvio del server.',
     'not_done' => 'Non è riuscito',

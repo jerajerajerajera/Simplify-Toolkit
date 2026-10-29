@@ -27,7 +27,7 @@ return [
     'switched_off' => 'Išjungta',
     'switched_on' => 'Įjungta',
     'remove' => 'Pašalinti',
-    'remove_help' => 'Failas perkeliamas į aplanką .simplify-mods-backups, kad galėtum jį grąžinti.',
+    'remove_help' => 'Failas perkeliamas į aplanką .simplify-toolkit-backups, kad galėtum jį grąžinti.',
     'removed' => 'Pašalinta',
     'restart_help' => 'Pakeitimai įsigalios, kai serveris vėl pasileis.',
     'not_done' => 'Nepavyko',

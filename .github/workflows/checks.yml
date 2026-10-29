@@ -60,19 +60,21 @@ jobs:
           php artisan key:generate --force
           php artisan migrate --force
           yarn install --silent
-      - name: Install Simplify Mods
+      - name: Install Simplify Toolkit
         run: |
-          mkdir -p panel/plugins/simplify-mods
-          tar -C plugin --exclude=.git --exclude=dist -cf - . | tar -C panel/plugins/simplify-mods -xf -
+          mkdir -p panel/plugins/simplify-toolkit
+          tar -C plugin --exclude=.git --exclude=dist -cf - . | tar -C panel/plugins/simplify-toolkit -xf -
           cd panel
-          php artisan p:plugin:install simplify-mods
+          php plugins/simplify-toolkit/tests/panel/takeover.php before
+          php artisan p:plugin:install simplify-toolkit
+          php plugins/simplify-toolkit/tests/panel/takeover.php after
           php artisan p:plugin:list | tee plugins.txt
-          grep -E 'Simplify Mods .*\| enabled' plugins.txt || { echo 'Simplify Mods did not install'; exit 1; }
+          grep -E 'Simplify Toolkit .*\| enabled' plugins.txt || { echo 'Simplify Toolkit did not install'; exit 1; }
       - name: Open the pages
         working-directory: panel
         # The output is checked as well as the exit code: a crash during Laravel's bootstrap can still exit with 0.
         run: |
-          php plugins/simplify-mods/tests/panel/smoke.php | tee smoke.txt
+          php plugins/simplify-toolkit/tests/panel/smoke.php | tee smoke.txt
           grep -q '^All steps passed$' smoke.txt
       - name: Laravel log
         if: failure()

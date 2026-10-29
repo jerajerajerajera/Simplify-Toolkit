@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.1.0
+
+- Simplify Mods is now Simplify Toolkit (id `simplify-toolkit`): the place for handy tools that are not in the
+  Simplify core. It shows as "Toolkit" in Simplify's add-on list and in the Simplify group of the admin menu.
+- Coming from Simplify Mods: install Simplify Toolkit first, then uninstall Simplify Mods. Installed plugins, chosen
+  loaders and saved CurseForge keys carry over.
+- With Simplify 1.1 or later, a running Minecraft server shows its players, MOTD, version and server icon on its
+  card and page in Simplify. Without Simplify, or with Simplify 1.0, nothing changes.
+
 ## 1.0.2
 
 - Mods now sits in the Simplify group of Pelican's admin menu, together with the other Simplify add-ons,

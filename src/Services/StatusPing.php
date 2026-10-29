@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Simplify\Mods\Services;
+namespace Simplify\Toolkit\Services;
 
 use App\Models\Server;
 use Illuminate\Support\Facades\Cache;
@@ -24,7 +24,7 @@ final class StatusPing
      */
     public static function get(Server $server): array
     {
-        return Cache::remember('simplify-mods.ping.'.$server->uuid, 30, function () use ($server): array {
+        return Cache::remember('simplify-toolkit.ping.'.$server->uuid, 30, function () use ($server): array {
             $port = (int) $server->allocation?->port;
             $node = (string) parse_url((string) $server->node?->getConnectionAddress(), PHP_URL_HOST);
             foreach ($port > 0 ? self::targets($server->allocation?->ip, $server->allocation?->ip_alias, $node) : [] as $host) {

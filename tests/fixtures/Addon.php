@@ -1,6 +1,6 @@
 <?php
 
-// Copy of Simplify\Core\Addons\Addon from the Simplify repository (src/Addons), to test ModsAddon without Simplify.
+// Copy of Simplify\Core\Addons\Addon from the Simplify repository (src/Addons), to test ToolkitAddon without Simplify.
 
 declare(strict_types=1);
 

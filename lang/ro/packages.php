@@ -27,7 +27,7 @@ return [
     'switched_off' => 'Oprit',
     'switched_on' => 'Pornit',
     'remove' => 'Elimină',
-    'remove_help' => 'Fișierul este mutat în folderul .simplify-mods-backups, ca să-l poți pune înapoi.',
+    'remove_help' => 'Fișierul este mutat în folderul .simplify-toolkit-backups, ca să-l poți pune înapoi.',
     'removed' => 'Eliminat',
     'restart_help' => 'Modificările se aplică la următoarea pornire a serverului.',
     'not_done' => 'Nu a mers',

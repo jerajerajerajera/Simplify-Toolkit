@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Simplify\Mods\Services;
+namespace Simplify\Toolkit\Services;
 
 use App\Models\Server;
 use Throwable;
 
 /**
- * What Simplify Mods adds to a server in Simplify Embed's public server list (the event "simplify.embed.server"):
+ * What Simplify Toolkit adds to a server in Simplify Embed's public server list (the event "simplify.embed.server"):
  * software, version and modpack always, and players and MOTD while it runs.
  */
 final class EmbedDetails

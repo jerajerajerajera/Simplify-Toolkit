@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Simplify\Mods\Livewire;
+namespace Simplify\Toolkit\Livewire;
 
 use App\Enums\SubuserPermission;
 use App\Models\Server;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
-use Simplify\Mods\Filament\Server\Pages\Minecraft;
-use Simplify\Mods\Filament\Server\Pages\Packages;
-use Simplify\Mods\Models\Package;
-use Simplify\Mods\Services\Modpack;
-use Simplify\Mods\Services\ServerKind;
-use Simplify\Mods\Services\Software;
-use Simplify\Mods\Services\StatusPing;
+use Simplify\Toolkit\Filament\Server\Pages\Minecraft;
+use Simplify\Toolkit\Filament\Server\Pages\Packages;
+use Simplify\Toolkit\Models\Package;
+use Simplify\Toolkit\Services\Modpack;
+use Simplify\Toolkit\Services\ServerKind;
+use Simplify\Toolkit\Services\Software;
+use Simplify\Toolkit\Services\StatusPing;
 
 /**
  * The Minecraft part of a server on Simplify's server page: players online, software, modpack and plugins.
@@ -38,7 +38,7 @@ final class ServerSummary extends Component
         $kind = ServerKind::forServer($this->server);
         $packages = Package::query()->where('server_id', $this->server->id);
 
-        return view('simplify-mods::livewire.server-summary', [
+        return view('simplify-toolkit::livewire.server-summary', [
             'software' => Software::label($this->server),
             'modpack' => Modpack::of($this->server),
             'mods' => $kind['kind'] === 'mods',

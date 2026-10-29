@@ -27,7 +27,7 @@ return [
     'switched_off' => 'Avstängd',
     'switched_on' => 'Påslagen',
     'remove' => 'Ta bort',
-    'remove_help' => 'Filen flyttas till mappen .simplify-mods-backups så att du kan lägga tillbaka den.',
+    'remove_help' => 'Filen flyttas till mappen .simplify-toolkit-backups så att du kan lägga tillbaka den.',
     'removed' => 'Borttagen',
     'restart_help' => 'Ändringar gäller när servern startar igen.',
     'not_done' => 'Det fungerade inte',

@@ -27,7 +27,7 @@ return [
     'switched_off' => 'Kikapcsolva',
     'switched_on' => 'Bekapcsolva',
     'remove' => 'Eltávolítás',
-    'remove_help' => 'A fájl a .simplify-mods-backups mappába kerül, így visszateheted.',
+    'remove_help' => 'A fájl a .simplify-toolkit-backups mappába kerül, így visszateheted.',
     'removed' => 'Eltávolítva',
     'restart_help' => 'A változások a szerver következő indításakor lépnek életbe.',
     'not_done' => 'Nem sikerült',

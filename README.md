@@ -1,25 +1,33 @@
-# Simplify Mods
+# Simplify Toolkit
 
-A [Pelican](https://pelican.dev) plugin that makes Minecraft servers easier to run:
+A [Pelican](https://pelican.dev) plugin with handy tools for your servers: the helping hands that do not belong in
+the [Simplify](https://github.com/jerajerajerajera/Simplify) core. New tools are added here over time. Today it has:
 
-- Add plugins (Paper, Purpur, Spigot, Velocity) and mods (Fabric, Forge, NeoForge, Quilt) from Modrinth, Hangar,
-  SpigotMC and CurseForge, see which version fits your server, and switch them off or remove them.
-- Change the MOTD, the main server settings and the server icon without editing `server.properties`.
+- **Plugins and mods** for Minecraft: add plugins (Paper, Purpur, Spigot, Velocity) and mods (Fabric, Forge, NeoForge,
+  Quilt) from Modrinth, Hangar, SpigotMC and CurseForge, see which version fits your server, and switch them off or
+  remove them.
+- **Minecraft settings**: change the MOTD, the main server settings and the server icon without editing
+  `server.properties`, and accept the EULA.
 
-It works on its own, and shows up inside [Simplify](https://github.com/jerajerajerajera/Simplify) when both are installed.
+It works on its own, and shows up inside Simplify when both are installed.
 
-Simplify Mods is being built for version 1.0. This list grows with each change.
+## Coming from Simplify Mods
+
+Simplify Toolkit was called Simplify Mods until 1.1.0. Install Simplify Toolkit first: it takes over the installed
+plugins list, the chosen loaders and the saved CurseForge keys of Simplify Mods. Then uninstall Simplify Mods, so
+the pages do not show twice.
 
 ## With other Simplify plugins
 
 - [Simplify](https://github.com/jerajerajerajera/Simplify): a Minecraft part on the server page (players online,
   software, modpack, plugins), "Paper 1.21.4" on the server tile, and a Settings button in the add-on list.
+  From Simplify 1.1: players, MOTD, version and server icon of a running server on its card and page.
 - [Simplify Embed](https://github.com/jerajerajerajera/Simplify-embed): software, version, modpack, and players and
   MOTD while the server runs, in the public server list (event `simplify.embed.server`).
 
 ## Install
 
-Install Simplify Mods from the [Pelican Hub](https://hub.pelican.dev). Updates come from the Hub only.
+Install Simplify Toolkit from the [Pelican Hub](https://hub.pelican.dev). Updates come from the Hub only.
 
 ## What it sends where
 
@@ -40,11 +48,11 @@ client asks it for the server list, at most every 30 seconds.
 Installing a plugin or mod asks Wings to download the file itself, only from `cdn.modrinth.com`,
 `hangarcdn.papermc.io`, `api.spiget.org`, `edge.forgecdn.net` or `mediafilez.forgecdn.net`. A plugin that the site
 only offers as a link to another website is not installed; the page links to the site instead.
-Replaced and removed files are moved to `.simplify-mods-backups` on the server, never deleted. After installing a
+Replaced and removed files are moved to `.simplify-toolkit-backups` on the server, never deleted. After installing a
 plugin, the Plugins page reads `logs/latest.log` of the next start and switches the plugin off (`.jar.disabled`) when
 it failed to load.
 
-CurseForge only answers apps with an API key. An admin can save one for the whole panel under Simplify → Mods,
+CurseForge only answers apps with an API key. An admin can save one for the whole panel under Simplify → Toolkit,
 and every user can save their own from the Plugins or Mods page; a user's own key goes first. Keys are tested
 with CurseForge before they are saved, stored encrypted with the panel's `APP_KEY`, and never shown again.
 
