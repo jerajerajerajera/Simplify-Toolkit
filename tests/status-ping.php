@@ -4,7 +4,9 @@
 declare(strict_types=1);
 
 require __DIR__.'/../src/Services/StatusPing.php';
+require __DIR__.'/../src/Services/ServerInfo.php';
 
+use Simplify\Mods\Services\ServerInfo;
 use Simplify\Mods\Services\StatusPing;
 
 $failures = [];
@@ -32,6 +34,12 @@ check($answer['motd'] === '§r§6Hello §r§6§lworld§r§x§f§f§0§0§0§0!',
 check($answer['favicon'] === 'data:image/png;base64,AAAA', 'the icon the server sends');
 check(StatusPing::read('{"description":"Plain","favicon":"javascript:x"}')['motd'] === 'Plain' && StatusPing::read('{"favicon":"https://x"}')['favicon'] === '', 'plain MOTD, other icons dropped');
 check(StatusPing::read('not json') === [], 'not a Minecraft answer');
+
+$info = ServerInfo::from($answer, 'https://cdn.modrinth.com/icon.png');
+check($info === ['players' => 3, 'max_players' => 20, 'motd' => $answer['motd'], 'version' => 'Paper 1.21.4', 'icon' => 'data:image/png;base64,AAAA'], 'Simplify card info: '.json_encode($info));
+check(ServerInfo::from([...$answer, 'favicon' => ''], 'https://cdn.modrinth.com/icon.png')['icon'] === 'https://cdn.modrinth.com/icon.png', 'the modpack icon when the server sends none');
+check(! isset(ServerInfo::from([...$answer, 'favicon' => ''], 'http://x/icon.png')['icon']), 'only https icons');
+check(ServerInfo::from([], 'https://cdn.modrinth.com/icon.png') === [], 'nothing while the server does not answer');
 
 if ($failures) {
     echo "FAIL status ping:\n  ".implode("\n  ", $failures)."\n";

@@ -8,6 +8,7 @@ use App\Models\Server;
 use Simplify\Core\Addons\Addon;
 use Simplify\Mods\Filament\Admin\Pages\ModsSettings;
 use Simplify\Mods\Livewire\ServerSummary;
+use Simplify\Mods\Services\ServerInfo;
 use Simplify\Mods\Services\ServerKind;
 use Simplify\Mods\Services\Software;
 
@@ -47,6 +48,12 @@ final class ModsAddon extends Addon
         $label = Software::label($server);
 
         return $label !== '' ? [$label] : [];
+    }
+
+    /** Players, MOTD, version and icon of a running Minecraft server, for Simplify 1.1 and later (API 2). */
+    public function serverInfo(Server $server): array
+    {
+        return ServerInfo::for($server);
     }
 
     public function serverSections(Server $server): array

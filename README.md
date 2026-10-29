@@ -14,6 +14,7 @@ Simplify Mods is being built for version 1.0. This list grows with each change.
 
 - [Simplify](https://github.com/jerajerajerajera/Simplify): a Minecraft part on the server page (players online,
   software, modpack, plugins), "Paper 1.21.4" on the server tile, and a Settings button in the add-on list.
+  From Simplify 1.1: players, MOTD, version and server icon of a running server on its card and page.
 - [Simplify Embed](https://github.com/jerajerajerajera/Simplify-embed): software, version, modpack, and players and
   MOTD while the server runs, in the public server list (event `simplify.embed.server`).
 
