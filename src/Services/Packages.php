@@ -130,9 +130,10 @@ final class Packages
      *
      * @return list<array<string, mixed>>
      */
-    public function installed(): array
+    public function installed(?array $context = null): array
     {
-        $context = $this->context();
+        // The page passes the context it just read, so Wings is not asked twice.
+        $context ??= $this->context();
         $tracked = Package::query()->where('server_id', $this->server->id)->get()->keyBy('filename');
         $items = [];
         foreach ($this->files()->getDirectory($context['directory']) as $file) {

@@ -33,6 +33,14 @@ a.sm-title:hover, .sm-meta a:hover { text-decoration: underline; }
 .sm-more { display: flex; justify-content: center; padding-top: .75rem; }
 .sm-search { margin-bottom: 1rem; }
 .sm-busy { opacity: .6; }
+/* Placeholder rows while the page loads: the same height as real rows, so nothing jumps when they arrive. */
+.sm-skeleton .sm-thumb, .sm-skeleton .sm-line { display: block; border-radius: .375rem; background: var(--gray-100); animation: sm-pulse 1.4s ease-in-out infinite; }
+.dark .sm-skeleton .sm-thumb, .dark .sm-skeleton .sm-line { background: rgb(255 255 255 / .06); }
+.sm-skeleton .sm-line { height: .7rem; margin: .3rem 0; width: 85%; }
+.sm-skeleton .sm-line.is-title { height: .85rem; width: 40%; }
+.sm-skeleton .sm-line.is-short { width: 55%; }
+@keyframes sm-pulse { 50% { opacity: .5; } }
+@media (prefers-reduced-motion: reduce) { .sm-skeleton .sm-thumb, .sm-skeleton .sm-line { animation: none; } }
 .sm-log { max-height: 24rem; overflow: auto; margin: 0; padding: .75rem; border-radius: .5rem; background: #0b0b0f; color: #e5e7eb; font-size: .75rem; line-height: 1.25rem; white-space: pre-wrap; overflow-wrap: anywhere; }
 .sm-facts { display: grid; gap: .75rem 1.5rem; margin: 0; font-size: .875rem; }
 @media (min-width: 640px) { .sm-facts { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
