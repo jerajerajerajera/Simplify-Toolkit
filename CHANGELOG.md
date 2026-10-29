@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.0.2
+
+- Mods now sits in the Simplify group of Pelican's admin menu, together with the other Simplify add-ons,
+  in the same order everywhere. This works with or without the Simplify core.
+
+## 1.0.1
+
+- Shows as "Mods" in Simplify's add-on list and settings, like the other add-ons.
+
 ## 1.0.0
 
 - First version as its own plugin. Updates come from the Pelican Hub only.
