@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Simplify\Mods\Services\Sources;
+namespace Simplify\Toolkit\Services\Sources;
 
-use Simplify\Mods\Services\Web;
+use Simplify\Toolkit\Services\Web;
 
 /**
  * Searches every site at once and works out which file "Install" downloads for a server.

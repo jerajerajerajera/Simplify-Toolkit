@@ -27,7 +27,7 @@ return [
     'switched_off' => 'Désactivé',
     'switched_on' => 'Activé',
     'remove' => 'Supprimer',
-    'remove_help' => 'Le fichier est déplacé dans le dossier .simplify-mods-backups, pour que vous puissiez le remettre.',
+    'remove_help' => 'Le fichier est déplacé dans le dossier .simplify-toolkit-backups, pour que vous puissiez le remettre.',
     'removed' => 'Supprimé',
     'restart_help' => 'Les changements s\'appliquent au prochain démarrage du serveur.',
     'not_done' => 'Ça n\'a pas marché',

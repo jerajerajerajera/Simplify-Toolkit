@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Simplify\Mods\Services;
+namespace Simplify\Toolkit\Services;
 
 use App\Facades\Activity;
 use App\Models\Server;

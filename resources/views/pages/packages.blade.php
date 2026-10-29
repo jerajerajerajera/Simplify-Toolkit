@@ -1,6 +1,6 @@
 <x-filament-panels::page>
     @once
-        <style>@include('simplify-mods::assets.pages-css')</style>
+        <style>@include('simplify-toolkit::assets.pages-css')</style>
     @endonce
     @php
         $mods = $context['kind'] === 'mods';
@@ -8,14 +8,14 @@
     @endphp
 
     @if ($unreachable)
-        <p class="sm-note is-danger">{{ __('simplify-mods::packages.unreachable') }}</p>
+        <p class="sm-note is-danger">{{ __('simplify-toolkit::packages.unreachable') }}</p>
     @endif
 
     <div class="sm-columns">
-        <x-filament::section :heading="__('simplify-mods::packages.find')" :description="$this->ready() ? __('simplify-mods::packages.for', ['loader' => ucfirst($context['loader']), 'version' => $context['minecraft']]) : null">
+        <x-filament::section :heading="__('simplify-toolkit::packages.find')" :description="$this->ready() ? __('simplify-toolkit::packages.for', ['loader' => ucfirst($context['loader']), 'version' => $context['minecraft']]) : null">
             @if (! $this->ready())
                 <div class="sm-stack">
-                    <p class="sm-note">{{ __('simplify-mods::packages.unknown_software') }}</p>
+                    <p class="sm-note">{{ __('simplify-toolkit::packages.unknown_software') }}</p>
                     {{ $this->chooseAction }}
                 </div>
             @else
@@ -26,10 +26,10 @@
                 @endunless
                 <div class="sm-search">
                     <x-filament::input.wrapper prefix-icon="tabler-search">
-                        <x-filament::input type="search" wire:model.live.debounce.400ms="query" :placeholder="__('simplify-mods::packages.search_placeholder')" />
+                        <x-filament::input type="search" wire:model.live.debounce.400ms="query" :placeholder="__('simplify-toolkit::packages.search_placeholder')" />
                     </x-filament::input.wrapper>
                     @if ($offline)
-                        <p class="sm-note is-warn">{{ __('simplify-mods::packages.offline', ['sites' => implode(', ', $offline)]) }}</p>
+                        <p class="sm-note is-warn">{{ __('simplify-toolkit::packages.offline', ['sites' => implode(', ', $offline)]) }}</p>
                     @endif
                 </div>
 
@@ -46,20 +46,20 @@
                                     <a href="{{ $card['page'] }}" target="_blank" rel="noopener" class="sm-title">{{ $card['title'] }}</a>
                                     <x-filament::badge size="sm" color="gray">{{ $card['label'] }}</x-filament::badge>
                                     @unless ($card['fits'])
-                                        <x-filament::badge size="sm" color="warning">{{ __('simplify-mods::packages.other_version') }}</x-filament::badge>
+                                        <x-filament::badge size="sm" color="warning">{{ __('simplify-toolkit::packages.other_version') }}</x-filament::badge>
                                     @endunless
                                 </div>
                                 <p class="sm-text">{{ $card['description'] }}</p>
                                 <p class="sm-meta">
-                                    @if ($card['author']){{ $card['author'] }} · @endif{{ __('simplify-mods::packages.downloads', ['count' => \Illuminate\Support\Number::abbreviate($card['downloads'])]) }}
+                                    @if ($card['author']){{ $card['author'] }} · @endif{{ __('simplify-toolkit::packages.downloads', ['count' => \Illuminate\Support\Number::abbreviate($card['downloads'])]) }}
                                     @foreach ($card['also'] as $also)
-                                        · <a href="{{ $also['page'] }}" target="_blank" rel="noopener">{{ __('simplify-mods::packages.also_on', ['site' => $also['label']]) }}</a>
+                                        · <a href="{{ $also['page'] }}" target="_blank" rel="noopener">{{ __('simplify-toolkit::packages.also_on', ['site' => $also['label']]) }}</a>
                                     @endforeach
                                 </p>
                             </div>
                             <div class="sm-actions">
                                 @if ($this->isInstalled($card))
-                                    <x-filament::badge color="success" icon="tabler-check">{{ __('simplify-mods::packages.is_installed') }}</x-filament::badge>
+                                    <x-filament::badge color="success" icon="tabler-check">{{ __('simplify-toolkit::packages.is_installed') }}</x-filament::badge>
                                 @else
                                     {{ ($this->installAction)(['key' => $card['key'], 'fits' => $card['fits']]) }}
                                 @endif
@@ -67,20 +67,20 @@
                         </li>
                     @empty
                         @if ($searched)
-                            <li class="sm-empty">{{ __('simplify-mods::packages.nothing_found') }}</li>
+                            <li class="sm-empty">{{ __('simplify-toolkit::packages.nothing_found') }}</li>
                         @endif
                     @endforelse
                 </ul>
                 @if (count($results) > $shown)
                     <div class="sm-more">
-                        <x-filament::button color="gray" size="sm" wire:click="showMore">{{ __('simplify-mods::packages.show_more') }}</x-filament::button>
+                        <x-filament::button color="gray" size="sm" wire:click="showMore">{{ __('simplify-toolkit::packages.show_more') }}</x-filament::button>
                     </div>
                 @endif
             @endif
         </x-filament::section>
 
         <div @if ($watching) wire:poll.15s="checkStart" @endif>
-            <x-filament::section :heading="__('simplify-mods::packages.'.($mods ? 'installed_mods' : 'installed_plugins'))" :description="__('simplify-mods::packages.restart_help')">
+            <x-filament::section :heading="__('simplify-toolkit::packages.'.($mods ? 'installed_mods' : 'installed_plugins'))" :description="__('simplify-toolkit::packages.restart_help')">
                 <ul class="sm-list">
                     @forelse ($installed as $item)
                         <li @class(['sm-row is-compact', 'is-off' => ! $item['enabled']]) wire:key="file-{{ $item['file'] }}">
@@ -92,16 +92,16 @@
                                 @endif
                                 <p class="sm-meta is-one-line">
                                     {{ $item['version'] ?: $item['file'] }}
-                                    · {{ $item['source'] ? ($sites[$item['source']] ?? $item['source']) : __('simplify-mods::packages.by_hand') }}
+                                    · {{ $item['source'] ? ($sites[$item['source']] ?? $item['source']) : __('simplify-toolkit::packages.by_hand') }}
                                     @unless ($item['enabled'])
-                                        · {{ __('simplify-mods::packages.off') }}
+                                        · {{ __('simplify-toolkit::packages.off') }}
                                     @endunless
                                     @if ($item['watched'])
-                                        · {{ __('simplify-mods::packages.watched') }}
+                                        · {{ __('simplify-toolkit::packages.watched') }}
                                     @endif
                                 </p>
                                 @if ($item['off_reason'])
-                                    <p class="sm-warn">{{ __('simplify-mods::packages.off_after_start') }}: {{ $item['off_reason'] }}</p>
+                                    <p class="sm-warn">{{ __('simplify-toolkit::packages.off_after_start') }}: {{ $item['off_reason'] }}</p>
                                 @endif
                             </div>
                             <div class="sm-actions">
@@ -113,7 +113,7 @@
                             </div>
                         </li>
                     @empty
-                        <li class="sm-empty">{{ __('simplify-mods::packages.'.($mods ? 'no_mods' : 'no_plugins')) }}</li>
+                        <li class="sm-empty">{{ __('simplify-toolkit::packages.'.($mods ? 'no_mods' : 'no_plugins')) }}</li>
                     @endforelse
                 </ul>
             </x-filament::section>

@@ -27,7 +27,7 @@ return [
     'switched_off' => 'Vypnuté',
     'switched_on' => 'Zapnuté',
     'remove' => 'Odstrániť',
-    'remove_help' => 'Súbor sa presunie do priečinka .simplify-mods-backups, takže ho môžeš vrátiť.',
+    'remove_help' => 'Súbor sa presunie do priečinka .simplify-toolkit-backups, takže ho môžeš vrátiť.',
     'removed' => 'Odstránené',
     'restart_help' => 'Zmeny platia po ďalšom spustení servera.',
     'not_done' => 'Nepodarilo sa',

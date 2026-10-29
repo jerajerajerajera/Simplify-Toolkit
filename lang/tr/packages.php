@@ -27,7 +27,7 @@ return [
     'switched_off' => 'Kapatıldı',
     'switched_on' => 'Açıldı',
     'remove' => 'Kaldır',
-    'remove_help' => 'Dosya .simplify-mods-backups klasörüne taşınır, böylece geri koyabilirsin.',
+    'remove_help' => 'Dosya .simplify-toolkit-backups klasörüne taşınır, böylece geri koyabilirsin.',
     'removed' => 'Kaldırıldı',
     'restart_help' => 'Değişiklikler sunucu yeniden başladığında geçerli olur.',
     'not_done' => 'Olmadı',

@@ -27,7 +27,7 @@ return [
     'switched_off' => 'Vypnuto',
     'switched_on' => 'Zapnuto',
     'remove' => 'Odebrat',
-    'remove_help' => 'Soubor se přesune do složky .simplify-mods-backups, takže ho můžeš vrátit.',
+    'remove_help' => 'Soubor se přesune do složky .simplify-toolkit-backups, takže ho můžeš vrátit.',
     'removed' => 'Odebráno',
     'restart_help' => 'Změny platí po dalším spuštění serveru.',
     'not_done' => 'Nepovedlo se',

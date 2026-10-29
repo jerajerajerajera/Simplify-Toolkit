@@ -27,7 +27,7 @@ return [
     'switched_off' => 'Poistettu käytöstä',
     'switched_on' => 'Otettu käyttöön',
     'remove' => 'Poista',
-    'remove_help' => 'Tiedosto siirretään kansioon .simplify-mods-backups, joten voit palauttaa sen.',
+    'remove_help' => 'Tiedosto siirretään kansioon .simplify-toolkit-backups, joten voit palauttaa sen.',
     'removed' => 'Poistettu',
     'restart_help' => 'Muutokset tulevat voimaan, kun palvelin käynnistyy uudelleen.',
     'not_done' => 'Se ei onnistunut',

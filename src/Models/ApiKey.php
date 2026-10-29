@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Simplify\Mods\Models;
+namespace Simplify\Toolkit\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 final class ApiKey extends Model
 {
-    protected $table = 'simplify_mods_keys';
+    protected $table = 'simplify_toolkit_keys';
 
     protected $guarded = ['id'];
 

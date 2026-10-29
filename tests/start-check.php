@@ -6,7 +6,7 @@ declare(strict_types=1);
 require __DIR__.'/../src/Services/Sources/Versions.php';
 require __DIR__.'/../src/Services/StartCheck.php';
 
-use Simplify\Mods\Services\StartCheck;
+use Simplify\Toolkit\Services\StartCheck;
 
 $log = <<<'LOG'
 [12:00:01 INFO]: Starting minecraft server version 1.21.4

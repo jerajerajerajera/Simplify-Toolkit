@@ -6,8 +6,8 @@ declare(strict_types=1);
 require __DIR__.'/../src/Services/StatusPing.php';
 require __DIR__.'/../src/Services/ServerInfo.php';
 
-use Simplify\Mods\Services\ServerInfo;
-use Simplify\Mods\Services\StatusPing;
+use Simplify\Toolkit\Services\ServerInfo;
+use Simplify\Toolkit\Services\StatusPing;
 
 $failures = [];
 function check(bool $ok, string $what): void

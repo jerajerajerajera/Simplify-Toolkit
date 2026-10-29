@@ -1,4 +1,4 @@
-# Simplify Mods License
+# Simplify Toolkit License
 
 Copyright (c) 2026 Jeroen (jerajerajerajera). All rights reserved.
 

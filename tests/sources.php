@@ -9,13 +9,13 @@ foreach (['Source', 'Versions', 'Release', 'Modrinth', 'Hangar', 'Spiget', 'Curs
     require __DIR__."/../src/Services/Sources/$class.php";
 }
 
-use Simplify\Mods\Services\Sources\Catalog;
-use Simplify\Mods\Services\Sources\CurseForge;
-use Simplify\Mods\Services\Sources\Hangar;
-use Simplify\Mods\Services\Sources\Modrinth;
-use Simplify\Mods\Services\Sources\Spiget;
-use Simplify\Mods\Services\Sources\Versions;
-use Simplify\Mods\Services\Web;
+use Simplify\Toolkit\Services\Sources\Catalog;
+use Simplify\Toolkit\Services\Sources\CurseForge;
+use Simplify\Toolkit\Services\Sources\Hangar;
+use Simplify\Toolkit\Services\Sources\Modrinth;
+use Simplify\Toolkit\Services\Sources\Spiget;
+use Simplify\Toolkit\Services\Sources\Versions;
+use Simplify\Toolkit\Services\Web;
 
 $failures = [];
 function check(bool $ok, string $what): void

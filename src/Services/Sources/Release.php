@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Simplify\Mods\Services\Sources;
+namespace Simplify\Toolkit\Services\Sources;
 
 /**
  * Builds cards and releases in the shape Source describes.

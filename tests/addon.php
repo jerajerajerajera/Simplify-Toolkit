@@ -1,25 +1,25 @@
 <?php
 
-// ModsAddon against Simplify's add-on contract, without Simplify or a panel.
+// ToolkitAddon against Simplify's add-on contract, without Simplify or a panel.
 declare(strict_types=1);
 
 require __DIR__.'/fixtures/Addon.php';
 require __DIR__.'/fixtures/Button.php';
-require __DIR__.'/../src/ModsAddon.php';
+require __DIR__.'/../src/ToolkitAddon.php';
 
 function __(string $key): string
 {
     return $key;
 }
 
-use Simplify\Mods\ModsAddon;
+use Simplify\Toolkit\ToolkitAddon;
 
-$addon = new ModsAddon;
+$addon = new ToolkitAddon;
 $failures = [];
-if ($addon->id() !== 'simplify-mods') {
+if ($addon->id() !== 'simplify-toolkit') {
     $failures[] = 'the id is the plugin id';
 }
-if ($addon->description() !== 'simplify-mods::mods.addon.description') {
+if ($addon->description() !== 'simplify-toolkit::toolkit.addon.description') {
     $failures[] = 'the description is translated';
 }
 if ($failures) {

@@ -27,7 +27,7 @@ return [
     'switched_off' => 'Выключана',
     'switched_on' => 'Уключана',
     'remove' => 'Выдаліць',
-    'remove_help' => 'Файл пераносіцца ў папку .simplify-mods-backups, яго можна вярнуць.',
+    'remove_help' => 'Файл пераносіцца ў папку .simplify-toolkit-backups, яго можна вярнуць.',
     'removed' => 'Выдалена',
     'restart_help' => 'Змены пачнуць дзейнічаць пры наступным запуску сервера.',
     'not_done' => 'Не атрымалася',

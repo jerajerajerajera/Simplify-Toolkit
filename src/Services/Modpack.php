@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Simplify\Mods\Services;
+namespace Simplify\Toolkit\Services;
 
 use App\Models\Server;
 use Illuminate\Support\Facades\Cache;
@@ -23,7 +23,7 @@ final class Modpack
         foreach ($server->variables as $variable) {
             $variables[$variable->env_variable] = (string) ($variable->server_value ?? $variable->default_value);
         }
-        $pack = Cache::remember('simplify-mods.modpack-info.'.$server->uuid.'.'.md5(json_encode($variables) ?: ''), 21600,
+        $pack = Cache::remember('simplify-toolkit.modpack-info.'.$server->uuid.'.'.md5(json_encode($variables) ?: ''), 21600,
             fn () => $modpack === 'modrinth' ? self::modrinth($variables) : self::ftb($variables));
 
         return $pack['name'] === '' ? null : $pack;

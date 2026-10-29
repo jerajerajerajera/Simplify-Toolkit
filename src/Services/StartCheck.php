@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Simplify\Mods\Services;
+namespace Simplify\Toolkit\Services;
 
 use App\Facades\Activity;
 use App\Models\Server;
 use App\Repositories\Daemon\DaemonFileRepository;
 use Illuminate\Support\Carbon;
-use Simplify\Mods\Models\Package;
-use Simplify\Mods\Services\Sources\Versions;
+use Simplify\Toolkit\Models\Package;
+use Simplify\Toolkit\Services\Sources\Versions;
 use Throwable;
 
 /**
- * After a start: plugins installed through Simplify Mods that failed to load are switched off (.jar.disabled), so the
+ * After a start: plugins installed through Simplify Toolkit that failed to load are switched off (.jar.disabled), so the
  * next start is clean, and keep the log line that says why. Plugins that loaded fine are no longer watched.
  */
 final class StartCheck

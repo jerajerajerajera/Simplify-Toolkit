@@ -27,7 +27,7 @@ return [
     'switched_off' => 'Uitgezet',
     'switched_on' => 'Aangezet',
     'remove' => 'Verwijderen',
-    'remove_help' => 'Het bestand gaat naar de map .simplify-mods-backups, zodat je het kunt terugzetten.',
+    'remove_help' => 'Het bestand gaat naar de map .simplify-toolkit-backups, zodat je het kunt terugzetten.',
     'removed' => 'Verwijderd',
     'restart_help' => 'Wijzigingen gelden zodra de server opnieuw start.',
     'not_done' => 'Dat lukte niet',

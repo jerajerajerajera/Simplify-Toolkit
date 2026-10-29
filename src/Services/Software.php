@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Simplify\Mods\Services;
+namespace Simplify\Toolkit\Services;
 
 use App\Models\Server;
-use Simplify\Mods\Models\ServerChoice;
+use Simplify\Toolkit\Models\ServerChoice;
 
 /**
  * What a Minecraft server runs, from its egg or what its owner chose. Cheap: the database only, never Wings.

@@ -27,7 +27,7 @@ return [
     'switched_off' => '已关闭',
     'switched_on' => '已开启',
     'remove' => '移除',
-    'remove_help' => '文件会移到 .simplify-mods-backups 文件夹，你可以放回去。',
+    'remove_help' => '文件会移到 .simplify-toolkit-backups 文件夹，你可以放回去。',
     'removed' => '已移除',
     'restart_help' => '更改会在服务器下次启动时生效。',
     'not_done' => '没有成功',

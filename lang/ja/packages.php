@@ -27,7 +27,7 @@ return [
     'switched_off' => 'オフにしました',
     'switched_on' => 'オンにしました',
     'remove' => '削除',
-    'remove_help' => 'ファイルは .simplify-mods-backups フォルダーに移動されるので、元に戻せます。',
+    'remove_help' => 'ファイルは .simplify-toolkit-backups フォルダーに移動されるので、元に戻せます。',
     'removed' => '削除しました',
     'restart_help' => '変更はサーバーの次回起動時に反映されます。',
     'not_done' => 'うまくいきませんでした',

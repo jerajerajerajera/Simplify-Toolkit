@@ -27,7 +27,7 @@ return [
     'switched_off' => 'Isključeno',
     'switched_on' => 'Uključeno',
     'remove' => 'Ukloni',
-    'remove_help' => 'Fajl se premešta u folder .simplify-mods-backups, pa možeš da ga vratiš.',
+    'remove_help' => 'Fajl se premešta u folder .simplify-toolkit-backups, pa možeš da ga vratiš.',
     'removed' => 'Uklonjeno',
     'restart_help' => 'Izmene važe kada se server ponovo pokrene.',
     'not_done' => 'Nije uspelo',

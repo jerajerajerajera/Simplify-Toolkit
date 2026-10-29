@@ -1,7 +1,7 @@
 <?php
 
-// Loads Simplify Mods inside a real Pelican panel. Run from the panel folder after
-// `php artisan p:plugin:install simplify-mods`: php plugins/simplify-mods/tests/panel/smoke.php
+// Loads Simplify Toolkit inside a real Pelican panel. Run from the panel folder after
+// `php artisan p:plugin:install simplify-toolkit`: php plugins/simplify-toolkit/tests/panel/smoke.php
 use App\Models\Egg;
 use App\Models\Role;
 use App\Models\Server;
@@ -18,17 +18,17 @@ use Illuminate\Foundation\Testing\Concerns\MakesHttpRequests;
 use Illuminate\Http\Client\Response;
 use Illuminate\Testing\TestResponse;
 use Livewire\Livewire;
-use Simplify\Mods\Filament\Admin\Pages\ModsSettings;
-use Simplify\Mods\Filament\Server\Pages\Minecraft;
-use Simplify\Mods\Filament\Server\Pages\Packages;
-use Simplify\Mods\Livewire\ServerSummary;
-use Simplify\Mods\Models\ApiKey;
-use Simplify\Mods\Models\Package;
-use Simplify\Mods\ModsAddon;
-use Simplify\Mods\Services\Keys;
-use Simplify\Mods\Services\ServerKind;
-use Simplify\Mods\Services\Software;
-use Simplify\Mods\Services\Web;
+use Simplify\Toolkit\Filament\Admin\Pages\ToolkitSettings;
+use Simplify\Toolkit\Filament\Server\Pages\Minecraft;
+use Simplify\Toolkit\Filament\Server\Pages\Packages;
+use Simplify\Toolkit\Livewire\ServerSummary;
+use Simplify\Toolkit\Models\ApiKey;
+use Simplify\Toolkit\Models\Package;
+use Simplify\Toolkit\Services\Keys;
+use Simplify\Toolkit\Services\ServerKind;
+use Simplify\Toolkit\Services\Software;
+use Simplify\Toolkit\Services\Web;
+use Simplify\Toolkit\ToolkitAddon;
 
 define('LARAVEL_START', microtime(true));
 require getcwd().'/vendor/autoload.php';
@@ -149,12 +149,12 @@ $admin->syncRoles(Role::getRootAdmin());
 
 step('the add-on is tagged for Simplify without loading its class', function () {
     $tags = (fn () => $this->tags['simplify.addons'] ?? [])->call(app());
-    if (! in_array(ModsAddon::class, $tags, true)) {
-        throw new RuntimeException('ModsAddon is not tagged: '.json_encode($tags));
+    if (! in_array(ToolkitAddon::class, $tags, true)) {
+        throw new RuntimeException('ToolkitAddon is not tagged: '.json_encode($tags));
     }
 });
 step('the translations load', function () {
-    if (__('simplify-mods::mods.addon.description') === 'simplify-mods::mods.addon.description') {
+    if (__('simplify-toolkit::toolkit.addon.description') === 'simplify-toolkit::toolkit.addon.description') {
         throw new RuntimeException('the text was not found');
     }
 });
@@ -166,9 +166,9 @@ step('a server is classified', function () use ($admin) {
     }
 });
 step('the admin settings page renders', function () use ($admin) {
-    $url = ModsSettings::getUrl(panel: 'admin');
+    $url = ToolkitSettings::getUrl(panel: 'admin');
     $response = visit($admin, $url);
-    if ($response->getStatusCode() !== 200 || ! str_contains($response->getContent(), e(__('simplify-mods::settings.no_key')))) {
+    if ($response->getStatusCode() !== 200 || ! str_contains($response->getContent(), e(__('simplify-toolkit::settings.no_key')))) {
         throw new RuntimeException('HTTP '.$response->getStatusCode().' at '.$url.($response->exception ? ': '.$response->exception->getMessage() : ''));
     }
 });
@@ -182,7 +182,7 @@ step('the Minecraft page renders while Wings is offline', function () use ($admi
     if ($response->getStatusCode() !== 200) {
         throw new RuntimeException('HTTP '.$response->getStatusCode().' at '.$url.($response->exception ? ': '.$response->exception->getMessage() : ''));
     }
-    if (! str_contains($response->getContent(), e(__('simplify-mods::minecraft.unreachable')))) {
+    if (! str_contains($response->getContent(), e(__('simplify-toolkit::minecraft.unreachable')))) {
         throw new RuntimeException('the page does not say the files cannot be reached');
     }
 });
@@ -263,7 +263,7 @@ step('installing, switching off and removing a plugin goes through Wings', funct
         throw new RuntimeException('not switched off: '.json_encode(array_keys(FakeFiles::$files)));
     }
     $page->callAction('remove', arguments: ['file' => 'SmokeEdit-1.0.jar.disabled']);
-    $backups = array_filter(array_keys(FakeFiles::$files), fn (string $name) => str_starts_with($name, '/.simplify-mods-backups/'));
+    $backups = array_filter(array_keys(FakeFiles::$files), fn (string $name) => str_starts_with($name, '/.simplify-toolkit-backups/'));
     if (isset(FakeFiles::$files['/plugins/SmokeEdit-1.0.jar.disabled']) || count($backups) !== 1 || Package::query()->where('server_id', $paper->id)->exists()) {
         throw new RuntimeException('not removed to the backup folder: '.json_encode(array_keys(FakeFiles::$files)));
     }
@@ -295,8 +295,8 @@ step('Simplify Embed gets the software of Minecraft servers, and nothing for oth
 });
 step('the Minecraft part of Simplify\'s server page renders and loads the player count', function () use ($admin, $paper) {
     Livewire::actingAs($admin)->test(ServerSummary::class, ['server' => $paper])
-        ->assertSee('Paper')->assertSee(e(__('simplify-mods::minecraft.title')))
-        ->call('loadStatus')->assertSee(e(__('simplify-mods::mods.summary.not_answering')));
+        ->assertSee('Paper')->assertSee(e(__('simplify-toolkit::minecraft.title')))
+        ->call('loadStatus')->assertSee(e(__('simplify-toolkit::toolkit.summary.not_answering')));
 });
 step('CurseForge keys are tested, stored encrypted, and a user\'s own key goes first', function () use ($admin) {
     if (Keys::curseForgeWorks('bad-key') || ! Keys::curseForgeWorks('good-key')) {

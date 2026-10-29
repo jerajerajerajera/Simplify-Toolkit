@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Simplify\Mods\Services;
+namespace Simplify\Toolkit\Services;
 
 use App\Models\User;
-use Simplify\Mods\Models\ApiKey;
-use Simplify\Mods\Services\Sources\CurseForge;
+use Simplify\Toolkit\Models\ApiKey;
+use Simplify\Toolkit\Services\Sources\CurseForge;
 
 /**
  * API keys of outside services. A user's own key goes before the key an admin saved for the whole panel.

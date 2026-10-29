@@ -27,7 +27,7 @@ return [
     'switched_off' => '껐습니다',
     'switched_on' => '켰습니다',
     'remove' => '삭제',
-    'remove_help' => '파일은 .simplify-mods-backups 폴더로 옮겨지므로 되돌릴 수 있습니다.',
+    'remove_help' => '파일은 .simplify-toolkit-backups 폴더로 옮겨지므로 되돌릴 수 있습니다.',
     'removed' => '삭제했습니다',
     'restart_help' => '변경 사항은 서버가 다시 시작될 때 적용됩니다.',
     'not_done' => '실패했습니다',

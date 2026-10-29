@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Simplify\Mods\Services;
+namespace Simplify\Toolkit\Services;
 
 use Closure;
 use Illuminate\Http\Client\Pool;
@@ -18,7 +18,7 @@ final class Web
     /** @var (Closure(string, array<string, string>): ?string)|null returns the body, or null on failure */
     public static ?Closure $transport = null;
 
-    public const USER_AGENT = 'Simplify-Mods (+https://github.com/jerajerajerajera/simplify-mods)';
+    public const USER_AGENT = 'Simplify-Toolkit (+https://github.com/jerajerajerajera/simplify-toolkit)';
 
     /**
      * @param  array<string, string>  $headers

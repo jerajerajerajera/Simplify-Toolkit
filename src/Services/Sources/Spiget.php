@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Simplify\Mods\Services\Sources;
+namespace Simplify\Toolkit\Services\Sources;
 
 /** spigotmc.org through the Spiget API: free plugins for Spigot and Paper. */
 final class Spiget implements Source

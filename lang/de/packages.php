@@ -27,7 +27,7 @@ return [
     'switched_off' => 'Ausgeschaltet',
     'switched_on' => 'Eingeschaltet',
     'remove' => 'Entfernen',
-    'remove_help' => 'Die Datei kommt in den Ordner .simplify-mods-backups, damit du sie zurückholen kannst.',
+    'remove_help' => 'Die Datei kommt in den Ordner .simplify-toolkit-backups, damit du sie zurückholen kannst.',
     'removed' => 'Entfernt',
     'restart_help' => 'Änderungen gelten, sobald der Server neu startet.',
     'not_done' => 'Das hat nicht geklappt',

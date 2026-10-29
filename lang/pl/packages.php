@@ -27,7 +27,7 @@ return [
     'switched_off' => 'Wyłączono',
     'switched_on' => 'Włączono',
     'remove' => 'Usuń',
-    'remove_help' => 'Plik trafi do folderu .simplify-mods-backups, więc możesz go przywrócić.',
+    'remove_help' => 'Plik trafi do folderu .simplify-toolkit-backups, więc możesz go przywrócić.',
     'removed' => 'Usunięto',
     'restart_help' => 'Zmiany zadziałają po ponownym uruchomieniu serwera.',
     'not_done' => 'Nie udało się',

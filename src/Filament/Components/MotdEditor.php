@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Simplify\Mods\Filament\Components;
+namespace Simplify\Toolkit\Filament\Components;
 
 use Closure;
 use Filament\Forms\Components\Field;
@@ -13,7 +13,7 @@ use Filament\Forms\Components\Field;
  */
 final class MotdEditor extends Field
 {
-    protected string $view = 'simplify-mods::components.motd-editor';
+    protected string $view = 'simplify-toolkit::components.motd-editor';
 
     private string|Closure $serverName = '';
 

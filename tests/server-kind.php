@@ -5,7 +5,7 @@ declare(strict_types=1);
 
 require __DIR__.'/../src/Services/ServerKind.php';
 
-use Simplify\Mods\Services\ServerKind;
+use Simplify\Toolkit\Services\ServerKind;
 
 $failures = [];
 function check(bool $ok, string $what): void

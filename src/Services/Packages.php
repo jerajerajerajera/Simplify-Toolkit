@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Simplify\Mods\Services;
+namespace Simplify\Toolkit\Services;
 
 use App\Exceptions\Repository\FileExistsException;
 use App\Facades\Activity;
 use App\Models\Server;
 use App\Repositories\Daemon\DaemonFileRepository;
 use Illuminate\Support\Facades\Cache;
-use Simplify\Mods\Models\Package;
-use Simplify\Mods\Models\ServerChoice;
-use Simplify\Mods\Services\Sources\Catalog;
-use Simplify\Mods\Services\Sources\Versions;
+use Simplify\Toolkit\Models\Package;
+use Simplify\Toolkit\Models\ServerChoice;
+use Simplify\Toolkit\Services\Sources\Catalog;
+use Simplify\Toolkit\Services\Sources\Versions;
 use Throwable;
 
 /**
@@ -21,7 +21,7 @@ use Throwable;
  */
 final class Packages
 {
-    public const BACKUPS = '.simplify-mods-backups';
+    public const BACKUPS = '.simplify-toolkit-backups';
 
     public function __construct(private readonly Server $server, private readonly Catalog $catalog) {}
 
@@ -73,7 +73,7 @@ final class Packages
     /** Paper and Purpur set to "latest": the version they really run, from the file Paper writes on start. */
     private function runningVersion(): string
     {
-        return (string) Cache::remember('simplify-mods.running.'.$this->server->uuid, 300, function (): string {
+        return (string) Cache::remember('simplify-toolkit.running.'.$this->server->uuid, 300, function (): string {
             try {
                 $history = json_decode($this->files()->getContent('/version_history.json', 65536), true);
             } catch (Throwable) {
@@ -91,7 +91,7 @@ final class Packages
      */
     private function modpack(string $modpack): array
     {
-        return Cache::remember('simplify-mods.modpack.'.$this->server->uuid, 3600, function () use ($modpack): array {
+        return Cache::remember('simplify-toolkit.modpack.'.$this->server->uuid, 3600, function () use ($modpack): array {
             $variables = $this->variables();
             if ($modpack === 'modrinth' && preg_match('/^\w{1,64}$/', $variables['VERSION_ID'] ?? '') === 1) {
                 $version = Web::json('https://api.modrinth.com/v2/version/'.$variables['VERSION_ID']) ?? [];
@@ -126,7 +126,7 @@ final class Packages
     }
 
     /**
-     * The .jar files in the plugins or mods folder, with what Simplify Mods knows about the ones it installed.
+     * The .jar files in the plugins or mods folder, with what Simplify Toolkit knows about the ones it installed.
      *
      * @return list<array<string, mixed>>
      */
@@ -173,14 +173,14 @@ final class Packages
     public function install(string $key, bool $anyway, array $card = []): array
     {
         $context = $this->context();
-        abort_unless(Catalog::parseKey($key) !== null, 422, __('simplify-mods::packages.unknown'));
-        abort_if($context['loader'] === '' || $context['minecraft'] === '', 422, __('simplify-mods::packages.choose_first'));
+        abort_unless(Catalog::parseKey($key) !== null, 422, __('simplify-toolkit::packages.unknown'));
+        abort_if($context['loader'] === '' || $context['minecraft'] === '', 422, __('simplify-toolkit::packages.choose_first'));
         $release = $this->catalog->releases([$key], $context['kind'], $context['loader'], $context['minecraft'])[$key] ?? null;
-        abort_unless(is_array($release), 422, __('simplify-mods::packages.unknown'));
-        abort_unless($release['installable'], 422, __('simplify-mods::sources.'.$release['reason'], ['site' => $release['label']]));
-        abort_unless($release['fits'] || $anyway, 409, __('simplify-mods::packages.not_for_version', ['version' => $context['minecraft']]));
+        abort_unless(is_array($release), 422, __('simplify-toolkit::packages.unknown'));
+        abort_unless($release['installable'], 422, __('simplify-toolkit::sources.'.$release['reason'], ['site' => $release['label']]));
+        abort_unless($release['fits'] || $anyway, 409, __('simplify-toolkit::packages.not_for_version', ['version' => $context['minecraft']]));
         $missing = $this->missingDependencies($release['needs']);
-        abort_if($missing !== [], 422, __('simplify-mods::packages.needs', ['names' => implode(', ', $missing)]));
+        abort_if($missing !== [], 422, __('simplify-toolkit::packages.needs', ['names' => implode(', ', $missing)]));
 
         $old = Package::query()->where('server_id', $this->server->id)->where('key', $key)->first();
         if ($old !== null && $old->filename !== $release['filename']) {

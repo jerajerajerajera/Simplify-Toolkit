@@ -27,7 +27,7 @@ return [
     'switched_off' => 'تم الإيقاف',
     'switched_on' => 'تم التشغيل',
     'remove' => 'إزالة',
-    'remove_help' => 'يُنقل الملف إلى مجلد .simplify-mods-backups لتتمكن من إعادته.',
+    'remove_help' => 'يُنقل الملف إلى مجلد .simplify-toolkit-backups لتتمكن من إعادته.',
     'removed' => 'تمت الإزالة',
     'restart_help' => 'تسري التغييرات عند تشغيل الخادم مرة أخرى.',
     'not_done' => 'لم ينجح ذلك',

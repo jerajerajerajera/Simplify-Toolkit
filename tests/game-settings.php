@@ -6,8 +6,8 @@ declare(strict_types=1);
 require __DIR__.'/../src/Services/PropertiesFile.php';
 require __DIR__.'/../src/Services/GameSettings.php';
 
-use Simplify\Mods\Services\GameSettings;
-use Simplify\Mods\Services\PropertiesFile;
+use Simplify\Toolkit\Services\GameSettings;
+use Simplify\Toolkit\Services\PropertiesFile;
 
 $failures = [];
 function check(bool $ok, string $what): void

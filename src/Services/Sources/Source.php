@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Simplify\Mods\Services\Sources;
+namespace Simplify\Toolkit\Services\Sources;
 
 /**
  * A site with plugins or mods. Sites only build URLs and read answers; Catalog does the requests, so every site

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Simplify\Mods\Filament\Server\Pages;
+namespace Simplify\Toolkit\Filament\Server\Pages;
 
 use App\Enums\SubuserPermission;
 use App\Models\Server;
@@ -14,11 +14,11 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
-use Simplify\Mods\Services\Keys;
-use Simplify\Mods\Services\Packages as ServerPackages;
-use Simplify\Mods\Services\ServerKind;
-use Simplify\Mods\Services\Sources\Catalog;
-use Simplify\Mods\Services\StartCheck;
+use Simplify\Toolkit\Services\Keys;
+use Simplify\Toolkit\Services\Packages as ServerPackages;
+use Simplify\Toolkit\Services\ServerKind;
+use Simplify\Toolkit\Services\Sources\Catalog;
+use Simplify\Toolkit\Services\StartCheck;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Throwable;
 
@@ -36,7 +36,7 @@ final class Packages extends Page implements HasActions
 
     protected static ?string $slug = 'plugins';
 
-    protected string $view = 'simplify-mods::pages.packages';
+    protected string $view = 'simplify-toolkit::pages.packages';
 
     public string $query = '';
 
@@ -76,7 +76,7 @@ final class Packages extends Page implements HasActions
         $server = Filament::getTenant();
         $kind = $server instanceof Server ? ServerKind::forServer($server)['kind'] : 'plugins';
 
-        return __('simplify-mods::packages.'.($kind === 'mods' ? 'mods' : 'plugins'));
+        return __('simplify-toolkit::packages.'.($kind === 'mods' ? 'mods' : 'plugins'));
     }
 
     public function getTitle(): string
@@ -135,7 +135,7 @@ final class Packages extends Page implements HasActions
     public function checkStart(): void
     {
         foreach (StartCheck::run($this->server()) as $off) {
-            Notification::make()->title(__('simplify-mods::packages.switched_off_after_start', ['name' => $off['title']]))
+            Notification::make()->title(__('simplify-toolkit::packages.switched_off_after_start', ['name' => $off['title']]))
                 ->body($off['reason'])->warning()->persistent()->send();
         }
         $this->refresh();
@@ -177,12 +177,12 @@ final class Packages extends Page implements HasActions
     {
         try {
             $change();
-            Notification::make()->title($done)->body(__('simplify-mods::packages.restart_help'))->success()->send();
+            Notification::make()->title($done)->body(__('simplify-toolkit::packages.restart_help'))->success()->send();
         } catch (HttpException $refused) {
-            Notification::make()->title(__('simplify-mods::packages.not_done'))->body($refused->getMessage())->danger()->send();
+            Notification::make()->title(__('simplify-toolkit::packages.not_done'))->body($refused->getMessage())->danger()->send();
         } catch (Throwable $error) {
             report($error);
-            Notification::make()->title(__('simplify-mods::packages.not_done'))->body(__('simplify-mods::packages.unreachable'))->danger()->send();
+            Notification::make()->title(__('simplify-toolkit::packages.not_done'))->body(__('simplify-toolkit::packages.unreachable'))->danger()->send();
         }
         $this->refresh();
     }
@@ -190,19 +190,19 @@ final class Packages extends Page implements HasActions
     public function installAction(): Action
     {
         return Action::make('install')
-            ->label(fn (array $arguments) => __('simplify-mods::packages.'.(($arguments['fits'] ?? true) ? 'install' : 'install_anyway')))
+            ->label(fn (array $arguments) => __('simplify-toolkit::packages.'.(($arguments['fits'] ?? true) ? 'install' : 'install_anyway')))
             ->icon('tabler-download')->size('sm')->button()
             ->color(fn (array $arguments) => ($arguments['fits'] ?? true) ? 'primary' : 'gray')
             ->visible(fn () => $this->can(SubuserPermission::FileCreate) && $this->ready())
             // A release that is not made for this version may still work; installing it is the owner's choice.
             ->requiresConfirmation(fn (array $arguments) => ! ($arguments['fits'] ?? true))
-            ->modalHeading(__('simplify-mods::packages.install_anyway'))
-            ->modalDescription(fn () => __('simplify-mods::packages.not_for_version', ['version' => $this->context['minecraft']]))
+            ->modalHeading(__('simplify-toolkit::packages.install_anyway'))
+            ->modalDescription(fn () => __('simplify-toolkit::packages.not_for_version', ['version' => $this->context['minecraft']]))
             ->action(function (array $arguments): void {
                 $card = collect($this->results)->firstWhere('key', $arguments['key'] ?? '') ?? [];
                 $this->attempt(
                     fn () => $this->packages()->install((string) ($arguments['key'] ?? ''), ! ($arguments['fits'] ?? true), $card),
-                    __('simplify-mods::packages.installed_title', ['name' => $card['title'] ?? '']),
+                    __('simplify-toolkit::packages.installed_title', ['name' => $card['title'] ?? '']),
                 );
             });
     }
@@ -212,11 +212,11 @@ final class Packages extends Page implements HasActions
         return Action::make('toggle')
             ->iconButton()->color('gray')
             ->icon(fn (array $arguments) => ($arguments['enabled'] ?? true) ? 'tabler-player-pause' : 'tabler-player-play')
-            ->tooltip(fn (array $arguments) => __('simplify-mods::packages.'.(($arguments['enabled'] ?? true) ? 'switch_off' : 'switch_on')))
+            ->tooltip(fn (array $arguments) => __('simplify-toolkit::packages.'.(($arguments['enabled'] ?? true) ? 'switch_off' : 'switch_on')))
             ->visible(fn () => $this->can(SubuserPermission::FileUpdate))
             ->action(fn (array $arguments) => $this->attempt(
                 fn () => $this->packages()->toggle((string) ($arguments['file'] ?? ''), ! ($arguments['enabled'] ?? true)),
-                __('simplify-mods::packages.'.(($arguments['enabled'] ?? true) ? 'switched_off' : 'switched_on')),
+                __('simplify-toolkit::packages.'.(($arguments['enabled'] ?? true) ? 'switched_off' : 'switched_on')),
             ));
     }
 
@@ -224,14 +224,14 @@ final class Packages extends Page implements HasActions
     {
         return Action::make('remove')
             ->iconButton()->color('danger')->icon('tabler-trash')
-            ->tooltip(__('simplify-mods::packages.remove'))
+            ->tooltip(__('simplify-toolkit::packages.remove'))
             ->visible(fn () => $this->can(SubuserPermission::FileDelete))
             ->requiresConfirmation()
-            ->modalHeading(__('simplify-mods::packages.remove'))
-            ->modalDescription(__('simplify-mods::packages.remove_help'))
+            ->modalHeading(__('simplify-toolkit::packages.remove'))
+            ->modalDescription(__('simplify-toolkit::packages.remove_help'))
             ->action(fn (array $arguments) => $this->attempt(
                 fn () => $this->packages()->remove((string) ($arguments['file'] ?? '')),
-                __('simplify-mods::packages.removed'),
+                __('simplify-toolkit::packages.removed'),
             ));
     }
 
@@ -244,29 +244,29 @@ final class Packages extends Page implements HasActions
     public function ownKeyAction(): Action
     {
         return Action::make('ownKey')
-            ->label(__('simplify-mods::settings.own_key'))->icon('tabler-key')->color('gray')->button()
-            ->modalDescription(fn () => __('simplify-mods::settings.'.(Keys::has(Keys::CURSEFORGE, user()) ? 'own_key_saved' : 'own_key_help')))
+            ->label(__('simplify-toolkit::settings.own_key'))->icon('tabler-key')->color('gray')->button()
+            ->modalDescription(fn () => __('simplify-toolkit::settings.'.(Keys::has(Keys::CURSEFORGE, user()) ? 'own_key_saved' : 'own_key_help')))
             ->schema([
-                TextInput::make('key')->label(__('simplify-mods::settings.key'))->password()->autocomplete('off')->required()->maxLength(200),
+                TextInput::make('key')->label(__('simplify-toolkit::settings.key'))->password()->autocomplete('off')->required()->maxLength(200),
             ])
-            ->modalSubmitActionLabel(__('simplify-mods::settings.save'))
+            ->modalSubmitActionLabel(__('simplify-toolkit::settings.save'))
             ->extraModalFooterActions(fn () => Keys::has(Keys::CURSEFORGE, user()) ? [
-                Action::make('forgetOwnKey')->label(__('simplify-mods::settings.remove'))->color('danger')->cancelParentActions()
+                Action::make('forgetOwnKey')->label(__('simplify-toolkit::settings.remove'))->color('danger')->cancelParentActions()
                     ->action(function (): void {
                         Keys::forget(Keys::CURSEFORGE, user());
-                        Notification::make()->title(__('simplify-mods::settings.removed'))->success()->send();
+                        Notification::make()->title(__('simplify-toolkit::settings.removed'))->success()->send();
                         $this->search();
                     }),
             ] : [])
             ->action(function (array $data): void {
                 $key = trim((string) $data['key']);
                 if (! Keys::curseForgeWorks($key)) {
-                    Notification::make()->title(__('simplify-mods::settings.key_refused'))->danger()->send();
+                    Notification::make()->title(__('simplify-toolkit::settings.key_refused'))->danger()->send();
 
                     return;
                 }
                 Keys::save(Keys::CURSEFORGE, user(), $key);
-                Notification::make()->title(__('simplify-mods::settings.key_works'))->success()->send();
+                Notification::make()->title(__('simplify-toolkit::settings.key_works'))->success()->send();
                 $this->search();
             });
     }
@@ -276,12 +276,12 @@ final class Packages extends Page implements HasActions
     {
         return Action::make('offLog')
             ->iconButton()->color('warning')->icon('tabler-alert-triangle')
-            ->tooltip(__('simplify-mods::packages.show_log'))
-            ->modalHeading(__('simplify-mods::packages.show_log'))
-            ->modalContent(fn (array $arguments) => view('simplify-mods::components.log-lines', [
+            ->tooltip(__('simplify-toolkit::packages.show_log'))
+            ->modalHeading(__('simplify-toolkit::packages.show_log'))
+            ->modalContent(fn (array $arguments) => view('simplify-toolkit::components.log-lines', [
                 'lines' => $this->packages()->offLines((string) ($arguments['file'] ?? '')),
             ]))
-            ->modalSubmitAction(false)->modalCancelActionLabel(__('simplify-mods::packages.close'));
+            ->modalSubmitAction(false)->modalCancelActionLabel(__('simplify-toolkit::packages.close'));
     }
 
     /** Asks for the loader and Minecraft version when the egg does not tell them. */
@@ -290,13 +290,13 @@ final class Packages extends Page implements HasActions
         $loaders = $this->context['kind'] === 'plugins' ? ServerKind::PLUGIN_LOADERS : ServerKind::MOD_LOADERS;
 
         return Action::make('choose')
-            ->label(__('simplify-mods::packages.choose'))->icon('tabler-adjustments')->button()
+            ->label(__('simplify-toolkit::packages.choose'))->icon('tabler-adjustments')->button()
             ->visible(fn () => $this->can(SubuserPermission::StartupUpdate) || $this->can(SubuserPermission::FileUpdate))
             ->fillForm(fn () => ['loader' => $this->context['loader'], 'minecraft' => $this->context['minecraft']])
             ->schema([
-                Select::make('loader')->label(__('simplify-mods::packages.loader'))->required()
+                Select::make('loader')->label(__('simplify-toolkit::packages.loader'))->required()
                     ->options(array_combine($loaders, array_map('ucfirst', $loaders))),
-                TextInput::make('minecraft')->label(__('simplify-mods::packages.minecraft'))->required()
+                TextInput::make('minecraft')->label(__('simplify-toolkit::packages.minecraft'))->required()
                     ->placeholder('1.21.4')->regex('/^\d+\.\d+(\.\d+)?$/'),
             ])
             ->action(function (array $data): void {

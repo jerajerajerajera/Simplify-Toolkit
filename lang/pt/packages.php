@@ -27,7 +27,7 @@ return [
     'switched_off' => 'Desligado',
     'switched_on' => 'Ligado',
     'remove' => 'Remover',
-    'remove_help' => 'O ficheiro vai para a pasta .simplify-mods-backups, para o poder repor.',
+    'remove_help' => 'O ficheiro vai para a pasta .simplify-toolkit-backups, para o poder repor.',
     'removed' => 'Removido',
     'restart_help' => 'As alterações aplicam-se quando o servidor voltar a arrancar.',
     'not_done' => 'Não funcionou',

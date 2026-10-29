@@ -1,17 +1,17 @@
 {
-    "id": "simplify-mods",
-    "name": "Simplify Mods",
+    "id": "simplify-toolkit",
+    "name": "Simplify Toolkit",
     "author": "jera",
-    "version": "1.0.3",
-    "description": "Minecraft made easy: add plugins and mods from Modrinth, Hangar, SpigotMC and CurseForge, and change the MOTD, server settings and icon without editing files.",
+    "version": "1.1.0",
+    "description": "Handy tools for your servers that are not in the Simplify core. Now for Minecraft: add plugins and mods from Modrinth, Hangar, SpigotMC and CurseForge, and change the MOTD, server settings, icon and EULA without editing files.",
     "category": "plugin",
-    "namespace": "Simplify\\Mods",
-    "class": "SimplifyModsPlugin",
+    "namespace": "Simplify\\Toolkit",
+    "class": "SimplifyToolkitPlugin",
     "panels": [
         "admin",
         "server"
     ],
     "panel_version": "^1.0.0-beta38",
     "api_version": 1,
-    "update_url": "https://hub.pelican.dev/plugins/simplify-mods/update.json"
+    "update_url": "https://hub.pelican.dev/plugins/simplify-toolkit/update.json"
 }

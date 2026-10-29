@@ -27,7 +27,7 @@ return [
     'switched_off' => 'Dimatikan',
     'switched_on' => 'Dinyalakan',
     'remove' => 'Hapus',
-    'remove_help' => 'File dipindah ke folder .simplify-mods-backups, jadi bisa kamu kembalikan.',
+    'remove_help' => 'File dipindah ke folder .simplify-toolkit-backups, jadi bisa kamu kembalikan.',
     'removed' => 'Dihapus',
     'restart_help' => 'Perubahan berlaku saat server dimulai lagi.',
     'not_done' => 'Tidak berhasil',

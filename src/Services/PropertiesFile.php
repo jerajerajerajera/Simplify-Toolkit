@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Simplify\Mods\Services;
+namespace Simplify\Toolkit\Services;
 
 /**
  * Java .properties files such as server.properties: read them, and change only chosen keys while every other

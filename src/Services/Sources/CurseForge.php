@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Simplify\Mods\Services\Sources;
+namespace Simplify\Toolkit\Services\Sources;
 
 /**
  * curseforge.com: Bukkit plugins and mods. Its API needs a key, which an admin saves in the settings.
