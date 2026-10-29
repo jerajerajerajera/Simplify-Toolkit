@@ -10,8 +10,8 @@ use Filament\Forms\Components\TextInput;
 use Simplify\Core\Addons\Addon;
 use Simplify\Toolkit\Filament\Admin\Pages\ToolkitSettings;
 use Simplify\Toolkit\Livewire\ServerSummary;
-use Simplify\Toolkit\Services\ServerInfo;
 use Simplify\Toolkit\Services\Keys;
+use Simplify\Toolkit\Services\ServerInfo;
 use Simplify\Toolkit\Services\ServerKind;
 use Simplify\Toolkit\Services\Software;
 

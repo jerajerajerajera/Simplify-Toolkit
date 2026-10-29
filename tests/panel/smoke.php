@@ -18,6 +18,7 @@ use Illuminate\Foundation\Testing\Concerns\MakesHttpRequests;
 use Illuminate\Http\Client\Response;
 use Illuminate\Testing\TestResponse;
 use Livewire\Livewire;
+use Simplify\Core\Addons\Addon;
 use Simplify\Toolkit\Filament\Admin\Pages\ToolkitSettings;
 use Simplify\Toolkit\Filament\Server\Pages\Minecraft;
 use Simplify\Toolkit\Filament\Server\Pages\Packages;
@@ -318,7 +319,7 @@ step('CurseForge keys are tested, stored encrypted, and a user\'s own key goes f
     }
 });
 step('Simplify\'s setup asks for the CurseForge key and saves only a working one', function () use ($admin) {
-    if (! class_exists(Simplify\Core\Addons\Addon::class)) {
+    if (! class_exists(Addon::class)) {
         require dirname(__DIR__).'/fixtures/Addon.php';
         require dirname(__DIR__).'/fixtures/Button.php';
     }
@@ -345,7 +346,7 @@ step('servers without plugins or mods have no Plugins page', function () use ($a
     }
 });
 // Every step must have run: a step that never ran is a failure too.
-$expected = 15;
+$expected = 16;
 if ($passed !== $expected) {
     echo "FAIL $passed of $expected steps passed\n";
     exit(1);
