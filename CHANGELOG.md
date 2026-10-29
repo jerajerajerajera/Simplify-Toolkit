@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Toolkit moves to the end of the Simplify group in the admin menu, which is now in A-Z order.
+
 ## 1.1.0
 
 - Simplify Mods is now Simplify Toolkit (id `simplify-toolkit`): the place for handy tools that are not in the
