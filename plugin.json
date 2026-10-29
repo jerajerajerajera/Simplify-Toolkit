@@ -2,7 +2,7 @@
     "id": "simplify-toolkit",
     "name": "Simplify Toolkit",
     "author": "jera",
-    "version": "1.1.0",
+    "version": "1.1.1",
     "description": "Handy tools for your servers that are not in the Simplify core. Now for Minecraft: add plugins and mods from Modrinth, Hangar, SpigotMC and CurseForge, and change the MOTD, server settings, icon and EULA without editing files.",
     "category": "plugin",
     "namespace": "Simplify\\Toolkit",

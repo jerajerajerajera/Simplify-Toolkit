@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.1.1
 
 - Toolkit moves to the end of the Simplify group in the admin menu, which is now in A-Z order.
 
