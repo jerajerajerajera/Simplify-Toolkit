@@ -317,6 +317,26 @@ step('CurseForge keys are tested, stored encrypted, and a user\'s own key goes f
         throw new RuntimeException('keys were not removed');
     }
 });
+step('Simplify\'s setup asks for the CurseForge key and saves only a working one', function () use ($admin) {
+    if (! class_exists(Simplify\Core\Addons\Addon::class)) {
+        require dirname(__DIR__).'/fixtures/Addon.php';
+        require dirname(__DIR__).'/fixtures/Button.php';
+    }
+    auth()->setUser($admin);
+    $addon = new ToolkitAddon;
+    if (count($addon->setupFields()) !== 1 || $addon->setupState() !== []) {
+        throw new RuntimeException('no setup field, or the key is sent back');
+    }
+    $addon->saveSetup(['curseforge' => 'bad-key']);
+    if (Keys::curseForge(null) !== '') {
+        throw new RuntimeException('a refused key was saved');
+    }
+    $addon->saveSetup(['curseforge' => ' good-key ']);
+    if (Keys::curseForge(null) !== 'good-key') {
+        throw new RuntimeException('the key was not saved');
+    }
+    Keys::forget(Keys::CURSEFORGE, null);
+});
 step('servers without plugins or mods have no Plugins page', function () use ($admin) {
     $rust = Server::factory()->create(['owner_id' => $admin->id, 'egg_id' => Egg::factory()->create(['name' => 'Rust', 'features' => []])->id]);
     Filament::setTenant($rust);
