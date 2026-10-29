@@ -41,3 +41,14 @@ a.sm-title:hover, .sm-meta a:hover { text-decoration: underline; }
 .dark .sm-facts dd { color: #fff; }
 .sm-facts dd .is-quiet { font-weight: 400; color: var(--gray-500); }
 .sm-buttons { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 1rem; }
+.sm-side { display: flex; flex-direction: column; gap: 1.5rem; }
+/* Icon buttons in a row look like Simplify's own icon buttons: a quiet bordered square, the icon turns the accent
+   colour on hover. Simplify's colours when it is installed, Pelican's otherwise. */
+.sm-actions .fi-icon-btn { display: inline-grid; place-items: center; width: var(--s-h, 36px); height: var(--s-h, 36px); margin: 0; border: 1px solid var(--s-line, var(--gray-200)); border-radius: var(--s-radius-sm, 6px); background: var(--s-surface, #fff); color: var(--s-ink, var(--gray-950)); transition: background .15s, border-color .15s, color .15s; }
+.dark .sm-actions .fi-icon-btn { border-color: var(--s-line, var(--gray-700)); background: var(--s-surface, var(--gray-900)); color: var(--s-ink, var(--gray-50)); }
+.sm-actions .fi-icon-btn .fi-icon { width: 18px; height: 18px; color: inherit; }
+.sm-actions .fi-icon-btn:hover:not(:disabled) { border-color: var(--s-accent, var(--primary-600)); background: var(--s-raised, var(--gray-100)); color: var(--s-accent, var(--primary-600)); }
+.dark .sm-actions .fi-icon-btn:hover:not(:disabled) { border-color: var(--s-accent, var(--primary-500)); background: var(--s-raised, var(--gray-800)); color: var(--s-accent, var(--primary-500)); }
+.sm-actions .fi-icon-btn.fi-color-danger:not(:hover) { color: var(--s-danger, var(--danger-600)); }
+.sm-actions .fi-icon-btn.fi-color-warning:not(:hover) { color: var(--s-warn, var(--warning-700)); }
+.sm-actions { gap: .5rem; }

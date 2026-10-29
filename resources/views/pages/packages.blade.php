@@ -79,43 +79,49 @@
             @endif
         </x-filament::section>
 
-        <div @if ($watching) wire:poll.15s="checkStart" @endif>
-            <x-filament::section :heading="__('simplify-toolkit::packages.'.($mods ? 'installed_mods' : 'installed_plugins'))" :description="__('simplify-toolkit::packages.restart_help')">
-                <ul class="sm-list">
-                    @forelse ($installed as $item)
-                        <li @class(['sm-row is-compact', 'is-off' => ! $item['enabled']]) wire:key="file-{{ $item['file'] }}">
-                            <div class="sm-body">
-                                @if ($item['page'])
-                                    <a href="{{ $item['page'] }}" target="_blank" rel="noopener" class="sm-title" style="display: block">{{ $item['title'] }}</a>
-                                @else
-                                    <p class="sm-title">{{ $item['title'] }}</p>
-                                @endif
-                                <p class="sm-meta is-one-line">
-                                    {{ $item['version'] ?: $item['file'] }}
-                                    · {{ $item['source'] ? ($sites[$item['source']] ?? $item['source']) : __('simplify-toolkit::packages.by_hand') }}
-                                    @unless ($item['enabled'])
-                                        · {{ __('simplify-toolkit::packages.off') }}
-                                    @endunless
-                                    @if ($item['watched'])
-                                        · {{ __('simplify-toolkit::packages.watched') }}
+        <div class="sm-side">
+            <div @if ($watching) wire:poll.15s="checkStart" @endif>
+                <x-filament::section :heading="__('simplify-toolkit::packages.'.($mods ? 'installed_mods' : 'installed_plugins'))" :description="__('simplify-toolkit::packages.restart_help')">
+                    <ul class="sm-list">
+                        @forelse ($installed as $item)
+                            <li @class(['sm-row is-compact', 'is-off' => ! $item['enabled']]) wire:key="file-{{ $item['file'] }}">
+                                <div class="sm-body">
+                                    @if ($item['page'])
+                                        <a href="{{ $item['page'] }}" target="_blank" rel="noopener" class="sm-title" style="display: block">{{ $item['title'] }}</a>
+                                    @else
+                                        <p class="sm-title">{{ $item['title'] }}</p>
                                     @endif
-                                </p>
-                                @if ($item['off_reason'])
-                                    <p class="sm-warn">{{ __('simplify-toolkit::packages.off_after_start') }}: {{ $item['off_reason'] }}</p>
-                                @endif
-                            </div>
-                            <div class="sm-actions">
-                                @if ($item['off_reason'])
-                                    {{ ($this->offLogAction)(['file' => $item['file']]) }}
-                                @endif
-                                {{ ($this->toggleAction)(['file' => $item['file'], 'enabled' => $item['enabled']]) }}
-                                {{ ($this->removeAction)(['file' => $item['file']]) }}
-                            </div>
-                        </li>
-                    @empty
-                        <li class="sm-empty">{{ __('simplify-toolkit::packages.'.($mods ? 'no_mods' : 'no_plugins')) }}</li>
-                    @endforelse
-                </ul>
+                                    <p class="sm-meta is-one-line">
+                                        {{ $item['version'] ?: $item['file'] }}
+                                        · {{ $item['source'] ? ($sites[$item['source']] ?? $item['source']) : __('simplify-toolkit::packages.by_hand') }}
+                                        @unless ($item['enabled'])
+                                            · {{ __('simplify-toolkit::packages.off') }}
+                                        @endunless
+                                        @if ($item['watched'])
+                                            · {{ __('simplify-toolkit::packages.watched') }}
+                                        @endif
+                                    </p>
+                                    @if ($item['off_reason'])
+                                        <p class="sm-warn">{{ __('simplify-toolkit::packages.off_after_start') }}: {{ $item['off_reason'] }}</p>
+                                    @endif
+                                </div>
+                                <div class="sm-actions">
+                                    @if ($item['off_reason'])
+                                        {{ ($this->offLogAction)(['file' => $item['file']]) }}
+                                    @endif
+                                    {{ ($this->toggleAction)(['file' => $item['file'], 'enabled' => $item['enabled']]) }}
+                                    {{ ($this->removeAction)(['file' => $item['file']]) }}
+                                </div>
+                            </li>
+                        @empty
+                            <li class="sm-empty">{{ __('simplify-toolkit::packages.'.($mods ? 'no_mods' : 'no_plugins')) }}</li>
+                        @endforelse
+                    </ul>
+                </x-filament::section>
+            </div>
+
+            <x-filament::section :heading="__('simplify-toolkit::settings.own_key')" :description="__('simplify-toolkit::settings.'.(\Simplify\Toolkit\Services\Keys::has(\Simplify\Toolkit\Services\Keys::CURSEFORGE, user()) ? 'own_key_saved' : 'own_key_help'))">
+                {{ ($this->ownKeyAction)->size('sm') }}
             </x-filament::section>
         </div>
     </div>

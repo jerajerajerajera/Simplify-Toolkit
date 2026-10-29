@@ -235,12 +235,7 @@ final class Packages extends Page implements HasActions
             ));
     }
 
-    protected function getHeaderActions(): array
-    {
-        return [$this->ownKeyAction()];
-    }
-
-    /** A user's own CurseForge key: CurseForge results for whoever has one, also when the panel has none. */
+    /** A user's own CurseForge key, in its own card: CurseForge results for whoever has one, also when the panel has none. */
     public function ownKeyAction(): Action
     {
         return Action::make('ownKey')

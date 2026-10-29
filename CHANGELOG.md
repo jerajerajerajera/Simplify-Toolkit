@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.3
+
+- The Plugins and Mods page follows Simplify's style: the pause, play, log and remove buttons of each installed plugin are
+  Simplify icon buttons (a quiet bordered square, accent colour on hover) instead of large coloured icons, and your own
+  CurseForge key has its own card under the installed plugins instead of a loose button above the page.
+
 ## 1.1.2
 
 - Simplify 1.3's setup now also asks for the panel's CurseForge key, so a new panel is set up in one go. The key is checked with CurseForge before it is saved. On older Simplify versions, or without Simplify, nothing changes.
