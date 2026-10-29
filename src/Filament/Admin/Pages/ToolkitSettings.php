@@ -28,7 +28,7 @@ final class ToolkitSettings extends Page implements HasSchemas
 
     protected static string|\BackedEnum|null $navigationIcon = 'tabler-cube';
 
-    protected static ?int $navigationSort = 60;
+    protected static ?int $navigationSort = 95;
 
     protected static ?string $slug = 'simplify-toolkit';
 
