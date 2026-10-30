@@ -17,12 +17,6 @@ On a modpack server the modpack is one row in the installed mods, with its mods 
 
 It works on its own, and shows up inside Simplify when both are installed.
 
-## Coming from Simplify Mods
-
-Simplify Toolkit was called Simplify Mods until 1.1.0. Install Simplify Toolkit first: it takes over the installed
-plugins list, the chosen loaders and the saved CurseForge keys of Simplify Mods. Then uninstall Simplify Mods, so
-the pages do not show twice.
-
 ## With Simplify
 
 With [Simplify](https://github.com/jerajerajerajera/Simplify) installed, a running Minecraft server shows its
