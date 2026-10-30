@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.1
+
+- Players page: a long whitelist scrolls inside its own box instead of running over Operators and Banned players.
+
 ## 1.2.0
 
 - Players page (back from PelicanSimplify 0.7.0): who is online, the whitelist, operators and bans. Type a name or click

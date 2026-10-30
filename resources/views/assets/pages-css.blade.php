@@ -85,4 +85,8 @@ a.sm-title:hover, .sm-meta a:hover { text-decoration: underline; }
     html.ps-fit body:has(.ps-server-top) .sm-side > :not(:first-child) { flex: none; }
     html.ps-fit body:has(.ps-server-top) :is(.sm-columns > .fi-section, .sm-side > :first-child > .fi-section) > .fi-section-header { flex: none; }
     html.ps-fit body:has(.ps-server-top) :is(.sm-columns > .fi-section, .sm-side > :first-child > .fi-section) > .fi-section-content-ctn { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; }
+    /* A column of lists (Players) shares its height evenly, and each list scrolls inside its own box. */
+    html.ps-fit body:has(.ps-server-top) .sm-side.is-lists > .fi-section { display: flex; flex: 1 1 0; flex-direction: column; min-height: 0; }
+    html.ps-fit body:has(.ps-server-top) .sm-side.is-lists > .fi-section > .fi-section-header { flex: none; }
+    html.ps-fit body:has(.ps-server-top) .sm-side.is-lists > .fi-section > .fi-section-content-ctn { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; }
 }
