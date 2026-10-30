@@ -114,6 +114,67 @@ final class Packages
         });
     }
 
+    /**
+     * The modpack this server runs: from the egg (Modrinth, FTB, CurseForge) or, for a pack put on by hand, from the
+     * pack file in the server's main folder. null when it runs no modpack.
+     *
+     * @return array{name: string, version: string, url: string, icon: string}|null
+     */
+    public function installedModpack(): ?array
+    {
+        $pack = Modpack::of($this->server);
+        if ($pack !== null) {
+            return $pack;
+        }
+        // [] = no pack file; Cache::remember does not keep null.
+        $file = Cache::remember('simplify-toolkit.pack-file.'.$this->server->uuid, 600, fn (): array => $this->packFile());
+        if ($file !== []) {
+            return $file;
+        }
+        if (ServerKind::forServer($this->server)['modpack'] === '') {
+            return null;
+        }
+        $id = $this->variables()['PROJECT_ID'] ?? '';
+
+        return [
+            'name' => '',
+            'version' => '',
+            'url' => preg_match('/^\d{1,10}$/', $id) === 1 ? 'https://www.curseforge.com/projects/'.$id : '',
+            'icon' => '',
+        ];
+    }
+
+    /**
+     * Name and version from modrinth.index.json (Modrinth) or manifest.json (CurseForge) in the main folder.
+     *
+     * @return array{name: string, version: string, url: string, icon: string}|array{}
+     */
+    private function packFile(): array
+    {
+        try {
+            $names = array_column($this->files()->getDirectory('/'), 'name');
+            foreach (['modrinth.index.json' => 'versionId', 'manifest.json' => 'version'] as $file => $versionKey) {
+                if (! in_array($file, $names, true)) {
+                    continue;
+                }
+                $index = json_decode($this->files()->getContent('/'.$file, 2097152), true);
+                if (! is_array($index) || ($file === 'manifest.json' && ($index['manifestType'] ?? '') !== 'minecraftModpack')) {
+                    continue;
+                }
+
+                return [
+                    'name' => mb_substr((string) ($index['name'] ?? ''), 0, 80),
+                    'version' => mb_substr((string) ($index[$versionKey] ?? ''), 0, 40),
+                    'url' => '',
+                    'icon' => '',
+                ];
+            }
+        } catch (Throwable) {
+        }
+
+        return [];
+    }
+
     /** @return array<string, string> */
     private function variables(): array
     {

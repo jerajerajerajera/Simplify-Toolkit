@@ -96,8 +96,51 @@
                             @endfor
                         </ul>
                     @else
+                    @php
+                        // A modpack's own mods fold into one row; mods added here and mods switched off stay visible.
+                        $folded = $modpack !== null && ! $showPack;
+                        $own = array_values(array_filter($installed, fn (array $item) => $item['source'] !== ''));
+                        $packCount = count($installed) - count($own);
+                        $rows = $folded ? array_values(array_filter($installed, fn (array $item) => $item['source'] !== '' || $item['off_reason'] !== '')) : $installed;
+                        // Plain buttons with the same look as Filament's icon buttons: a Filament action per row made a
+                        // modpack's list slow to render and every tooltip slow to start. Clicking still mounts the action.
+                        $icons = [];
+                        foreach (['tabler-player-pause', 'tabler-player-play', 'tabler-trash', 'tabler-chevron-down', 'tabler-chevron-up', 'tabler-packages'] as $name) {
+                            $icons[$name] = svg($name, 'fi-icon')->toHtml();
+                        }
+                    @endphp
                     <ul class="sm-list">
-                        @forelse ($installed as $item)
+                        @if ($modpack !== null)
+                            <li class="sm-row is-compact is-pack" wire:key="modpack">
+                                @if ($modpack['icon'])
+                                    <img src="{{ $modpack['icon'] }}" alt="" loading="lazy" class="sm-thumb">
+                                @else
+                                    <span class="sm-thumb is-empty">{!! $icons['tabler-packages'] !!}</span>
+                                @endif
+                                <div class="sm-body">
+                                    @php $packName = $modpack['name'] ?: __('simplify-toolkit::packages.modpack'); @endphp
+                                    @if ($modpack['url'])
+                                        <a href="{{ $modpack['url'] }}" target="_blank" rel="noopener" class="sm-title" style="display: block">{{ $packName }}</a>
+                                    @else
+                                        <p class="sm-title">{{ $packName }}</p>
+                                    @endif
+                                    <p class="sm-meta is-one-line">
+                                        {{ __('simplify-toolkit::packages.installed_modpack') }}
+                                        @if ($modpack['version']) · {{ $modpack['version'] }} @endif
+                                        · {{ trans_choice('simplify-toolkit::packages.pack_mods', $packCount, ['count' => $packCount]) }}
+                                    </p>
+                                </div>
+                                @if ($packCount > 0)
+                                    @php $packLabel = __('simplify-toolkit::packages.'.($showPack ? 'hide_pack_mods' : 'show_pack_mods')); @endphp
+                                    <div class="sm-actions">
+                                        <button type="button" class="sm-icon-btn" title="{{ $packLabel }}" aria-label="{{ $packLabel }}" aria-expanded="{{ $showPack ? 'true' : 'false' }}" wire:click="$toggle('showPack')">
+                                            {!! $icons[$showPack ? 'tabler-chevron-up' : 'tabler-chevron-down'] !!}
+                                        </button>
+                                    </div>
+                                @endif
+                            </li>
+                        @endif
+                        @forelse ($rows as $item)
                             <li @class(['sm-row is-compact', 'is-off' => ! $item['enabled']]) wire:key="file-{{ $item['file'] }}">
                                 <div class="sm-body">
                                     @if ($item['page'])
@@ -107,7 +150,7 @@
                                     @endif
                                     <p class="sm-meta is-one-line">
                                         {{ $item['version'] ?: $item['file'] }}
-                                        · {{ $item['source'] ? ($sites[$item['source']] ?? $item['source']) : __('simplify-toolkit::packages.by_hand') }}
+                                        · {{ $item['source'] ? ($sites[$item['source']] ?? $item['source']) : __('simplify-toolkit::packages.'.($modpack !== null ? 'from_pack' : 'by_hand')) }}
                                         @unless ($item['enabled'])
                                             · {{ __('simplify-toolkit::packages.off') }}
                                         @endunless
@@ -123,12 +166,25 @@
                                     @if ($item['off_reason'])
                                         {{ ($this->offLogAction)(['file' => $item['file']]) }}
                                     @endif
-                                    {{ ($this->toggleAction)(['file' => $item['file'], 'enabled' => $item['enabled']]) }}
-                                    {{ ($this->removeAction)(['file' => $item['file']]) }}
+                                    @if ($canToggle)
+                                        @php $toggleLabel = __('simplify-toolkit::packages.'.($item['enabled'] ? 'switch_off' : 'switch_on')); @endphp
+                                        <button type="button" class="sm-icon-btn" title="{{ $toggleLabel }}" aria-label="{{ $toggleLabel }}"
+                                            wire:click="mountAction('toggle', {{ \Illuminate\Support\Js::from(['file' => $item['file'], 'enabled' => $item['enabled']]) }})">
+                                            {!! $icons[$item['enabled'] ? 'tabler-player-pause' : 'tabler-player-play'] !!}
+                                        </button>
+                                    @endif
+                                    @if ($canRemove)
+                                        <button type="button" class="sm-icon-btn is-danger" title="{{ __('simplify-toolkit::packages.remove') }}" aria-label="{{ __('simplify-toolkit::packages.remove') }}"
+                                            wire:click="mountAction('remove', {{ \Illuminate\Support\Js::from(['file' => $item['file']]) }})">
+                                            {!! $icons['tabler-trash'] !!}
+                                        </button>
+                                    @endif
                                 </div>
                             </li>
                         @empty
-                            <li class="sm-empty">{{ __('simplify-toolkit::packages.'.($mods ? 'no_mods' : 'no_plugins')) }}</li>
+                            @if ($modpack === null)
+                                <li class="sm-empty">{{ __('simplify-toolkit::packages.'.($mods ? 'no_mods' : 'no_plugins')) }}</li>
+                            @endif
                         @endforelse
                     </ul>
                     @endif

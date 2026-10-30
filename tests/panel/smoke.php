@@ -286,6 +286,19 @@ step('a plugin that fails on the next start is switched off with its log line', 
         throw new RuntimeException('switching it on again does not watch it again');
     }
 });
+step('a modpack is one row in the installed list, and its mods only show when asked for', function () use ($admin) {
+    $forge = Server::factory()->create(['owner_id' => $admin->id, 'egg_id' => Egg::factory()->create(['name' => 'Forge', 'features' => ['eula']])->id]);
+    FakeFiles::$files = [
+        '/modrinth.index.json' => json_encode(['formatVersion' => 1, 'game' => 'minecraft', 'name' => 'Smoke Pack', 'versionId' => '2.0']),
+        '/mods/create-1.21.1-6.0.4.jar' => 'jar',
+        '/mods/jei-1.21.1-19.0.jar' => 'jar',
+    ];
+    Filament::setTenant($forge);
+    Livewire::actingAs($admin)->test(Packages::class)->call('load')
+        ->assertSet('modpack.name', 'Smoke Pack')->assertSet('modpack.version', '2.0')->assertSee('Smoke Pack')
+        ->assertDontSee('file-create-1.21.1-6.0.4.jar', false)
+        ->set('showPack', true)->assertSee('file-create-1.21.1-6.0.4.jar', false)->assertSee('file-jei-1.21.1-19.0.jar', false);
+});
 step('Simplify Embed gets the software of Minecraft servers, and nothing for other games', function () use ($admin, $paper) {
     $answers = event('simplify.embed.server', [$paper, false]);
     if (! in_array(['game' => 'Minecraft', 'software' => 'Paper'], $answers, true)) {
@@ -348,7 +361,7 @@ step('servers without plugins or mods have no Plugins page', function () use ($a
     }
 });
 // Every step must have run: a step that never ran is a failure too.
-$expected = 16;
+$expected = 17;
 if ($passed !== $expected) {
     echo "FAIL $passed of $expected steps passed\n";
     exit(1);

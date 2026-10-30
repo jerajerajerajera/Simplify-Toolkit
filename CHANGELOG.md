@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.1.6
+
+- Mods page on a modpack server: the modpack is one row in the installed list, with its name, version, the number of
+  mods and a link to the modpack. Its mods fold away; the arrow on the row shows them one by one. Mods you added here,
+  and mods that were switched off after a start, stay in the list.
+- The installed list opens and reacts much faster with many mods: the pause and remove buttons are light buttons with a
+  plain tooltip, and who may use them is checked once instead of once per row.
+- In Simplify's server page each column scrolls on its own: scrolling the installed list no longer moves the search
+  results.
+
 ## 1.1.5
 
 - Toolkit settings: Save key, Test and Remove sit in the head of the page instead of a row of buttons inside the form. In
