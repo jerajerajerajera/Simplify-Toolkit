@@ -6,6 +6,7 @@ namespace Simplify\Toolkit\Filament\Admin\Pages;
 
 use Filament\Actions\Action;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
@@ -14,10 +15,11 @@ use Filament\Schemas\Components\Text;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Illuminate\Support\HtmlString;
+use Simplify\Toolkit\Services\AutomaticBackups;
 use Simplify\Toolkit\Services\Keys;
 
 /**
- * Settings of Simplify Toolkit for the whole panel: the CurseForge API key.
+ * Settings of Simplify Toolkit for the whole panel: the CurseForge API key, and automatic backups.
  *
  * @property Schema $form
  */
@@ -68,7 +70,12 @@ final class ToolkitSettings extends Page implements HasSchemas
     {
         abort_unless(self::canAccess(), 403);
         $this->hasKey = Keys::has(Keys::CURSEFORGE, null);
-        $this->form->fill();
+        $this->fillForm();
+    }
+
+    private function fillForm(): void
+    {
+        $this->form->fill(['backups' => AutomaticBackups::panel()->only(['enabled', 'every_minutes', 'keep', 'only_when_used'])]);
     }
 
     public function form(Schema $schema): Schema
@@ -82,6 +89,17 @@ final class ToolkitSettings extends Page implements HasSchemas
                     TextInput::make('curseforge')->label(__('simplify-toolkit::settings.'.($this->hasKey ? 'new_key' : 'key')))
                         ->password()->autocomplete('off')->maxLength(200),
                 ]),
+            Section::make(__('simplify-toolkit::backups.title'))->description(__('simplify-toolkit::backups.help'))
+                ->statePath('backups')->columns(2)->schema([
+                    Toggle::make('enabled')->label(__('simplify-toolkit::backups.panel'))
+                        ->helperText(__('simplify-toolkit::backups.panel_help'))->columnSpanFull(),
+                    TextInput::make('every_minutes')->label(__('simplify-toolkit::backups.default_interval'))
+                        ->helperText(__('simplify-toolkit::backups.default_interval_help'))->integer()->minValue(30)->maxValue(10080)->required(),
+                    TextInput::make('keep')->label(__('simplify-toolkit::backups.default_points'))
+                        ->helperText(__('simplify-toolkit::backups.default_points_help'))->integer()->minValue(1)->maxValue(100)->required(),
+                    Toggle::make('only_when_used')->label(__('simplify-toolkit::backups.only_used'))
+                        ->helperText(__('simplify-toolkit::backups.only_used_help'))->columnSpanFull(),
+                ]),
         ]);
     }
 
@@ -93,13 +111,21 @@ final class ToolkitSettings extends Page implements HasSchemas
                 ->visible(fn () => $this->canChange() && $this->hasKey)->action(fn () => $this->testKey()),
             Action::make('removeKey')->label(__('simplify-toolkit::settings.remove'))->icon('tabler-trash')->color('gray')
                 ->requiresConfirmation()->visible(fn () => $this->canChange() && $this->hasKey)->action(fn () => $this->removeKey()),
-            Action::make('saveKey')->label(__('simplify-toolkit::settings.save'))->icon('tabler-device-floppy')
-                ->visible(fn () => $this->canChange())->action(fn () => $this->saveKey()),
+            Action::make('save')->label(__('simplify-toolkit::settings.save'))->icon('tabler-device-floppy')
+                ->visible(fn () => $this->canChange())->action(fn () => $this->save()),
         ];
     }
 
     public function save(): void
     {
+        abort_unless($this->canChange(), 403);
+        $state = $this->form->getState();
+        AutomaticBackups::save(null, $state['backups'] ?? []);
+        if (trim((string) ($state['curseforge'] ?? '')) === '') {
+            Notification::make()->title(__('simplify-toolkit::minecraft.saved'))->success()->send();
+
+            return;
+        }
         $this->saveKey();
     }
 
@@ -118,7 +144,7 @@ final class ToolkitSettings extends Page implements HasSchemas
         }
         Keys::save(Keys::CURSEFORGE, null, $key);
         $this->hasKey = true;
-        $this->form->fill();
+        $this->fillForm();
         Notification::make()->title(__('simplify-toolkit::settings.key_works'))->success()->send();
     }
 

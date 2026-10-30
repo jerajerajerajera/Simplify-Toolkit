@@ -20,12 +20,14 @@ use Illuminate\Testing\TestResponse;
 use Livewire\Livewire;
 use Simplify\Core\Addons\Addon;
 use Simplify\Toolkit\Filament\Admin\Pages\ToolkitSettings;
+use Simplify\Toolkit\Filament\Server\Pages\Backups;
 use Simplify\Toolkit\Filament\Server\Pages\Minecraft;
 use Simplify\Toolkit\Filament\Server\Pages\Packages;
 use Simplify\Toolkit\Filament\Server\Pages\Players;
 use Simplify\Toolkit\Livewire\ServerSummary;
 use Simplify\Toolkit\Models\ApiKey;
 use Simplify\Toolkit\Models\Package;
+use Simplify\Toolkit\Services\AutomaticBackups;
 use Simplify\Toolkit\Services\Keys;
 use Simplify\Toolkit\Services\RestartReminder;
 use Simplify\Toolkit\Services\ServerKind;
@@ -245,6 +247,18 @@ step('a saved change leaves a restart reminder on the card until it is dismissed
     RestartReminder::forget($paper);
     if (RestartReminder::get($paper) !== null) {
         throw new RuntimeException('the reminder stayed');
+    }
+});
+step('automatic backups: new servers get the panel plan, root admins change it', function () use ($admin, $paper) {
+    if (! AutomaticBackups::for($paper)->exists || ! AutomaticBackups::for($paper)->enabled) {
+        throw new RuntimeException('the new server has no plan');
+    }
+    $paper->forceFill(['backup_limit' => 3])->save();
+    Livewire::actingAs($admin)->test(Backups::class)
+        ->set('data.every_minutes', 720)->set('data.keep', 3)->call('save')->assertHasNoErrors()
+        ->assertSee(Backups::summary(['enabled' => true, 'every_minutes' => 720, 'keep' => 3, 'only_when_used' => true]));
+    if (AutomaticBackups::for($paper)->every_minutes !== 720) {
+        throw new RuntimeException('the plan was not saved');
     }
 });
 step('other games have no Minecraft page', function () use ($admin) {

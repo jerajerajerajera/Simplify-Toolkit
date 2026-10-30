@@ -8,9 +8,11 @@ use App\Models\Server;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
+use Simplify\Toolkit\Services\AutomaticBackups;
 use Simplify\Toolkit\Services\EmbedDetails;
 use Simplify\Toolkit\Services\RestartReminder;
 use Simplify\Toolkit\ToolkitAddon;
+use Throwable;
 
 final class ToolkitServiceProvider extends ServiceProvider
 {
@@ -26,7 +28,19 @@ final class ToolkitServiceProvider extends ServiceProvider
         // Embed nobody fires it.
         Event::listen('simplify.embed.server', fn (Server $server, bool $running) => EmbedDetails::for($server, $running));
         // Planned restarts, and reminders of servers that started since; Pelican's own scheduler runs it.
-        $this->callAfterResolving(Schedule::class, fn (Schedule $schedule) => $schedule->call(fn () => RestartReminder::tick())
-            ->everyMinute()->name('simplify-toolkit-restarts')->withoutOverlapping());
+        $this->callAfterResolving(Schedule::class, function (Schedule $schedule): void {
+            $schedule->call(fn () => RestartReminder::tick())->everyMinute()->name('simplify-toolkit-restarts')->withoutOverlapping();
+            $schedule->call(fn () => AutomaticBackups::tick())->everyMinute()->name('simplify-toolkit-backups')->withoutOverlapping();
+        });
+        // New servers get automatic backups with the panel's values, as in PelicanSimplify 0.7.0.
+        Server::created(function (Server $server): void {
+            try {
+                if (AutomaticBackups::panel()->enabled) {
+                    AutomaticBackups::start($server);
+                }
+            } catch (Throwable $error) {
+                report($error);
+            }
+        });
     }
 }
