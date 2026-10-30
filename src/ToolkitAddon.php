@@ -9,11 +9,9 @@ use Closure;
 use Filament\Forms\Components\TextInput;
 use Simplify\Core\Addons\Addon;
 use Simplify\Toolkit\Filament\Admin\Pages\ToolkitSettings;
-use Simplify\Toolkit\Livewire\ServerSummary;
 use Simplify\Toolkit\Services\Keys;
 use Simplify\Toolkit\Services\RestartReminder;
 use Simplify\Toolkit\Services\ServerInfo;
-use Simplify\Toolkit\Services\ServerKind;
 use Simplify\Toolkit\Services\Software;
 
 /**
@@ -58,11 +56,6 @@ final class ToolkitAddon extends Addon
     public function serverInfo(Server $server): array
     {
         return ServerInfo::for($server);
-    }
-
-    public function serverSections(Server $server): array
-    {
-        return ServerKind::forServer($server)['minecraft'] ? [ServerSummary::class] : [];
     }
 
     /** In Simplify's setup (Simplify 1.3+, add-on API 3): the panel's CurseForge key, checked with CurseForge first. */

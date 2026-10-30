@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.2
+
+- Smaller: the old Minecraft block for under the console is gone. Simplify has not shown it since 1.3.9; the server card and the Minecraft page show the same.
+
 ## 1.2.1
 
 - Players page: a long whitelist scrolls inside its own box instead of running over Operators and Banned players.
