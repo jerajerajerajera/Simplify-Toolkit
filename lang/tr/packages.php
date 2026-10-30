@@ -8,6 +8,8 @@ return [
     'search_placeholder' => 'Modrinth, Hangar, SpigotMC ve CurseForge\'da ara',
     'offline' => 'Şu an yanıt vermiyor: :sites.',
     'nothing_found' => 'Hiçbir şey bulunamadı.',
+    'popular_plugins' => 'Popüler eklentiler: :target',
+    'popular_mods' => 'Popüler modlar: :target',
     'other_version' => 'Başka sürüm',
     'downloads' => ':count indirme',
     'also_on' => 'ayrıca :site',

@@ -8,6 +8,8 @@ return [
     'search_placeholder' => 'Zoek op Modrinth, Hangar, SpigotMC en CurseForge',
     'offline' => 'Antwoordt nu niet: :sites.',
     'nothing_found' => 'Niets gevonden.',
+    'popular_plugins' => 'Populaire plugins voor :target',
+    'popular_mods' => 'Populaire mods voor :target',
     'other_version' => 'Andere versie',
     'downloads' => ':count downloads',
     'also_on' => 'ook op :site',

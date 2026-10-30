@@ -8,6 +8,8 @@ return [
     'search_placeholder' => 'Søg på Modrinth, Hangar, SpigotMC og CurseForge',
     'offline' => 'Svarer ikke lige nu: :sites.',
     'nothing_found' => 'Intet fundet.',
+    'popular_plugins' => 'Populære plugins til :target',
+    'popular_mods' => 'Populære mods til :target',
     'other_version' => 'Anden version',
     'downloads' => ':count downloads',
     'also_on' => 'også på :site',

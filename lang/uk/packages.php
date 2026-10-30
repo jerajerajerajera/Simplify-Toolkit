@@ -8,6 +8,8 @@ return [
     'search_placeholder' => 'Шукати на Modrinth, Hangar, SpigotMC і CurseForge',
     'offline' => 'Зараз не відповідає: :sites.',
     'nothing_found' => 'Нічого не знайдено.',
+    'popular_plugins' => 'Популярні плагіни для :target',
+    'popular_mods' => 'Популярні моди для :target',
     'other_version' => 'Інша версія',
     'downloads' => 'Завантажень: :count',
     'also_on' => 'також на :site',

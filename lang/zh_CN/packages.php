@@ -8,6 +8,8 @@ return [
     'search_placeholder' => '搜索 Modrinth、Hangar、SpigotMC 和 CurseForge',
     'offline' => '暂时无响应：:sites。',
     'nothing_found' => '没有找到结果。',
+    'popular_plugins' => '适用于 :target 的热门插件',
+    'popular_mods' => '适用于 :target 的热门模组',
     'other_version' => '其他版本',
     'downloads' => ':count 次下载',
     'also_on' => '也在 :site 上',

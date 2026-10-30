@@ -8,6 +8,8 @@ return [
     'search_placeholder' => 'Αναζήτηση σε Modrinth, Hangar, SpigotMC και CurseForge',
     'offline' => 'Δεν απαντά τώρα: :sites.',
     'nothing_found' => 'Δεν βρέθηκε τίποτα.',
+    'popular_plugins' => 'Δημοφιλή πρόσθετα για :target',
+    'popular_mods' => 'Δημοφιλή mods για :target',
     'other_version' => 'Άλλη έκδοση',
     'downloads' => ':count λήψεις',
     'also_on' => 'επίσης στο :site',

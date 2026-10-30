@@ -8,6 +8,8 @@ return [
     'search_placeholder' => 'Pretraži Modrinth, Hangar, SpigotMC i CurseForge',
     'offline' => 'Trenutno ne odgovara: :sites.',
     'nothing_found' => 'Ništa nije pronađeno.',
+    'popular_plugins' => 'Популарни додаци за :target',
+    'popular_mods' => 'Популарни модови за :target',
     'other_version' => 'Druga verzija',
     'downloads' => ':count preuzimanja',
     'also_on' => 'takođe na :site',

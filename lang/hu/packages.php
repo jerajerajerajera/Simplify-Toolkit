@@ -8,6 +8,8 @@ return [
     'search_placeholder' => 'Keresés a Modrinth, Hangar, SpigotMC és CurseForge oldalon',
     'offline' => 'Most nem válaszol: :sites.',
     'nothing_found' => 'Nincs találat.',
+    'popular_plugins' => 'Népszerű bővítmények: :target',
+    'popular_mods' => 'Népszerű modok: :target',
     'other_version' => 'Más verzió',
     'downloads' => ':count letöltés',
     'also_on' => 'itt is: :site',

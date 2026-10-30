@@ -8,6 +8,8 @@ return [
     'search_placeholder' => 'Tìm trên Modrinth, Hangar, SpigotMC và CurseForge',
     'offline' => 'Hiện không phản hồi: :sites.',
     'nothing_found' => 'Không tìm thấy gì.',
+    'popular_plugins' => 'Plugin phổ biến cho :target',
+    'popular_mods' => 'Mod phổ biến cho :target',
     'other_version' => 'Phiên bản khác',
     'downloads' => ':count lượt tải',
     'also_on' => 'cũng có trên :site',

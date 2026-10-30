@@ -8,6 +8,8 @@ return [
     'search_placeholder' => 'Cari di Modrinth, Hangar, SpigotMC, dan CurseForge',
     'offline' => 'Tidak merespons sekarang: :sites.',
     'nothing_found' => 'Tidak ada yang ditemukan.',
+    'popular_plugins' => 'Plugin populer untuk :target',
+    'popular_mods' => 'Mod populer untuk :target',
     'other_version' => 'Versi lain',
     'downloads' => ':count unduhan',
     'also_on' => 'juga di :site',
