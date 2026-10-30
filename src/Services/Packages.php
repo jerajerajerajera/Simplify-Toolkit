@@ -271,6 +271,25 @@ final class Packages
     }
 
     /**
+     * Installs the newest release of a plugin installed here before, as 0.7.0's Update did; null when it has that one.
+     *
+     * @return array<string, mixed>|null the release that was installed
+     */
+    public function update(string $file, bool $anyway): ?array
+    {
+        $base = (string) preg_replace('/\.disabled$/i', '', self::checkName($file));
+        $package = Package::query()->where('server_id', $this->server->id)->where('filename', $base)->first();
+        abort_if($package === null, 404, __('simplify-toolkit::packages.unknown'));
+        $context = $this->context();
+        $release = $this->catalog->releases([$package->key], $context['kind'], $context['loader'], $context['minecraft'])[$package->key] ?? null;
+        if (is_array($release) && $release['version_id'] !== '' && $release['version_id'] === $package->version_id) {
+            return null;
+        }
+
+        return $this->install($package->key, $anyway, ['title' => $package->title, 'icon' => $package->icon, 'page' => $package->page]);
+    }
+
+    /**
      * Required Modrinth projects that are not installed yet, by name.
      *
      * @param  list<string>  $needs

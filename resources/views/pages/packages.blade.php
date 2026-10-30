@@ -108,7 +108,7 @@
                         // Plain buttons with the same look as Filament's icon buttons: a Filament action per row made a
                         // modpack's list slow to render and every tooltip slow to start. Clicking still mounts the action.
                         $icons = [];
-                        foreach (['tabler-player-pause', 'tabler-player-play', 'tabler-trash', 'tabler-chevron-down', 'tabler-chevron-up', 'tabler-packages'] as $name) {
+                        foreach (['tabler-refresh', 'tabler-player-pause', 'tabler-player-play', 'tabler-trash', 'tabler-chevron-down', 'tabler-chevron-up', 'tabler-packages'] as $name) {
                             $icons[$name] = svg($name, 'fi-icon')->toHtml();
                         }
                     @endphp
@@ -168,6 +168,12 @@
                                 <div class="sm-actions">
                                     @if ($item['off_reason'])
                                         {{ ($this->offLogAction)(['file' => $item['file']]) }}
+                                    @endif
+                                    @if ($canUpdate && $item['key'] !== '')
+                                        <button type="button" class="sm-icon-btn" title="{{ __('simplify-toolkit::packages.update') }}" aria-label="{{ __('simplify-toolkit::packages.update') }}"
+                                            wire:click="mountAction('update', {{ \Illuminate\Support\Js::from(['file' => $item['file'], 'title' => $item['title']]) }})">
+                                            {!! $icons['tabler-refresh'] !!}
+                                        </button>
                                     @endif
                                     @if ($canToggle)
                                         @php $toggleLabel = __('simplify-toolkit::packages.'.($item['enabled'] ? 'switch_off' : 'switch_on')); @endphp

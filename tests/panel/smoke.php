@@ -311,6 +311,41 @@ step('installing, switching off and removing a plugin goes through Wings', funct
         throw new RuntimeException('not removed to the backup folder: '.json_encode(array_keys(FakeFiles::$files)));
     }
 });
+step('updating a plugin installs its newest release, and asks first when that is for another version', function () use ($admin, $paper) {
+    $sites = Web::$transport;
+    $release = fn (string $version, string $minecraft) => ['id' => 'ver'.$version, 'version_number' => $version, 'version_type' => 'release', 'game_versions' => [$minecraft], 'loaders' => ['paper'],
+        'files' => [['filename' => "SmokeEdit-$version.jar", 'url' => "https://cdn.modrinth.com/data/AAAA1111/SmokeEdit-$version.jar", 'primary' => true]]];
+    $newest = null;
+    Web::$transport = function (string $url, array $headers = []) use (&$newest, $sites) {
+        return $newest !== null && str_contains($url, 'AAAA1111/version') ? json_encode([$newest]) : $sites($url, $headers);
+    };
+    try {
+        $page = Livewire::actingAs($admin)->test(Packages::class)->call('load')
+            ->callAction('install', arguments: ['key' => 'modrinth:AAAA1111', 'fits' => true])
+            ->callAction('update', arguments: ['file' => 'SmokeEdit-1.0.jar', 'title' => 'Smoke Edit']);
+        if (! isset(FakeFiles::$files['/plugins/SmokeEdit-1.0.jar'])) {
+            throw new RuntimeException('the newest release was installed again');
+        }
+        $newest = $release('2.0', '1.21.4');
+        $page->callAction('update', arguments: ['file' => 'SmokeEdit-1.0.jar', 'title' => 'Smoke Edit']);
+        if (! isset(FakeFiles::$files['/plugins/SmokeEdit-2.0.jar']) || isset(FakeFiles::$files['/plugins/SmokeEdit-1.0.jar'])
+            || Package::query()->where('server_id', $paper->id)->value('version') !== '2.0') {
+            throw new RuntimeException('not updated: '.json_encode(array_keys(FakeFiles::$files)));
+        }
+        $newest = $release('3.0', '1.20.6');
+        $page->callAction('update', arguments: ['file' => 'SmokeEdit-2.0.jar', 'title' => 'Smoke Edit'])->assertActionMounted('updateAnyway');
+        if (isset(FakeFiles::$files['/plugins/SmokeEdit-3.0.jar'])) {
+            throw new RuntimeException('a release for another version was installed without asking');
+        }
+        $page->callMountedAction();
+        if (! isset(FakeFiles::$files['/plugins/SmokeEdit-3.0.jar'])) {
+            throw new RuntimeException('Update anyway did not install: '.json_encode(array_keys(FakeFiles::$files)));
+        }
+        $page->callAction('remove', arguments: ['file' => 'SmokeEdit-3.0.jar']);
+    } finally {
+        Web::$transport = $sites;
+    }
+});
 step('a plugin that fails on the next start is switched off with its log line', function () use ($admin, $paper) {
     $page = Livewire::actingAs($admin)->test(Packages::class)->call('load')
         ->callAction('install', arguments: ['key' => 'modrinth:AAAA1111', 'fits' => true])
@@ -396,7 +431,7 @@ step('servers without plugins or mods have no Plugins page', function () use ($a
     }
 });
 // Every step must have run: a step that never ran is a failure too.
-$expected = 19;
+$expected = 20;
 if ($passed !== $expected) {
     echo "FAIL $passed of $expected steps passed\n";
     exit(1);
