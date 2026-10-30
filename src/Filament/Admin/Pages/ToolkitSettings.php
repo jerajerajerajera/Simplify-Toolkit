@@ -9,7 +9,6 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
-use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Text;
 use Filament\Schemas\Contracts\HasSchemas;
@@ -82,16 +81,21 @@ final class ToolkitSettings extends Page implements HasSchemas
                         ->color(fn () => $this->hasKey ? 'success' : 'gray'),
                     TextInput::make('curseforge')->label(__('simplify-toolkit::settings.'.($this->hasKey ? 'new_key' : 'key')))
                         ->password()->autocomplete('off')->maxLength(200),
-                    Actions::make([
-                        Action::make('saveKey')->label(__('simplify-toolkit::settings.save'))->icon('tabler-device-floppy')->button()
-                            ->action(fn () => $this->saveKey()),
-                        Action::make('testKey')->label(__('simplify-toolkit::settings.test'))->icon('tabler-plug-connected')->color('gray')->button()
-                            ->visible(fn () => $this->hasKey)->action(fn () => $this->testKey()),
-                        Action::make('removeKey')->label(__('simplify-toolkit::settings.remove'))->icon('tabler-trash')->color('danger')->button()
-                            ->requiresConfirmation()->visible(fn () => $this->hasKey)->action(fn () => $this->removeKey()),
-                    ])->visible(fn () => $this->canChange()),
                 ]),
         ]);
+    }
+
+    /** Save, Test and Remove in the head of the page, as on Simplify's own pages (and in host mode's title bar). */
+    protected function getHeaderActions(): array
+    {
+        return [
+            Action::make('testKey')->label(__('simplify-toolkit::settings.test'))->icon('tabler-plug-connected')->color('gray')
+                ->visible(fn () => $this->canChange() && $this->hasKey)->action(fn () => $this->testKey()),
+            Action::make('removeKey')->label(__('simplify-toolkit::settings.remove'))->icon('tabler-trash')->color('gray')
+                ->requiresConfirmation()->visible(fn () => $this->canChange() && $this->hasKey)->action(fn () => $this->removeKey()),
+            Action::make('saveKey')->label(__('simplify-toolkit::settings.save'))->icon('tabler-device-floppy')
+                ->visible(fn () => $this->canChange())->action(fn () => $this->saveKey()),
+        ];
     }
 
     public function save(): void
