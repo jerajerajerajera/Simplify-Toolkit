@@ -23,6 +23,17 @@ With [Simplify](https://github.com/jerajerajerajera/Simplify) installed, a runni
 players, MOTD, version and server icon on its card and page, and its software, version, modpack and players in the
 server list on your website (event `simplify.embed.server`). Toolkit also shows up in Simplify's add-on list.
 
+## For other Simplify add-ons
+
+Two parts are meant to be used by other add-ons, behind `class_exists()`, and keep their signature:
+
+- `Simplify\Toolkit\Filament\Components\MotdEditor::make('motd')->serverName(string|Closure)->iconUrl(string|Closure|null)`:
+  the MOTD editor of the Minecraft page as a Filament field. Its state is the MOTD with `§` codes, at most 512
+  characters, as `server.properties` holds it. CSS and JavaScript come with the field.
+- `Simplify\Toolkit\Services\AutomaticBackups::save(?Server $server, array $values)` with `enabled`, `every_minutes`
+  (30 to 10080), `keep` (1 to 100) and `only_when_used`, all required and validated; `null` for the panel's own row.
+  `AutomaticBackups::panel()` gives the panel's values, which new servers get on their own.
+
 ## Install
 
 Install Simplify Toolkit from the [Pelican Hub](https://hub.pelican.dev). Updates come from the Hub only.

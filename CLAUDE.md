@@ -145,6 +145,8 @@ Een fix zonder test die eerst rood was, is niet af. Zo komt dezelfde fout niet t
 - Gereedschap voor servers: plugins en mods (Modrinth, Hangar, SpigotMC, CurseForge), Minecraft-instellingen
   (MOTD, server.properties, servericoon), spelersbeheer, populaire plugins, geplande herstart, automatische back-ups.
 - Neemt de gegevens van de oude Mods-add-on over (`tests/panel/takeover.php`). Die overname blijft werken.
+- Stabiele API voor andere add-ons (README, "For other Simplify add-ons"): `MotdEditor` (Server Maker) en
+  `AutomaticBackups::save()`/`panel()`. Signatuur nooit stil veranderen; eerst de Server Maker-thread melden.
 - `tests/panel/smoke.php` telt de stappen (`$expected`): pas dat getal aan als je een stap toevoegt.
 - In de functielijst (`docs/REFERENCE-070.md` in de kern) horen hier o.a. T1 spelersbeheer, T3 populaire plugins,
   T4 Explain-knop bij uitgezette plugin, K6 herstart, B1 automatische back-ups.
