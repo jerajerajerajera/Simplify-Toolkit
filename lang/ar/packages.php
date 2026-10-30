@@ -6,6 +6,8 @@ return [
     'find' => 'بحث',
     'for' => 'لـ :loader :version',
     'search_placeholder' => 'ابحث في Modrinth وHangar وSpigotMC وCurseForge',
+    'site' => 'الموقع',
+    'all_sites' => 'كل المواقع',
     'offline' => 'لا يرد الآن: :sites.',
     'nothing_found' => 'لم يُعثر على شيء.',
     'popular_plugins' => 'إضافات شائعة لـ :target',

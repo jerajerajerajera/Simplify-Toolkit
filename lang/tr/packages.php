@@ -6,6 +6,8 @@ return [
     'find' => 'Ara',
     'for' => ':loader :version için',
     'search_placeholder' => 'Modrinth, Hangar, SpigotMC ve CurseForge\'da ara',
+    'site' => 'Site',
+    'all_sites' => 'Tüm siteler',
     'offline' => 'Şu an yanıt vermiyor: :sites.',
     'nothing_found' => 'Hiçbir şey bulunamadı.',
     'popular_plugins' => 'Popüler eklentiler: :target',

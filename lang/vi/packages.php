@@ -6,6 +6,8 @@ return [
     'find' => 'Tìm',
     'for' => 'Cho :loader :version',
     'search_placeholder' => 'Tìm trên Modrinth, Hangar, SpigotMC và CurseForge',
+    'site' => 'Trang',
+    'all_sites' => 'Tất cả các trang',
     'offline' => 'Hiện không phản hồi: :sites.',
     'nothing_found' => 'Không tìm thấy gì.',
     'popular_plugins' => 'Plugin phổ biến cho :target',

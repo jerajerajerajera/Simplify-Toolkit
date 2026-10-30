@@ -6,6 +6,8 @@ return [
     'find' => 'Cari',
     'for' => 'Untuk :loader :version',
     'search_placeholder' => 'Cari di Modrinth, Hangar, SpigotMC, dan CurseForge',
+    'site' => 'Situs',
+    'all_sites' => 'Semua situs',
     'offline' => 'Tidak merespons sekarang: :sites.',
     'nothing_found' => 'Tidak ada yang ditemukan.',
     'popular_plugins' => 'Plugin populer untuk :target',

@@ -6,6 +6,8 @@ return [
     'find' => '查找',
     'for' => '适用于 :loader :version',
     'search_placeholder' => '搜索 Modrinth、Hangar、SpigotMC 和 CurseForge',
+    'site' => '网站',
+    'all_sites' => '所有网站',
     'offline' => '暂时无响应：:sites。',
     'nothing_found' => '没有找到结果。',
     'popular_plugins' => '适用于 :target 的热门插件',

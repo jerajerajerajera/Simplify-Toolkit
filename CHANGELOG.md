@@ -4,6 +4,8 @@
 
 - Plugins and Mods pages: update a plugin or mod that was added here to its newest release (back from 0.7.0). When the
   newest release is made for another Minecraft version, Toolkit asks first. The old file goes to the backup folder.
+- Plugins and Mods pages: search one site (Modrinth, Hangar, SpigotMC or CurseForge) or all of them, as in 0.7.0.
+  Only the sites that fit the server show.
 
 ## 1.2.2
 

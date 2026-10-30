@@ -6,6 +6,8 @@ return [
     'find' => 'Hľadať',
     'for' => 'Pre :loader :version',
     'search_placeholder' => 'Hľadať na Modrinth, Hangar, SpigotMC a CurseForge',
+    'site' => 'Web',
+    'all_sites' => 'Všetky weby',
     'offline' => 'Teraz neodpovedá: :sites.',
     'nothing_found' => 'Nič sa nenašlo.',
     'popular_plugins' => 'Obľúbené pluginy pre :target',

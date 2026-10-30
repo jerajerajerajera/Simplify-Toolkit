@@ -51,6 +51,9 @@ final class Packages extends Page implements HasActions
 
     public bool $searched = false;
 
+    /** The one site to search, or '' for all of them. */
+    public string $site = '';
+
     /** How many results are shown; "Show more" adds a page. */
     public int $shown = 10;
 
@@ -170,8 +173,7 @@ final class Packages extends Page implements HasActions
         if (! $this->ready()) {
             return;
         }
-        $found = (new Catalog(Keys::curseForge(user())))
-            ->search($this->query, $this->context['kind'], $this->context['loader'], $this->context['minecraft']);
+        $found = $this->catalog()->search($this->query, $this->context['kind'], $this->context['loader'], $this->context['minecraft'], $this->site);
         $this->results = $found['items'];
         $this->shown = 10;
         $this->offline = $found['offline'];
@@ -186,6 +188,34 @@ final class Packages extends Page implements HasActions
     public function updatedQuery(): void
     {
         $this->search();
+    }
+
+    public function updatedSite(): void
+    {
+        if (! array_key_exists($this->site, $this->sites())) {
+            $this->site = '';
+        }
+        $this->search();
+    }
+
+    /**
+     * The sites this server's software can install from, by id: the choice above the results.
+     *
+     * @return array<string, string>
+     */
+    public function sites(): array
+    {
+        $sites = [];
+        foreach ($this->catalog()->sourcesFor($this->context['kind'], $this->context['loader']) as $source) {
+            $sites[$source->id()] = $source->label();
+        }
+
+        return $sites;
+    }
+
+    private function catalog(): Catalog
+    {
+        return new Catalog(Keys::curseForge(user()));
     }
 
     /**

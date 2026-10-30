@@ -6,6 +6,8 @@ return [
     'find' => 'Etsi',
     'for' => ':loader :version',
     'search_placeholder' => 'Etsi Modrinthista, Hangarista, SpigotMC:stä ja CurseForgesta',
+    'site' => 'Sivusto',
+    'all_sites' => 'Kaikki sivustot',
     'offline' => 'Ei vastaa juuri nyt: :sites.',
     'nothing_found' => 'Mitään ei löytynyt.',
     'popular_plugins' => 'Suositut lisäosat: :target',

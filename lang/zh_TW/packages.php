@@ -6,6 +6,8 @@ return [
     'find' => '尋找',
     'for' => '適用於 :loader :version',
     'search_placeholder' => '搜尋 Modrinth、Hangar、SpigotMC 和 CurseForge',
+    'site' => '網站',
+    'all_sites' => '所有網站',
     'offline' => '暫時沒有回應：:sites。',
     'nothing_found' => '沒有找到結果。',
     'popular_plugins' => '適用於 :target 的熱門外掛',

@@ -6,6 +6,8 @@ return [
     'find' => 'Αναζήτηση',
     'for' => 'Για :loader :version',
     'search_placeholder' => 'Αναζήτηση σε Modrinth, Hangar, SpigotMC και CurseForge',
+    'site' => 'Ιστότοπος',
+    'all_sites' => 'Όλοι οι ιστότοποι',
     'offline' => 'Δεν απαντά τώρα: :sites.',
     'nothing_found' => 'Δεν βρέθηκε τίποτα.',
     'popular_plugins' => 'Δημοφιλή πρόσθετα για :target',

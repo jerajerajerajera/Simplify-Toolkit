@@ -32,6 +32,13 @@ a.sm-title:hover, .sm-meta a:hover { text-decoration: underline; }
 .sm-stack { display: flex; flex-direction: column; align-items: flex-start; gap: .75rem; }
 .sm-more { display: flex; justify-content: center; padding-top: .75rem; }
 .sm-search { margin-bottom: 1rem; }
+/* The site choice under the search field: small pills, the chosen one in the accent colour. */
+.sm-sites { display: flex; flex-wrap: wrap; gap: .375rem; margin-top: .5rem; }
+.sm-site { padding: .25rem .625rem; border: 1px solid var(--s-line, var(--gray-200)); border-radius: 999px; background: transparent; color: var(--s-muted, var(--gray-600)); font: inherit; font-size: .75rem; cursor: pointer; }
+.dark .sm-site { border-color: var(--s-line, var(--gray-700)); color: var(--s-muted, var(--gray-400)); }
+.sm-site:hover { color: var(--s-accent, var(--primary-600)); }
+.sm-site[aria-pressed="true"] { border-color: transparent; background: color-mix(in srgb, var(--s-accent, var(--primary-600)) 14%, transparent); color: var(--s-accent, var(--primary-600)); font-weight: 600; }
+.sm-site:focus-visible { outline: 2px solid var(--s-accent, var(--primary-600)); outline-offset: 1px; }
 .sm-busy { opacity: .6; }
 /* Placeholder rows while the page loads: the same height as real rows, so nothing jumps when they arrive. */
 .sm-skeleton .sm-thumb, .sm-skeleton .sm-line { display: block; border-radius: .375rem; background: var(--gray-100); animation: sm-pulse 1.4s ease-in-out infinite; }
