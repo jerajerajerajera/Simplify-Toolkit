@@ -1,0 +1,31 @@
+<?php
+
+return [
+    'title' => 'Oyuncular',
+    'heading' => 'Oyuncu yönetimi',
+    'description' => 'Beyaz liste, operatörler ve moderasyon',
+    'name' => 'Oyuncu adı',
+    'name_placeholder' => 'Minecraft kullanıcı adı',
+    'online' => 'Çevrimiçi oyuncular',
+    'online_help' => 'Sunucular durum yanıtlarında oyuncu adlarını gizleyebilir.',
+    'online_badge' => 'Çevrimiçi',
+    'no_names' => 'Oyuncu adı bildirilmedi.',
+    'whitelist' => 'Beyaz liste',
+    'operators' => 'Operatörler',
+    'banned' => 'Yasaklı oyuncular',
+    'nobody' => 'Henüz kimse yok.',
+    'actions' => [
+        'whitelist' => 'Beyaz listeye ekle',
+        'unwhitelist' => 'Beyaz listeden çıkar',
+        'op' => 'OP',
+        'deop' => 'DeOP',
+        'kick' => 'At',
+        'ban' => 'Yasakla',
+        'unban' => 'Yasağı kaldır',
+    ],
+    'confirm' => ':player için :action?',
+    'op_message' => 'Operatörler her sunucu komutunu çalıştırabilir.',
+    'removed_message' => 'Oyuncu sunucudan çıkarılır.',
+    'sent' => 'Gönderildi: :action',
+    'offline' => 'Oyuncuları değiştirmek için sunucuyu başlatın.',
+];

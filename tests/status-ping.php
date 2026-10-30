@@ -5,6 +5,7 @@ declare(strict_types=1);
 
 require __DIR__.'/../src/Services/StatusPing.php';
 require __DIR__.'/../src/Services/ServerInfo.php';
+require __DIR__.'/../src/Services/Players.php';
 
 use Simplify\Toolkit\Services\ServerInfo;
 use Simplify\Toolkit\Services\StatusPing;
@@ -34,6 +35,8 @@ check($answer['motd'] === '§r§6Hello §r§6§lworld§r§x§f§f§0§0§0§0!',
 check($answer['favicon'] === 'data:image/png;base64,AAAA', 'the icon the server sends');
 check(StatusPing::read('{"description":"Plain","favicon":"javascript:x"}')['motd'] === 'Plain' && StatusPing::read('{"favicon":"https://x"}')['favicon'] === '', 'plain MOTD, other icons dropped');
 check(StatusPing::read('not json') === [], 'not a Minecraft answer');
+check($answer['names'] === ['Steve'], 'online names: '.json_encode($answer['names']));
+check(StatusPing::read('{"players":{"sample":[{"name":"§6Join us!"},{"name":".BedrockKid"},"x",{"name":"Alex"}]}}')['names'] === ['.BedrockKid', 'Alex'], 'text lines in the sample are not names');
 
 $info = ServerInfo::from($answer, 'https://cdn.modrinth.com/icon.png');
 check($info === ['players' => 3, 'max_players' => 20, 'motd' => $answer['motd'], 'version' => 'Paper 1.21.4', 'icon' => 'data:image/png;base64,AAAA'], 'Simplify card info: '.json_encode($info));

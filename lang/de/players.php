@@ -1,0 +1,31 @@
+<?php
+
+return [
+    'title' => 'Spieler',
+    'heading' => 'Spielerverwaltung',
+    'description' => 'Whitelist, Operatoren und Moderation',
+    'name' => 'Spielername',
+    'name_placeholder' => 'Minecraft-Benutzername',
+    'online' => 'Spieler online',
+    'online_help' => 'Server können Spielernamen in ihrer Statusantwort verbergen.',
+    'online_badge' => 'Online',
+    'no_names' => 'Keine Spielernamen gemeldet.',
+    'whitelist' => 'Whitelist',
+    'operators' => 'Operatoren',
+    'banned' => 'Gebannte Spieler',
+    'nobody' => 'Noch niemand.',
+    'actions' => [
+        'whitelist' => 'Auf Whitelist',
+        'unwhitelist' => 'Von Whitelist',
+        'op' => 'OP',
+        'deop' => 'DeOP',
+        'kick' => 'Kicken',
+        'ban' => 'Bannen',
+        'unban' => 'Entbannen',
+    ],
+    'confirm' => ':action :player?',
+    'op_message' => 'Operatoren können jeden Serverbefehl ausführen.',
+    'removed_message' => 'Der Spieler wird vom Server entfernt.',
+    'sent' => ':action gesendet',
+    'offline' => 'Starte den Server, um Spieler zu ändern.',
+];

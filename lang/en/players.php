@@ -1,0 +1,31 @@
+<?php
+
+return [
+    'title' => 'Players',
+    'heading' => 'Player management',
+    'description' => 'Whitelist, operators & moderation',
+    'name' => 'Player name',
+    'name_placeholder' => 'Minecraft username',
+    'online' => 'Online players',
+    'online_help' => 'Servers may hide player names in their status response.',
+    'online_badge' => 'Online',
+    'no_names' => 'No player names reported.',
+    'whitelist' => 'Whitelist',
+    'operators' => 'Operators',
+    'banned' => 'Banned players',
+    'nobody' => 'Nobody yet.',
+    'actions' => [
+        'whitelist' => 'Whitelist',
+        'unwhitelist' => 'Unwhitelist',
+        'op' => 'OP',
+        'deop' => 'DeOP',
+        'kick' => 'Kick',
+        'ban' => 'Ban',
+        'unban' => 'Unban',
+    ],
+    'confirm' => ':action :player?',
+    'op_message' => 'Operators can run every server command.',
+    'removed_message' => 'The player is removed from the server.',
+    'sent' => ':action sent',
+    'offline' => 'Start the server to change players.',
+];

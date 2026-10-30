@@ -1,0 +1,31 @@
+<?php
+
+return [
+    'title' => 'Spillere',
+    'heading' => 'Spilleradministrasjon',
+    'description' => 'Whitelist, operatører og moderering',
+    'name' => 'Spillernavn',
+    'name_placeholder' => 'Minecraft-brukernavn',
+    'online' => 'Spillere på nett',
+    'online_help' => 'Servere kan skjule spillernavn i statussvaret sitt.',
+    'online_badge' => 'På nett',
+    'no_names' => 'Ingen spillernavn rapportert.',
+    'whitelist' => 'Whitelist',
+    'operators' => 'Operatører',
+    'banned' => 'Utestengte spillere',
+    'nobody' => 'Ingen ennå.',
+    'actions' => [
+        'whitelist' => 'Legg til i whitelist',
+        'unwhitelist' => 'Fjern fra whitelist',
+        'op' => 'OP',
+        'deop' => 'DeOP',
+        'kick' => 'Kast ut',
+        'ban' => 'Utesteng',
+        'unban' => 'Opphev utestengelse',
+    ],
+    'confirm' => ':action :player?',
+    'op_message' => 'Operatører kan kjøre alle serverkommandoer.',
+    'removed_message' => 'Spilleren fjernes fra serveren.',
+    'sent' => ':action sendt',
+    'offline' => 'Start serveren for å endre spillere.',
+];

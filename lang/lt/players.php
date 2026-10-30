@@ -1,0 +1,31 @@
+<?php
+
+return [
+    'title' => 'Žaidėjai',
+    'heading' => 'Žaidėjų valdymas',
+    'description' => 'Whitelist, operatoriai ir moderavimas',
+    'name' => 'Žaidėjo vardas',
+    'name_placeholder' => 'Minecraft naudotojo vardas',
+    'online' => 'Prisijungę žaidėjai',
+    'online_help' => 'Serveriai gali slėpti žaidėjų vardus savo būsenos atsakyme.',
+    'online_badge' => 'Prisijungę',
+    'no_names' => 'Žaidėjų vardų nepranešta.',
+    'whitelist' => 'Whitelist',
+    'operators' => 'Operatoriai',
+    'banned' => 'Užblokuoti žaidėjai',
+    'nobody' => 'Kol kas nieko.',
+    'actions' => [
+        'whitelist' => 'Į whitelist',
+        'unwhitelist' => 'Iš whitelist',
+        'op' => 'OP',
+        'deop' => 'DeOP',
+        'kick' => 'Išmesti',
+        'ban' => 'Užblokuoti',
+        'unban' => 'Atblokuoti',
+    ],
+    'confirm' => ':action :player?',
+    'op_message' => 'Operatoriai gali vykdyti bet kurią serverio komandą.',
+    'removed_message' => 'Žaidėjas pašalinamas iš serverio.',
+    'sent' => 'Išsiųsta: :action',
+    'offline' => 'Paleiskite serverį, kad galėtumėte keisti žaidėjus.',
+];

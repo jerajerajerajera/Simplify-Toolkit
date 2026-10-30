@@ -50,6 +50,12 @@ a.sm-title:hover, .sm-meta a:hover { text-decoration: underline; }
 .sm-facts dd .is-quiet { font-weight: 400; color: var(--gray-500); }
 .sm-buttons { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 1rem; }
 .sm-side { display: flex; flex-direction: column; gap: 1.5rem; }
+/* Players: a name in a list fills in the player field above the buttons. */
+.sm-thumb.is-small { width: 1.75rem; height: 1.75rem; }
+.sm-thumb.is-pixel { image-rendering: pixelated; }
+.sm-row.is-pick { cursor: pointer; border-radius: .375rem; }
+.sm-row.is-pick:hover .sm-title { color: var(--s-accent, var(--primary-600)); }
+.sm-search + .sm-title { display: block; margin-top: .5rem; }
 /* Icon buttons in a row look like Simplify's own icon buttons: a quiet bordered square, the icon turns the accent
    colour on hover. Simplify's colours when it is installed, Pelican's otherwise. */
 .sm-actions :is(.fi-icon-btn, .sm-icon-btn) { display: inline-grid; place-items: center; width: var(--s-h, 36px); height: var(--s-h, 36px); margin: 0; border: 1px solid var(--s-line, var(--gray-200)); border-radius: var(--s-radius-sm, 6px); background: var(--s-surface, #fff); color: var(--s-ink, var(--gray-950)); transition: background .15s, border-color .15s, color .15s; }

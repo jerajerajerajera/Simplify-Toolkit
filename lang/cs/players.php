@@ -1,0 +1,31 @@
+<?php
+
+return [
+    'title' => 'Hráči',
+    'heading' => 'Správa hráčů',
+    'description' => 'Whitelist, operátoři a moderace',
+    'name' => 'Jméno hráče',
+    'name_placeholder' => 'Jméno hráče Minecraftu',
+    'online' => 'Hráči online',
+    'online_help' => 'Servery mohou ve stavové odpovědi skrývat jména hráčů.',
+    'online_badge' => 'Online',
+    'no_names' => 'Nebyla nahlášena žádná jména hráčů.',
+    'whitelist' => 'Whitelist',
+    'operators' => 'Operátoři',
+    'banned' => 'Zabanovaní hráči',
+    'nobody' => 'Zatím nikdo.',
+    'actions' => [
+        'whitelist' => 'Na whitelist',
+        'unwhitelist' => 'Z whitelistu',
+        'op' => 'OP',
+        'deop' => 'DeOP',
+        'kick' => 'Vyhodit',
+        'ban' => 'Zabanovat',
+        'unban' => 'Odbanovat',
+    ],
+    'confirm' => ':action :player?',
+    'op_message' => 'Operátoři mohou spouštět jakýkoli příkaz serveru.',
+    'removed_message' => 'Hráč bude ze serveru odebrán.',
+    'sent' => 'Odesláno: :action',
+    'offline' => 'Spusťte server, abyste mohli měnit hráče.',
+];

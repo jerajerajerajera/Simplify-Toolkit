@@ -1,0 +1,31 @@
+<?php
+
+return [
+    'title' => '玩家',
+    'heading' => '玩家管理',
+    'description' => '白名單、管理員和管理',
+    'name' => '玩家名稱',
+    'name_placeholder' => 'Minecraft 使用者名稱',
+    'online' => '線上玩家',
+    'online_help' => '伺服器可能會在狀態響應中隱藏玩家名稱。',
+    'online_badge' => '線上',
+    'no_names' => '未報告玩家名稱。',
+    'whitelist' => '白名單',
+    'operators' => '管理員（OP）',
+    'banned' => '被封鎖的玩家',
+    'nobody' => '還沒有人。',
+    'actions' => [
+        'whitelist' => '加入白名單',
+        'unwhitelist' => '移出白名單',
+        'op' => '設為 OP',
+        'deop' => '取消 OP',
+        'kick' => '踢出',
+        'ban' => '封鎖',
+        'unban' => '解除封鎖',
+    ],
+    'confirm' => '對 :player 執行「:action」？',
+    'op_message' => '管理員（OP）可以執行所有伺服器指令。',
+    'removed_message' => '該玩家將被移出伺服器。',
+    'sent' => ':action 已傳送',
+    'offline' => '啟動伺服器後才能變更玩家。',
+];

@@ -1,0 +1,31 @@
+<?php
+
+return [
+    'title' => 'プレイヤー',
+    'heading' => 'プレイヤー管理',
+    'description' => 'ホワイトリスト、オペレーター、モデレーション',
+    'name' => 'プレイヤー名',
+    'name_placeholder' => 'Minecraft のユーザー名',
+    'online' => 'オンラインのプレイヤー',
+    'online_help' => 'サーバーはステータス応答でプレイヤー名を隠すことがあります。',
+    'online_badge' => 'オンライン',
+    'no_names' => 'プレイヤー名は報告されていません。',
+    'whitelist' => 'ホワイトリスト',
+    'operators' => 'オペレーター',
+    'banned' => 'BAN されたプレイヤー',
+    'nobody' => 'まだ誰もいません。',
+    'actions' => [
+        'whitelist' => 'ホワイトリストに追加',
+        'unwhitelist' => 'ホワイトリストから削除',
+        'op' => 'OP にする',
+        'deop' => 'OP を解除',
+        'kick' => 'キック',
+        'ban' => 'BAN',
+        'unban' => 'BAN を解除',
+    ],
+    'confirm' => '「:action」を :player に実行しますか?',
+    'op_message' => 'オペレーターはすべてのサーバーコマンドを実行できます。',
+    'removed_message' => 'プレイヤーはサーバーから削除されます。',
+    'sent' => ':action を送信しました',
+    'offline' => 'プレイヤーを変更するにはサーバーを起動してください。',
+];

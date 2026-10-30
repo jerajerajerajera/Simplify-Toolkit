@@ -22,6 +22,7 @@ use Simplify\Core\Addons\Addon;
 use Simplify\Toolkit\Filament\Admin\Pages\ToolkitSettings;
 use Simplify\Toolkit\Filament\Server\Pages\Minecraft;
 use Simplify\Toolkit\Filament\Server\Pages\Packages;
+use Simplify\Toolkit\Filament\Server\Pages\Players;
 use Simplify\Toolkit\Livewire\ServerSummary;
 use Simplify\Toolkit\Models\ApiKey;
 use Simplify\Toolkit\Models\Package;
@@ -221,10 +222,20 @@ step('the server icon shows and can be removed', function () use ($admin) {
         throw new RuntimeException('the icon was not removed');
     }
 });
+step('the Players page lists whitelist, operators and bans from their files', function () use ($admin) {
+    FakeFiles::$files['/whitelist.json'] = json_encode([['uuid' => 'a1', 'name' => 'Steve'], ['name' => 'bad name!']]);
+    FakeFiles::$files['/ops.json'] = json_encode([['uuid' => 'b2', 'name' => 'Alex', 'level' => 4]]);
+    $page = Livewire::actingAs($admin)->test(Players::class)->call('load')->assertSet('unreachable', false)->assertSet('running', false);
+    $lists = $page->get('lists');
+    if (array_column($lists['whitelist'], 'name') !== ['Steve'] || array_column($lists['operators'], 'name') !== ['Alex'] || $lists['banned'] !== []) {
+        throw new RuntimeException('lists: '.json_encode($lists));
+    }
+    $page->assertSee(__('simplify-toolkit::players.offline'));
+});
 step('other games have no Minecraft page', function () use ($admin) {
     $rust = Server::factory()->create(['owner_id' => $admin->id, 'egg_id' => Egg::factory()->create(['name' => 'Rust', 'features' => []])->id]);
     Filament::setTenant($rust);
-    if (Minecraft::canAccess()) {
+    if (Minecraft::canAccess() || Players::canAccess()) {
         throw new RuntimeException('Rust got a Minecraft page');
     }
 });

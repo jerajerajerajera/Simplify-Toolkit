@@ -1,0 +1,31 @@
+<?php
+
+return [
+    'title' => 'Spelers',
+    'heading' => 'Spelersbeheer',
+    'description' => 'Whitelist, operators en moderatie',
+    'name' => 'Spelersnaam',
+    'name_placeholder' => 'Minecraft-gebruikersnaam',
+    'online' => 'Online spelers',
+    'online_help' => 'Servers kunnen spelersnamen verbergen in hun statusantwoord.',
+    'online_badge' => 'Online',
+    'no_names' => 'Geen spelersnamen gemeld.',
+    'whitelist' => 'Whitelist',
+    'operators' => 'Operators',
+    'banned' => 'Verbannen spelers',
+    'nobody' => 'Nog niemand.',
+    'actions' => [
+        'whitelist' => 'Op whitelist',
+        'unwhitelist' => 'Van whitelist',
+        'op' => 'OP',
+        'deop' => 'DeOP',
+        'kick' => 'Kicken',
+        'ban' => 'Bannen',
+        'unban' => 'Unbannen',
+    ],
+    'confirm' => ':action :player?',
+    'op_message' => 'Operators kunnen elk servercommando uitvoeren.',
+    'removed_message' => 'De speler wordt van de server verwijderd.',
+    'sent' => ':action verstuurd',
+    'offline' => 'Start de server om spelers te wijzigen.',
+];

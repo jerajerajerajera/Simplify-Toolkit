@@ -1,0 +1,31 @@
+<?php
+
+return [
+    'title' => 'Játékosok',
+    'heading' => 'Játékoskezelés',
+    'description' => 'Engedélyezési lista, operátorok és moderálás',
+    'name' => 'Játékosnév',
+    'name_placeholder' => 'Minecraft-felhasználónév',
+    'online' => 'Online játékosok',
+    'online_help' => 'A szerverek elrejthetik a játékosneveket az állapotválaszukban.',
+    'online_badge' => 'Online',
+    'no_names' => 'Nincs jelentett játékosnév.',
+    'whitelist' => 'Engedélyezési lista',
+    'operators' => 'Operátorok',
+    'banned' => 'Kitiltott játékosok',
+    'nobody' => 'Még senki.',
+    'actions' => [
+        'whitelist' => 'Engedélyezési listára',
+        'unwhitelist' => 'Le az engedélyezési listáról',
+        'op' => 'OP',
+        'deop' => 'DeOP',
+        'kick' => 'Kirúgás',
+        'ban' => 'Kitiltás',
+        'unban' => 'Kitiltás feloldása',
+    ],
+    'confirm' => ':action: :player?',
+    'op_message' => 'Az operátorok minden szerverparancsot futtathatnak.',
+    'removed_message' => 'A játékos eltávolításra kerül a szerverről.',
+    'sent' => ':action elküldve',
+    'offline' => 'Indítsd el a szervert a játékosok módosításához.',
+];

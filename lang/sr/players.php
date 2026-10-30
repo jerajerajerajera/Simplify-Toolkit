@@ -1,0 +1,31 @@
+<?php
+
+return [
+    'title' => 'Играчи',
+    'heading' => 'Управљање играчима',
+    'description' => 'Whitelist, оператори и модерација',
+    'name' => 'Име играча',
+    'name_placeholder' => 'Minecraft корисничко име',
+    'online' => 'Играчи на мрежи',
+    'online_help' => 'Сервери могу сакрити имена играча у одговору о статусу.',
+    'online_badge' => 'На мрежи',
+    'no_names' => 'Нису пријављена имена играча.',
+    'whitelist' => 'Whitelist',
+    'operators' => 'Оператори',
+    'banned' => 'Забрањени играчи',
+    'nobody' => 'Још нико.',
+    'actions' => [
+        'whitelist' => 'На whitelist',
+        'unwhitelist' => 'Са whitelist-е',
+        'op' => 'OP',
+        'deop' => 'DeOP',
+        'kick' => 'Избаци',
+        'ban' => 'Забрани',
+        'unban' => 'Укини забрану',
+    ],
+    'confirm' => ':action :player?',
+    'op_message' => 'Оператори могу покренути сваку команду сервера.',
+    'removed_message' => 'Играч се уклања са сервера.',
+    'sent' => ':action послато',
+    'offline' => 'Покрените сервер да бисте мењали играче.',
+];
