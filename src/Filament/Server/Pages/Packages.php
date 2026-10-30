@@ -15,8 +15,10 @@ use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Simplify\Explain\Filament\ExplainAction;
+use Simplify\Toolkit\Filament\Server\Actions\RestartActions;
 use Simplify\Toolkit\Services\Keys;
 use Simplify\Toolkit\Services\Packages as ServerPackages;
+use Simplify\Toolkit\Services\RestartReminder;
 use Simplify\Toolkit\Services\ServerKind;
 use Simplify\Toolkit\Services\Sources\Catalog;
 use Simplify\Toolkit\Services\StartCheck;
@@ -92,6 +94,11 @@ final class Packages extends Page implements HasActions
     public function getTitle(): string
     {
         return self::getNavigationLabel();
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [RestartActions::group()];
     }
 
     public function server(): Server
@@ -208,6 +215,7 @@ final class Packages extends Page implements HasActions
     {
         try {
             $change();
+            RestartReminder::mark($this->server());
             Notification::make()->title($done)->body(__('simplify-toolkit::packages.restart_help'))->success()->send();
         } catch (HttpException $refused) {
             Notification::make()->title(__('simplify-toolkit::packages.not_done'))->body($refused->getMessage())->danger()->send();

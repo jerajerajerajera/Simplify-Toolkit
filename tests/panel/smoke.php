@@ -27,6 +27,7 @@ use Simplify\Toolkit\Livewire\ServerSummary;
 use Simplify\Toolkit\Models\ApiKey;
 use Simplify\Toolkit\Models\Package;
 use Simplify\Toolkit\Services\Keys;
+use Simplify\Toolkit\Services\RestartReminder;
 use Simplify\Toolkit\Services\ServerKind;
 use Simplify\Toolkit\Services\Software;
 use Simplify\Toolkit\Services\Web;
@@ -231,6 +232,20 @@ step('the Players page lists whitelist, operators and bans from their files', fu
         throw new RuntimeException('lists: '.json_encode($lists));
     }
     $page->assertSee(__('simplify-toolkit::players.offline'));
+});
+step('a saved change leaves a restart reminder on the card until it is dismissed', function () use ($admin, $paper) {
+    Livewire::actingAs($admin)->test(Minecraft::class)->call('save')->assertHasNoErrors();
+    if (! in_array(__('simplify-toolkit::restart.needed'), (new ToolkitAddon)->tileBadges($paper), true)) {
+        throw new RuntimeException('no reminder after saving: '.json_encode(RestartReminder::get($paper)));
+    }
+    RestartReminder::plan($paper, 15);
+    if ((RestartReminder::get($paper)['at'] ?? 0) < time() + 14 * 60) {
+        throw new RuntimeException('the restart was not planned');
+    }
+    RestartReminder::forget($paper);
+    if (RestartReminder::get($paper) !== null) {
+        throw new RuntimeException('the reminder stayed');
+    }
 });
 step('other games have no Minecraft page', function () use ($admin) {
     $rust = Server::factory()->create(['owner_id' => $admin->id, 'egg_id' => Egg::factory()->create(['name' => 'Rust', 'features' => []])->id]);
