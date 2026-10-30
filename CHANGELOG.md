@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.1.5
+
+- Toolkit settings: Save key, Test and Remove sit in the head of the page instead of a row of buttons inside the form. In
+  Simplify's host mode they are in the title bar.
+- Plugins/Mods: the button for your own CurseForge key sits in the head of its card.
+- Minecraft: the MOTD preview runs edge to edge in its card, instead of a box inside the card.
+
 ## 1.1.4
 
 - The Plugins and Mods page opens at once: its boxes stand straight away with placeholder rows, and the search results

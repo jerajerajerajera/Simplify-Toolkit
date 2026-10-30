@@ -136,7 +136,10 @@
             </div>
 
             <x-filament::section :heading="__('simplify-toolkit::settings.own_key')" :description="__('simplify-toolkit::settings.'.(\Simplify\Toolkit\Services\Keys::has(\Simplify\Toolkit\Services\Keys::CURSEFORGE, user()) ? 'own_key_saved' : 'own_key_help'))">
-                {{ ($this->ownKeyAction)->size('sm') }}
+                {{-- The button sits in the card's head, like the buttons of Simplify's own cards. --}}
+                <x-slot name="afterHeader">
+                    {{ ($this->ownKeyAction)->size('sm') }}
+                </x-slot>
             </x-filament::section>
         </div>
     </div>

@@ -10,6 +10,8 @@
 
 /* Minecraft's own colours, so the row looks the same in light and dark themes. */
 .sm-motd-row { display: grid; grid-template-columns: 3.5rem minmax(0, 1fr); gap: .25rem .75rem; padding: .625rem .75rem; border-radius: .5rem; background: #202024; }
+/* In its card the row runs edge to edge as a band, so it is no box inside the box. */
+.fi-section-content .sm-motd-row { margin-inline: calc(var(--fi-section-padding, 1.5rem) * -1); border-radius: 0; padding-inline: 1.5rem; }
 .sm-motd-icon { grid-row: span 3; width: 3.5rem; height: 3.5rem; border-radius: .25rem; background: #3a3a40; image-rendering: pixelated; object-fit: cover; }
 .sm-motd-head { display: flex; justify-content: space-between; gap: .75rem; min-width: 0; color: #fff; font: 15px/24px ui-monospace, monospace; text-shadow: 1px 1px #000; }
 .sm-motd-head span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
