@@ -7,23 +7,21 @@ the [Simplify](https://github.com/jerajerajerajera/Simplify) core. New tools are
   Quilt) from Modrinth, Hangar, SpigotMC and CurseForge, see which version fits your server, and switch them off or
   remove them.
 - **Minecraft settings**: change the MOTD, the main server settings and the server icon without editing
-  `server.properties`, and accept the EULA.
+  `server.properties`, and accept the EULA. After a change, the server shows "Restart needed" with Restart now, later
+  or dismiss.
+- **Players**: who is online, the whitelist, operators and bans, with whitelist, OP, kick and ban.
+- **Automatic backups**: a backup every so many minutes per server, keeping a set number of recovery points. Only
+  these automatic backups are ever deleted.
+
+On a modpack server the modpack is one row in the installed mods, with its mods folded under it.
 
 It works on its own, and shows up inside Simplify when both are installed.
 
-## Coming from Simplify Mods
+## With Simplify
 
-Simplify Toolkit was called Simplify Mods until 1.1.0. Install Simplify Toolkit first: it takes over the installed
-plugins list, the chosen loaders and the saved CurseForge keys of Simplify Mods. Then uninstall Simplify Mods, so
-the pages do not show twice.
-
-## With other Simplify plugins
-
-- [Simplify](https://github.com/jerajerajerajera/Simplify): a Minecraft part on the server page (players online,
-  software, modpack, plugins), "Paper 1.21.4" on the server tile, and a Settings button in the add-on list.
-  From Simplify 1.1: players, MOTD, version and server icon of a running server on its card and page.
-- [Simplify Embed](https://github.com/jerajerajerajera/Simplify-embed): software, version, modpack, and players and
-  MOTD while the server runs, in the public server list (event `simplify.embed.server`).
+With [Simplify](https://github.com/jerajerajerajera/Simplify) installed, a running Minecraft server shows its
+players, MOTD, version and server icon on its card and page, and its software, version, modpack and players in the
+server list on your website (event `simplify.embed.server`). Toolkit also shows up in Simplify's add-on list.
 
 ## Install
 
