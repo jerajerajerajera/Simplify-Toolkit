@@ -234,7 +234,8 @@ step('the Players page lists whitelist, operators and bans from their files', fu
     if (array_column($lists['whitelist'], 'name') !== ['Steve'] || array_column($lists['operators'], 'name') !== ['Alex'] || $lists['banned'] !== []) {
         throw new RuntimeException('lists: '.json_encode($lists));
     }
-    $page->assertSee(__('simplify-toolkit::players.offline'));
+    // A head that does not load gives way to the user icon underneath (style audit: no broken images).
+    $page->assertSee(__('simplify-toolkit::players.offline'))->assertSeeHtml('sm-face')->assertSeeHtml('x-on:error="$el.remove()"');
 });
 step('a saved change leaves a restart reminder on the card until it is dismissed', function () use ($admin, $paper) {
     Livewire::actingAs($admin)->test(Minecraft::class)->call('save')->assertHasNoErrors();
@@ -320,6 +321,10 @@ step('the Plugins page finds plugins for the version the server runs', function 
         ->assertSee('Smoke Edit')->assertSee('Chunky');
     if (count($page->get('installed')) !== 1) {
         throw new RuntimeException('installed: '.json_encode($page->get('installed')));
+    }
+    // On a phone the button in a box's head goes under the title (style audit phone390).
+    if (! str_contains(view('simplify-toolkit::assets.pages-css')->render(), '.sm-columns .fi-section-header-after-ctn { flex-basis: 100%; }')) {
+        throw new RuntimeException('the phone rule for buttons in a box\'s head is missing');
     }
 });
 step('the search can be limited to one site, as in 0.7.0', function () use ($admin) {

@@ -8,6 +8,8 @@
   Only the sites that fit the server show.
 - A file saved in Pelican's file manager while a Minecraft server runs gives "File changes saved, restart to load
   them" and the same "Restart needed" reminder as a change on the Minecraft or Plugins page (back from 0.7.0).
+- Players page: a player head that cannot be loaded shows the user icon instead of a broken image.
+- Plugins and Mods pages on a phone: the button next to a box's title goes under it, so the title keeps its line.
 
 ## 1.2.2
 
