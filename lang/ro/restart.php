@@ -4,6 +4,7 @@ return [
     'needed' => 'Repornire necesară',
     'waiting' => 'Modificările așteaptă o repornire',
     'waiting_help' => 'Reporniți serverul pentru a aplica modificările salvate.',
+    'file_saved' => 'Modificările fișierului au fost salvate, repornește pentru a le încărca',
     'scheduled' => 'Repornire programată',
     'scheduled_help' => 'O repornire este programată pentru a aplica modificările.',
     'now' => 'Reporniți acum',

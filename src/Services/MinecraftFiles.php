@@ -61,7 +61,8 @@ final class MinecraftFiles
     private function write(string $path, string $content): void
     {
         $this->files()->putContent($path, $content)->throw();
-        Activity::event('server:file.write')->subject($this->server)->property('file', $path)->log();
+        // The Minecraft page shows its own reminder after saving.
+        RestartReminder::quietly(fn () => Activity::event('server:file.write')->subject($this->server)->property('file', $path)->log());
     }
 
     private function files(): DaemonFileRepository

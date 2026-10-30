@@ -4,6 +4,7 @@ return [
     'needed' => '需要重新啟動',
     'waiting' => '變更正在等待重新啟動',
     'waiting_help' => '重新啟動伺服器以套用已儲存的變更。',
+    'file_saved' => '檔案變更已儲存，重新啟動後生效',
     'scheduled' => '重新啟動已排程',
     'scheduled_help' => '已排程重新啟動以套用你的變更。',
     'now' => '立即重新啟動',

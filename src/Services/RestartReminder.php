@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Simplify\Toolkit\Services;
 
+use App\Enums\ContainerStatus;
 use App\Models\Server;
 use App\Repositories\Daemon\DaemonServerRepository;
+use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\Cache;
 use Throwable;
 
@@ -22,6 +24,8 @@ final class RestartReminder
 
     public const MINUTES = [5, 15, 30, 60];
 
+    private static bool $quiet = false;
+
     /** @return array{since: int, at: int|null}|null */
     public static function get(Server $server): ?array
     {
@@ -31,6 +35,37 @@ final class RestartReminder
     public static function mark(Server $server): void
     {
         self::change(fn (array $all) => [...$all, $server->uuid => ['since' => time(), 'at' => $all[$server->uuid]['at'] ?? null]]);
+    }
+
+    /**
+     * A file saved in Pelican's file manager while a Minecraft server runs: the game reads it on the next start, so the
+     * same reminder, and the notice 0.7.0 gave ("File changes saved, restart to load them").
+     */
+    public static function fileSaved(Server $server): void
+    {
+        if (self::$quiet) {
+            return;
+        }
+        try {
+            if (! ServerKind::forServer($server)['minecraft'] || $server->retrieveStatus() !== ContainerStatus::Running) {
+                return;
+            }
+            self::mark($server);
+            Notification::make()->title(__('simplify-toolkit::restart.file_saved'))->body(__('simplify-toolkit::restart.waiting_help'))->warning()->send();
+        } catch (Throwable $error) {
+            report($error);
+        }
+    }
+
+    /** Runs a file write of a Toolkit page, which shows its own reminder instead. */
+    public static function quietly(callable $write): mixed
+    {
+        self::$quiet = true;
+        try {
+            return $write();
+        } finally {
+            self::$quiet = false;
+        }
     }
 
     public static function plan(Server $server, int $minutes): void

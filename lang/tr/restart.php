@@ -4,6 +4,7 @@ return [
     'needed' => 'Yeniden başlatma gerekli',
     'waiting' => 'Değişiklikler yeniden başlatmayı bekliyor',
     'waiting_help' => 'Kaydedilen değişiklikleri uygulamak için sunucuyu yeniden başlat.',
+    'file_saved' => 'Dosya değişiklikleri kaydedildi, yüklemek için yeniden başlatın',
     'scheduled' => 'Yeniden başlatma zamanlandı',
     'scheduled_help' => 'Değişikliklerini uygulamak için bir yeniden başlatma zamanlandı.',
     'now' => 'Şimdi yeniden başlat',

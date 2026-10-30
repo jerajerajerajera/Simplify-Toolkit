@@ -2,6 +2,8 @@
 
 // Loads Simplify Toolkit inside a real Pelican panel. Run from the panel folder after
 // `php artisan p:plugin:install simplify-toolkit`: php plugins/simplify-toolkit/tests/panel/smoke.php
+use App\Enums\ContainerStatus;
+use App\Facades\Activity;
 use App\Models\Egg;
 use App\Models\Role;
 use App\Models\Server;
@@ -249,6 +251,29 @@ step('a saved change leaves a restart reminder on the card until it is dismissed
         throw new RuntimeException('the reminder stayed');
     }
 });
+step('a file saved in the file manager of a running Minecraft server leaves the restart reminder, as in 0.7.0', function () use ($admin, $paper) {
+    Filament::setTenant($paper);
+    $status = "servers.$paper->uuid.status";
+    cache()->put($status, ContainerStatus::Running, 60);
+    try {
+        Activity::event('server:file.write')->property('file', '/plugins/Essentials/config.yml')->log();
+        if (RestartReminder::get($paper) === null) {
+            throw new RuntimeException('no reminder after saving a file');
+        }
+        RestartReminder::forget($paper);
+        // The Minecraft page writes files too, and says so itself: no second notice.
+        Livewire::actingAs($admin)->test(Minecraft::class)->call('save')->assertNotNotified(__('simplify-toolkit::restart.file_saved'));
+        RestartReminder::forget($paper);
+        cache()->put($status, ContainerStatus::Offline, 60);
+        Activity::event('server:file.write')->property('file', '/plugins/Essentials/config.yml')->log();
+        if (RestartReminder::get($paper) !== null) {
+            throw new RuntimeException('a reminder for a server that is not running');
+        }
+    } finally {
+        cache()->forget($status);
+        RestartReminder::forget($paper);
+    }
+});
 step('automatic backups: new servers get the panel plan, root admins change it', function () use ($admin, $paper) {
     if (! AutomaticBackups::for($paper)->exists || ! AutomaticBackups::for($paper)->enabled) {
         throw new RuntimeException('the new server has no plan');
@@ -451,7 +476,7 @@ step('servers without plugins or mods have no Plugins page', function () use ($a
     }
 });
 // Every step must have run: a step that never ran is a failure too.
-$expected = 21;
+$expected = 22;
 if ($passed !== $expected) {
     echo "FAIL $passed of $expected steps passed\n";
     exit(1);

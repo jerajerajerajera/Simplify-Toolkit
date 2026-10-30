@@ -4,6 +4,7 @@ return [
     'needed' => '需要重启',
     'waiting' => '更改正在等待重启',
     'waiting_help' => '重启服务器以应用已保存的更改。',
+    'file_saved' => '文件更改已保存，重启后生效',
     'scheduled' => '重启已计划',
     'scheduled_help' => '已计划重启以应用你的更改。',
     'now' => '立即重启',

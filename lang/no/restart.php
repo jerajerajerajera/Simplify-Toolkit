@@ -4,6 +4,7 @@ return [
     'needed' => 'Omstart nødvendig',
     'waiting' => 'Endringer venter på en omstart',
     'waiting_help' => 'Start serveren på nytt for å ta i bruk de lagrede endringene dine.',
+    'file_saved' => 'Filendringer lagret, start på nytt for å laste dem',
     'scheduled' => 'Omstart planlagt',
     'scheduled_help' => 'En omstart er planlagt for å ta i bruk endringene dine.',
     'now' => 'Start på nytt nå',

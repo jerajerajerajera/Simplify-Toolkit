@@ -4,6 +4,7 @@ return [
     'needed' => 'Perlu dimulai ulang',
     'waiting' => 'Perubahan menunggu mulai ulang',
     'waiting_help' => 'Mulai ulang server untuk menerapkan perubahan yang disimpan.',
+    'file_saved' => 'Perubahan file disimpan, mulai ulang untuk memuatnya',
     'scheduled' => 'Mulai ulang dijadwalkan',
     'scheduled_help' => 'Mulai ulang dijadwalkan untuk menerapkan perubahan Anda.',
     'now' => 'Mulai ulang sekarang',

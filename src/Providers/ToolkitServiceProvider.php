@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Simplify\Toolkit\Providers;
 
+use App\Models\ActivityLog;
 use App\Models\Server;
+use Filament\Facades\Filament;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
@@ -31,6 +33,12 @@ final class ToolkitServiceProvider extends ServiceProvider
         $this->callAfterResolving(Schedule::class, function (Schedule $schedule): void {
             $schedule->call(fn () => RestartReminder::tick())->everyMinute()->name('simplify-toolkit-restarts')->withoutOverlapping();
             $schedule->call(fn () => AutomaticBackups::tick())->everyMinute()->name('simplify-toolkit-backups')->withoutOverlapping();
+        });
+        // Saved in Pelican's file manager (its pages log this event with the server as tenant).
+        ActivityLog::created(function (ActivityLog $log): void {
+            if ($log->event === 'server:file.write' && ($server = Filament::getTenant()) instanceof Server) {
+                RestartReminder::fileSaved($server);
+            }
         });
         // New servers get automatic backups with the panel's values, as in PelicanSimplify 0.7.0.
         Server::created(function (Server $server): void {
