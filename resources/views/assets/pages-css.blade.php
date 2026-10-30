@@ -1,4 +1,4 @@
-/* The Plugins/Mods page, the log lines and the server summary. Pelican's stylesheet only has the Tailwind classes
+/* The Plugins/Mods page, and the log lines. Pelican's stylesheet only has the Tailwind classes
    the panel itself uses, so the layout of these views lives here. */
 .sm-columns { display: grid; gap: 1.5rem; align-items: start; }
 @media (min-width: 1024px) { .sm-columns { grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); } }
@@ -42,12 +42,6 @@ a.sm-title:hover, .sm-meta a:hover { text-decoration: underline; }
 @keyframes sm-pulse { 50% { opacity: .5; } }
 @media (prefers-reduced-motion: reduce) { .sm-skeleton .sm-thumb, .sm-skeleton .sm-line { animation: none; } }
 .sm-log { max-height: 24rem; overflow: auto; margin: 0; padding: .75rem; border-radius: .5rem; background: #0b0b0f; color: #e5e7eb; font-size: .75rem; line-height: 1.25rem; white-space: pre-wrap; overflow-wrap: anywhere; }
-.sm-facts { display: grid; gap: .75rem 1.5rem; margin: 0; font-size: .875rem; }
-@media (min-width: 640px) { .sm-facts { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-.sm-facts dt { color: var(--gray-500); }
-.sm-facts dd { margin: 0; font-weight: 500; color: var(--gray-950); }
-.dark .sm-facts dd { color: #fff; }
-.sm-facts dd .is-quiet { font-weight: 400; color: var(--gray-500); }
 .sm-buttons { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 1rem; }
 .sm-side { display: flex; flex-direction: column; gap: 1.5rem; }
 /* Players: a name in a list fills in the player field above the buttons. */

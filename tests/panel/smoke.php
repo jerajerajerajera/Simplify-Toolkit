@@ -24,7 +24,6 @@ use Simplify\Toolkit\Filament\Server\Pages\Backups;
 use Simplify\Toolkit\Filament\Server\Pages\Minecraft;
 use Simplify\Toolkit\Filament\Server\Pages\Packages;
 use Simplify\Toolkit\Filament\Server\Pages\Players;
-use Simplify\Toolkit\Livewire\ServerSummary;
 use Simplify\Toolkit\Models\ApiKey;
 use Simplify\Toolkit\Models\Package;
 use Simplify\Toolkit\Services\AutomaticBackups;
@@ -350,11 +349,6 @@ step('Simplify Embed gets the software of Minecraft servers, and nothing for oth
         throw new RuntimeException('other games got Minecraft details');
     }
 });
-step('the Minecraft part of Simplify\'s server page renders and loads the player count', function () use ($admin, $paper) {
-    Livewire::actingAs($admin)->test(ServerSummary::class, ['server' => $paper])
-        ->assertSee('Paper')->assertSee(e(__('simplify-toolkit::minecraft.title')))
-        ->call('loadStatus')->assertSee(e(__('simplify-toolkit::toolkit.summary.not_answering')));
-});
 step('CurseForge keys are tested, stored encrypted, and a user\'s own key goes first', function () use ($admin) {
     if (Keys::curseForgeWorks('bad-key') || ! Keys::curseForgeWorks('good-key')) {
         throw new RuntimeException('the key test does not tell good from bad');
@@ -402,7 +396,7 @@ step('servers without plugins or mods have no Plugins page', function () use ($a
     }
 });
 // Every step must have run: a step that never ran is a failure too.
-$expected = 20;
+$expected = 19;
 if ($passed !== $expected) {
     echo "FAIL $passed of $expected steps passed\n";
     exit(1);
