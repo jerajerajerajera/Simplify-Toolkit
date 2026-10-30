@@ -57,6 +57,12 @@ final class Packages extends Page implements HasActions
     /** @var array{kind: string, loader: string, minecraft: string, directory: string, detected: bool} */
     public array $context = ['kind' => '', 'loader' => '', 'minecraft' => '', 'directory' => '', 'detected' => false];
 
+    /** @var array{name: string, version: string, url: string, icon: string}|null the modpack the server runs */
+    public ?array $modpack = null;
+
+    /** A modpack's own mods are folded into one row; this shows them one by one. */
+    public bool $showPack = false;
+
     public bool $unreachable = false;
 
     /** A plugin installed here waits for its first start; the page then checks the log now and then. */
@@ -132,6 +138,7 @@ final class Packages extends Page implements HasActions
             $packages = $this->packages();
             $this->context = $packages->context();
             $this->installed = $packages->installed($this->context);
+            $this->modpack = $this->context['kind'] === 'mods' ? $packages->installedModpack() : null;
             $this->watching = StartCheck::watching($this->server());
             $this->unreachable = false;
         } catch (Throwable $error) {
@@ -171,6 +178,20 @@ final class Packages extends Page implements HasActions
     public function updatedQuery(): void
     {
         $this->search();
+    }
+
+    /**
+     * Who may switch off and remove, asked once for the whole list instead of once per row: with a modpack of 200
+     * mods that was 400 permission checks and 400 Filament buttons with tooltips on every render.
+     *
+     * @return array<string, mixed>
+     */
+    protected function getViewData(): array
+    {
+        return [
+            'canToggle' => $this->can(SubuserPermission::FileUpdate),
+            'canRemove' => $this->can(SubuserPermission::FileDelete),
+        ];
     }
 
     /** True when the plugin on this card is installed already, by its key or one of the other sites' keys. */

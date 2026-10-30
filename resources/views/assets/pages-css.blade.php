@@ -52,11 +52,31 @@ a.sm-title:hover, .sm-meta a:hover { text-decoration: underline; }
 .sm-side { display: flex; flex-direction: column; gap: 1.5rem; }
 /* Icon buttons in a row look like Simplify's own icon buttons: a quiet bordered square, the icon turns the accent
    colour on hover. Simplify's colours when it is installed, Pelican's otherwise. */
-.sm-actions .fi-icon-btn { display: inline-grid; place-items: center; width: var(--s-h, 36px); height: var(--s-h, 36px); margin: 0; border: 1px solid var(--s-line, var(--gray-200)); border-radius: var(--s-radius-sm, 6px); background: var(--s-surface, #fff); color: var(--s-ink, var(--gray-950)); transition: background .15s, border-color .15s, color .15s; }
-.dark .sm-actions .fi-icon-btn { border-color: var(--s-line, var(--gray-700)); background: var(--s-surface, var(--gray-900)); color: var(--s-ink, var(--gray-50)); }
-.sm-actions .fi-icon-btn .fi-icon { width: 18px; height: 18px; color: inherit; }
-.sm-actions .fi-icon-btn:hover:not(:disabled) { border-color: var(--s-accent, var(--primary-600)); background: var(--s-raised, var(--gray-100)); color: var(--s-accent, var(--primary-600)); }
-.dark .sm-actions .fi-icon-btn:hover:not(:disabled) { border-color: var(--s-accent, var(--primary-500)); background: var(--s-raised, var(--gray-800)); color: var(--s-accent, var(--primary-500)); }
-.sm-actions .fi-icon-btn.fi-color-danger:not(:hover) { color: var(--s-danger, var(--danger-600)); }
+.sm-actions :is(.fi-icon-btn, .sm-icon-btn) { display: inline-grid; place-items: center; width: var(--s-h, 36px); height: var(--s-h, 36px); margin: 0; border: 1px solid var(--s-line, var(--gray-200)); border-radius: var(--s-radius-sm, 6px); background: var(--s-surface, #fff); color: var(--s-ink, var(--gray-950)); transition: background .15s, border-color .15s, color .15s; }
+.dark .sm-actions :is(.fi-icon-btn, .sm-icon-btn) { border-color: var(--s-line, var(--gray-700)); background: var(--s-surface, var(--gray-900)); color: var(--s-ink, var(--gray-50)); }
+.sm-actions :is(.fi-icon-btn, .sm-icon-btn) .fi-icon { width: 18px; height: 18px; color: inherit; }
+.sm-actions :is(.fi-icon-btn, .sm-icon-btn):hover:not(:disabled) { border-color: var(--s-accent, var(--primary-600)); background: var(--s-raised, var(--gray-100)); color: var(--s-accent, var(--primary-600)); }
+.dark .sm-actions :is(.fi-icon-btn, .sm-icon-btn):hover:not(:disabled) { border-color: var(--s-accent, var(--primary-500)); background: var(--s-raised, var(--gray-800)); color: var(--s-accent, var(--primary-500)); }
+.sm-actions :is(.fi-icon-btn.fi-color-danger, .sm-icon-btn.is-danger):not(:hover) { color: var(--s-danger, var(--danger-600)); }
 .sm-actions .fi-icon-btn.fi-color-warning:not(:hover) { color: var(--s-warn, var(--warning-700)); }
 .sm-actions { gap: .5rem; }
+/* The plain icon buttons of the installed list: no browser button look, a pointer, and a focus ring for the keyboard. */
+.sm-icon-btn { padding: 0; cursor: pointer; font: inherit; }
+.sm-icon-btn:focus-visible { outline: 2px solid var(--s-accent, var(--primary-600)); outline-offset: 1px; }
+.sm-icon-btn .fi-icon { display: block; }
+/* In Simplify's server page the page itself never scrolls: on wide screens each column scrolls on its own, under its
+   own head, so scrolling the installed list leaves the search results where they are. */
+@media (min-width: 1024px) {
+    html.ps-fit body:has(.ps-server-top) .fi-page-main:has(.sm-columns) { display: flex; flex-direction: column; overflow: hidden; }
+    html.ps-fit body:has(.ps-server-top) .fi-page-main:has(.sm-columns) > .fi-page-content { display: flex; flex: 1; flex-direction: column; min-height: 0; }
+    html.ps-fit body:has(.ps-server-top) .fi-main .sm-columns { flex: 1; min-height: 0; height: auto; }
+    html.ps-fit body:has(.ps-server-top) .sm-columns > .fi-section,
+    html.ps-fit body:has(.ps-server-top) .sm-side > :first-child,
+    html.ps-fit body:has(.ps-server-top) .sm-side > :first-child > .fi-section { display: flex; flex-direction: column; min-height: 0; }
+    html.ps-fit body:has(.ps-server-top) .sm-side { min-height: 0; }
+    html.ps-fit body:has(.ps-server-top) .sm-side > :first-child,
+    html.ps-fit body:has(.ps-server-top) .sm-side > :first-child > .fi-section { flex: 1; }
+    html.ps-fit body:has(.ps-server-top) .sm-side > :not(:first-child) { flex: none; }
+    html.ps-fit body:has(.ps-server-top) :is(.sm-columns > .fi-section, .sm-side > :first-child > .fi-section) > .fi-section-header { flex: none; }
+    html.ps-fit body:has(.ps-server-top) :is(.sm-columns > .fi-section, .sm-side > :first-child > .fi-section) > .fi-section-content-ctn { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; }
+}
