@@ -197,6 +197,7 @@ final class Packages extends Page implements HasActions
     protected function getViewData(): array
     {
         return [
+            'canUpdate' => $this->can(SubuserPermission::FileCreate) && $this->ready(),
             'canToggle' => $this->can(SubuserPermission::FileUpdate),
             'canRemove' => $this->can(SubuserPermission::FileDelete),
         ];
@@ -210,13 +211,14 @@ final class Packages extends Page implements HasActions
         return in_array($card['key'], $keys, true) || array_intersect(array_column($card['also'], 'key'), $keys) !== [];
     }
 
-    /** Runs a change and reports a refusal as a notification instead of an error page. */
+    /** Runs a change and reports a refusal as a notification instead of an error page. A change returning false did nothing. */
     private function attempt(callable $change, string $done): void
     {
         try {
-            $change();
-            RestartReminder::mark($this->server());
-            Notification::make()->title($done)->body(__('simplify-toolkit::packages.restart_help'))->success()->send();
+            if ($change() !== false) {
+                RestartReminder::mark($this->server());
+                Notification::make()->title($done)->body(__('simplify-toolkit::packages.restart_help'))->success()->send();
+            }
         } catch (HttpException $refused) {
             Notification::make()->title(__('simplify-toolkit::packages.not_done'))->body($refused->getMessage())->danger()->send();
         } catch (Throwable $error) {
@@ -244,6 +246,46 @@ final class Packages extends Page implements HasActions
                     __('simplify-toolkit::packages.installed_title', ['name' => $card['title'] ?? '']),
                 );
             });
+    }
+
+    public function updateAction(): Action
+    {
+        return Action::make('update')
+            ->iconButton()->color('gray')->icon('tabler-refresh')
+            ->tooltip(__('simplify-toolkit::packages.update'))
+            ->visible(fn () => $this->can(SubuserPermission::FileCreate) && $this->ready())
+            ->action(fn (array $arguments) => $this->update($arguments, false));
+    }
+
+    /** Asked when the newest release is not made for this Minecraft version, as when installing. */
+    public function updateAnywayAction(): Action
+    {
+        return Action::make('updateAnyway')
+            ->requiresConfirmation()->color('gray')
+            ->visible(fn () => $this->can(SubuserPermission::FileCreate) && $this->ready())
+            ->modalHeading(__('simplify-toolkit::packages.update_anyway'))
+            ->modalDescription(fn () => __('simplify-toolkit::packages.not_for_version', ['version' => $this->context['minecraft']]))
+            ->modalSubmitActionLabel(__('simplify-toolkit::packages.update_anyway'))
+            ->action(fn (array $arguments) => $this->update($arguments, true));
+    }
+
+    /** @param  array<string, mixed>  $arguments  file and title of the installed row */
+    private function update(array $arguments, bool $anyway): void
+    {
+        $name = (string) ($arguments['title'] ?? '');
+        $this->attempt(function () use ($arguments, $anyway, $name): bool {
+            try {
+                if ($this->packages()->update((string) ($arguments['file'] ?? ''), $anyway) !== null) {
+                    return true;
+                }
+                Notification::make()->title(__('simplify-toolkit::packages.up_to_date', ['name' => $name]))->success()->send();
+            } catch (HttpException $refused) {
+                throw_unless($refused->getStatusCode() === 409 && ! $anyway, $refused);
+                $this->replaceMountedAction('updateAnyway', $arguments);
+            }
+
+            return false;
+        }, __('simplify-toolkit::packages.installed_title', ['name' => $name]));
     }
 
     public function toggleAction(): Action

@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Plugins and Mods pages: update a plugin or mod that was added here to its newest release (back from 0.7.0). When the
+  newest release is made for another Minecraft version, Toolkit asks first. The old file goes to the backup folder.
+
 ## 1.2.2
 
 - Smaller: the old Minecraft block for under the console is gone. Simplify has not shown it since 1.3.9; the server card and the Minecraft page show the same.
