@@ -237,7 +237,8 @@ step('the Players page lists whitelist, operators and bans from their files', fu
 });
 step('a saved change leaves a restart reminder on the card until it is dismissed', function () use ($admin, $paper) {
     Livewire::actingAs($admin)->test(Minecraft::class)->call('save')->assertHasNoErrors();
-    if (! in_array(__('simplify-toolkit::restart.needed'), (new ToolkitAddon)->tileBadges($paper), true)) {
+    // The card's badge reads the same reminder (ToolkitAddon::tileBadges, checked with Simplify further on).
+    if (RestartReminder::get($paper) === null) {
         throw new RuntimeException('no reminder after saving: '.json_encode(RestartReminder::get($paper)));
     }
     RestartReminder::plan($paper, 15);
