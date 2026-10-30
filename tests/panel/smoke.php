@@ -20,12 +20,16 @@ use Illuminate\Testing\TestResponse;
 use Livewire\Livewire;
 use Simplify\Core\Addons\Addon;
 use Simplify\Toolkit\Filament\Admin\Pages\ToolkitSettings;
+use Simplify\Toolkit\Filament\Server\Pages\Backups;
 use Simplify\Toolkit\Filament\Server\Pages\Minecraft;
 use Simplify\Toolkit\Filament\Server\Pages\Packages;
+use Simplify\Toolkit\Filament\Server\Pages\Players;
 use Simplify\Toolkit\Livewire\ServerSummary;
 use Simplify\Toolkit\Models\ApiKey;
 use Simplify\Toolkit\Models\Package;
+use Simplify\Toolkit\Services\AutomaticBackups;
 use Simplify\Toolkit\Services\Keys;
+use Simplify\Toolkit\Services\RestartReminder;
 use Simplify\Toolkit\Services\ServerKind;
 use Simplify\Toolkit\Services\Software;
 use Simplify\Toolkit\Services\Web;
@@ -221,10 +225,47 @@ step('the server icon shows and can be removed', function () use ($admin) {
         throw new RuntimeException('the icon was not removed');
     }
 });
+step('the Players page lists whitelist, operators and bans from their files', function () use ($admin) {
+    FakeFiles::$files['/whitelist.json'] = json_encode([['uuid' => 'a1', 'name' => 'Steve'], ['name' => 'bad name!']]);
+    FakeFiles::$files['/ops.json'] = json_encode([['uuid' => 'b2', 'name' => 'Alex', 'level' => 4]]);
+    $page = Livewire::actingAs($admin)->test(Players::class)->call('load')->assertSet('unreachable', false)->assertSet('running', false);
+    $lists = $page->get('lists');
+    if (array_column($lists['whitelist'], 'name') !== ['Steve'] || array_column($lists['operators'], 'name') !== ['Alex'] || $lists['banned'] !== []) {
+        throw new RuntimeException('lists: '.json_encode($lists));
+    }
+    $page->assertSee(__('simplify-toolkit::players.offline'));
+});
+step('a saved change leaves a restart reminder on the card until it is dismissed', function () use ($admin, $paper) {
+    Livewire::actingAs($admin)->test(Minecraft::class)->call('save')->assertHasNoErrors();
+    // The card's badge reads the same reminder (ToolkitAddon::tileBadges, checked with Simplify further on).
+    if (RestartReminder::get($paper) === null) {
+        throw new RuntimeException('no reminder after saving: '.json_encode(RestartReminder::get($paper)));
+    }
+    RestartReminder::plan($paper, 15);
+    if ((RestartReminder::get($paper)['at'] ?? 0) < time() + 14 * 60) {
+        throw new RuntimeException('the restart was not planned');
+    }
+    RestartReminder::forget($paper);
+    if (RestartReminder::get($paper) !== null) {
+        throw new RuntimeException('the reminder stayed');
+    }
+});
+step('automatic backups: new servers get the panel plan, root admins change it', function () use ($admin, $paper) {
+    if (! AutomaticBackups::for($paper)->exists || ! AutomaticBackups::for($paper)->enabled) {
+        throw new RuntimeException('the new server has no plan');
+    }
+    $paper->forceFill(['backup_limit' => 3])->save();
+    Livewire::actingAs($admin)->test(Backups::class)
+        ->set('data.every_minutes', 720)->set('data.keep', 3)->call('save')->assertHasNoErrors()
+        ->assertSee(Backups::summary(['enabled' => true, 'every_minutes' => 720, 'keep' => 3, 'only_when_used' => true]));
+    if (AutomaticBackups::for($paper)->every_minutes !== 720) {
+        throw new RuntimeException('the plan was not saved');
+    }
+});
 step('other games have no Minecraft page', function () use ($admin) {
     $rust = Server::factory()->create(['owner_id' => $admin->id, 'egg_id' => Egg::factory()->create(['name' => 'Rust', 'features' => []])->id]);
     Filament::setTenant($rust);
-    if (Minecraft::canAccess()) {
+    if (Minecraft::canAccess() || Players::canAccess()) {
         throw new RuntimeException('Rust got a Minecraft page');
     }
 });
@@ -361,7 +402,7 @@ step('servers without plugins or mods have no Plugins page', function () use ($a
     }
 });
 // Every step must have run: a step that never ran is a failure too.
-$expected = 17;
+$expected = 20;
 if ($passed !== $expected) {
     echo "FAIL $passed of $expected steps passed\n";
     exit(1);

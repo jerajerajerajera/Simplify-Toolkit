@@ -1,0 +1,31 @@
+<?php
+
+return [
+    'title' => 'Joueurs',
+    'heading' => 'Gestion des joueurs',
+    'description' => 'Liste blanche, opérateurs et modération',
+    'name' => 'Nom du joueur',
+    'name_placeholder' => 'Nom d’utilisateur Minecraft',
+    'online' => 'Joueurs en ligne',
+    'online_help' => 'Les serveurs peuvent masquer les noms des joueurs dans leur réponse de statut.',
+    'online_badge' => 'En ligne',
+    'no_names' => 'Aucun nom de joueur transmis.',
+    'whitelist' => 'Whitelist',
+    'operators' => 'Opérateurs',
+    'banned' => 'Joueurs bannis',
+    'nobody' => 'Personne pour l’instant.',
+    'actions' => [
+        'whitelist' => 'Ajouter à la whitelist',
+        'unwhitelist' => 'Retirer de la whitelist',
+        'op' => 'OP',
+        'deop' => 'DeOP',
+        'kick' => 'Expulser',
+        'ban' => 'Bannir',
+        'unban' => 'Débannir',
+    ],
+    'confirm' => ':action :player ?',
+    'op_message' => 'Les opérateurs peuvent exécuter toutes les commandes du serveur.',
+    'removed_message' => 'Le joueur est retiré du serveur.',
+    'sent' => ':action envoyé',
+    'offline' => 'Démarrez le serveur pour modifier les joueurs.',
+];

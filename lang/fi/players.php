@@ -1,0 +1,31 @@
+<?php
+
+return [
+    'title' => 'Pelaajat',
+    'heading' => 'Pelaajien hallinta',
+    'description' => 'Sallittujen lista, operaattorit ja valvonta',
+    'name' => 'Pelaajan nimi',
+    'name_placeholder' => 'Minecraft-käyttäjänimi',
+    'online' => 'Paikalla olevat pelaajat',
+    'online_help' => 'Palvelimet voivat piilottaa pelaajien nimet tilavastauksessaan.',
+    'online_badge' => 'Paikalla',
+    'no_names' => 'Pelaajien nimiä ei ilmoitettu.',
+    'whitelist' => 'Sallittujen lista',
+    'operators' => 'Operaattorit',
+    'banned' => 'Estetyt pelaajat',
+    'nobody' => 'Ei vielä ketään.',
+    'actions' => [
+        'whitelist' => 'Sallittujen listalle',
+        'unwhitelist' => 'Pois sallittujen listalta',
+        'op' => 'OP',
+        'deop' => 'DeOP',
+        'kick' => 'Potkaise',
+        'ban' => 'Estä',
+        'unban' => 'Poista esto',
+    ],
+    'confirm' => ':action: :player?',
+    'op_message' => 'Operaattorit voivat suorittaa kaikkia palvelinkomentoja.',
+    'removed_message' => 'Pelaaja poistetaan palvelimelta.',
+    'sent' => ':action lähetetty',
+    'offline' => 'Käynnistä palvelin muuttaaksesi pelaajia.',
+];

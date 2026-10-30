@@ -1,0 +1,31 @@
+<?php
+
+return [
+    'title' => 'Người chơi',
+    'heading' => 'Quản lý người chơi',
+    'description' => 'Danh sách trắng, operator & kiểm duyệt',
+    'name' => 'Tên người chơi',
+    'name_placeholder' => 'Tên người dùng Minecraft',
+    'online' => 'Người chơi trực tuyến',
+    'online_help' => 'Máy chủ có thể ẩn tên người chơi trong phản hồi trạng thái.',
+    'online_badge' => 'Trực tuyến',
+    'no_names' => 'Không có tên người chơi nào được báo.',
+    'whitelist' => 'Danh sách trắng',
+    'operators' => 'Operator',
+    'banned' => 'Người chơi bị cấm',
+    'nobody' => 'Chưa có ai.',
+    'actions' => [
+        'whitelist' => 'Thêm vào danh sách trắng',
+        'unwhitelist' => 'Gỡ khỏi danh sách trắng',
+        'op' => 'OP',
+        'deop' => 'DeOP',
+        'kick' => 'Đuổi',
+        'ban' => 'Cấm',
+        'unban' => 'Bỏ cấm',
+    ],
+    'confirm' => ':action :player?',
+    'op_message' => 'Operator có thể chạy mọi lệnh máy chủ.',
+    'removed_message' => 'Người chơi bị đưa ra khỏi máy chủ.',
+    'sent' => 'Đã gửi :action',
+    'offline' => 'Hãy khởi động máy chủ để thay đổi người chơi.',
+];

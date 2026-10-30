@@ -1,0 +1,31 @@
+<?php
+
+return [
+    'title' => 'Pemain',
+    'heading' => 'Pengelolaan pemain',
+    'description' => 'Whitelist, operator & moderasi',
+    'name' => 'Nama pemain',
+    'name_placeholder' => 'Nama pengguna Minecraft',
+    'online' => 'Pemain online',
+    'online_help' => 'Server dapat menyembunyikan nama pemain dalam respons statusnya.',
+    'online_badge' => 'Online',
+    'no_names' => 'Tidak ada nama pemain yang dilaporkan.',
+    'whitelist' => 'Whitelist',
+    'operators' => 'Operator',
+    'banned' => 'Pemain yang diblokir',
+    'nobody' => 'Belum ada siapa pun.',
+    'actions' => [
+        'whitelist' => 'Masukkan whitelist',
+        'unwhitelist' => 'Keluarkan dari whitelist',
+        'op' => 'OP',
+        'deop' => 'DeOP',
+        'kick' => 'Tendang',
+        'ban' => 'Blokir',
+        'unban' => 'Buka blokir',
+    ],
+    'confirm' => ':action :player?',
+    'op_message' => 'Operator dapat menjalankan semua perintah server.',
+    'removed_message' => 'Pemain dikeluarkan dari server.',
+    'sent' => ':action dikirim',
+    'offline' => 'Jalankan server untuk mengubah pemain.',
+];

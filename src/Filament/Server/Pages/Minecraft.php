@@ -6,7 +6,6 @@ namespace Simplify\Toolkit\Filament\Server\Pages;
 
 use App\Enums\SubuserPermission;
 use App\Models\Server;
-use App\Repositories\Daemon\DaemonServerRepository;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\FileUpload;
@@ -25,9 +24,11 @@ use Illuminate\Support\HtmlString;
 use Livewire\Attributes\On;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Simplify\Toolkit\Filament\Components\MotdEditor;
+use Simplify\Toolkit\Filament\Server\Actions\RestartActions;
 use Simplify\Toolkit\Services\GameSettings;
 use Simplify\Toolkit\Services\MinecraftFiles;
 use Simplify\Toolkit\Services\PropertiesFile;
+use Simplify\Toolkit\Services\RestartReminder;
 use Simplify\Toolkit\Services\ServerIcon;
 use Simplify\Toolkit\Services\ServerKind;
 use Simplify\Toolkit\Services\Web;
@@ -188,6 +189,7 @@ final class Minecraft extends Page implements HasSchemas
     protected function getHeaderActions(): array
     {
         return [
+            RestartActions::group(),
             Action::make('save')->hiddenLabel()->icon('tabler-device-floppy')->tooltip(__('simplify-toolkit::minecraft.save'))
                 ->action('save')->keyBindings(['mod+s'])->visible(fn () => $this->canChange()),
         ];
@@ -292,6 +294,7 @@ final class Minecraft extends Page implements HasSchemas
     /** Settings take effect on the next start, so the notification offers a restart to whoever may restart. */
     private function savedNotification(string $title): void
     {
+        RestartReminder::mark($this->server());
         $restart = (bool) user()?->can(SubuserPermission::ControlRestart, $this->server());
         Notification::make()->title($title)->body(__('simplify-toolkit::minecraft.restart_help'))->success()
             ->actions($restart ? [Action::make('restart')->label(__('simplify-toolkit::minecraft.restart'))->button()->dispatch('simplify-toolkit-restart')] : [])
@@ -302,7 +305,7 @@ final class Minecraft extends Page implements HasSchemas
     public function restart(): void
     {
         abort_unless(user()?->can(SubuserPermission::ControlRestart, $this->server()), 403);
-        app(DaemonServerRepository::class)->setServer($this->server())->power('restart')->throw();
+        RestartReminder::restart($this->server());
         Notification::make()->title(__('simplify-toolkit::minecraft.restarting'))->success()->send();
     }
 }

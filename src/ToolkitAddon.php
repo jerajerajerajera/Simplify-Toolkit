@@ -11,6 +11,7 @@ use Simplify\Core\Addons\Addon;
 use Simplify\Toolkit\Filament\Admin\Pages\ToolkitSettings;
 use Simplify\Toolkit\Livewire\ServerSummary;
 use Simplify\Toolkit\Services\Keys;
+use Simplify\Toolkit\Services\RestartReminder;
 use Simplify\Toolkit\Services\ServerInfo;
 use Simplify\Toolkit\Services\ServerKind;
 use Simplify\Toolkit\Services\Software;
@@ -45,12 +46,12 @@ final class ToolkitAddon extends Addon
         return ToolkitSettings::canAccess() ? ToolkitSettings::getUrl(panel: 'admin') : null;
     }
 
-    /** "Paper 1.21.4" on Minecraft tiles, from the database only. */
+    /** "Paper 1.21.4" on Minecraft tiles, and "Restart needed" after a change here; from the database and cache only. */
     public function tileBadges(Server $server): array
     {
         $label = Software::label($server);
 
-        return $label !== '' ? [$label] : [];
+        return [...($label !== '' ? [$label] : []), ...(RestartReminder::get($server) !== null ? [__('simplify-toolkit::restart.needed')] : [])];
     }
 
     /** Players, MOTD, version and icon of a running Minecraft server, for Simplify 1.1 and later (API 2). */

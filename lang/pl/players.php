@@ -1,0 +1,31 @@
+<?php
+
+return [
+    'title' => 'Gracze',
+    'heading' => 'Zarządzanie graczami',
+    'description' => 'Biała lista, operatorzy i moderacja',
+    'name' => 'Nazwa gracza',
+    'name_placeholder' => 'Nazwa gracza Minecraft',
+    'online' => 'Gracze online',
+    'online_help' => 'Serwery mogą ukrywać nazwy graczy w odpowiedzi o statusie.',
+    'online_badge' => 'Online',
+    'no_names' => 'Nie zgłoszono nazw graczy.',
+    'whitelist' => 'Biała lista',
+    'operators' => 'Operatorzy',
+    'banned' => 'Zbanowani gracze',
+    'nobody' => 'Jeszcze nikogo.',
+    'actions' => [
+        'whitelist' => 'Dodaj do białej listy',
+        'unwhitelist' => 'Usuń z białej listy',
+        'op' => 'OP',
+        'deop' => 'DeOP',
+        'kick' => 'Wyrzuć',
+        'ban' => 'Zbanuj',
+        'unban' => 'Odbanuj',
+    ],
+    'confirm' => ':action :player?',
+    'op_message' => 'Operatorzy mogą wykonywać każde polecenie serwera.',
+    'removed_message' => 'Gracz zostanie usunięty z serwera.',
+    'sent' => 'Wysłano: :action',
+    'offline' => 'Uruchom serwer, aby zmieniać graczy.',
+];

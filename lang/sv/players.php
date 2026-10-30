@@ -1,0 +1,31 @@
+<?php
+
+return [
+    'title' => 'Spelare',
+    'heading' => 'Spelarhantering',
+    'description' => 'Whitelist, operatörer och moderering',
+    'name' => 'Spelarnamn',
+    'name_placeholder' => 'Minecraft-användarnamn',
+    'online' => 'Spelare online',
+    'online_help' => 'Servrar kan dölja spelarnamn i sitt statussvar.',
+    'online_badge' => 'Online',
+    'no_names' => 'Inga spelarnamn rapporterade.',
+    'whitelist' => 'Whitelist',
+    'operators' => 'Operatörer',
+    'banned' => 'Bannade spelare',
+    'nobody' => 'Ingen ännu.',
+    'actions' => [
+        'whitelist' => 'Lägg till i whitelist',
+        'unwhitelist' => 'Ta bort från whitelist',
+        'op' => 'OP',
+        'deop' => 'DeOP',
+        'kick' => 'Sparka ut',
+        'ban' => 'Banna',
+        'unban' => 'Häv ban',
+    ],
+    'confirm' => ':action :player?',
+    'op_message' => 'Operatörer kan köra alla serverkommandon.',
+    'removed_message' => 'Spelaren tas bort från servern.',
+    'sent' => ':action skickat',
+    'offline' => 'Starta servern för att ändra spelare.',
+];

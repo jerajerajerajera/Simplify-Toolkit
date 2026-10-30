@@ -8,6 +8,8 @@ return [
     'search_placeholder' => 'Search Modrinth, Hangar, SpigotMC and CurseForge',
     'offline' => 'Not answering right now: :sites.',
     'nothing_found' => 'Nothing found.',
+    'popular_plugins' => 'Popular plugins for :target',
+    'popular_mods' => 'Popular mods for :target',
     'other_version' => 'Other version',
     'downloads' => ':count downloads',
     'also_on' => 'also on :site',

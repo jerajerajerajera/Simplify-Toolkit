@@ -1,5 +1,20 @@
 # Changelog
 
+## 1.2.0
+
+- Players page (back from PelicanSimplify 0.7.0): who is online, the whitelist, operators and bans. Type a name or click
+  one in a list, then Whitelist, Unwhitelist, OP, DeOP, Kick, Ban or Unban; OP, kick and ban ask first. Works while the
+  server runs.
+- Automatic backups (back from 0.7.0): a backup every so many minutes per server, keeping a number of recovery points,
+  skipped while the server has not run. Only these automatic backups are ever deleted, and a new one is made before the
+  oldest goes. Root admins set them per server; Toolkit's settings pause them for the panel and set what new servers
+  get. Plans from 0.7.0 are taken over.
+- Restart reminder (back from 0.7.0): after a change on the Minecraft or Plugins page, "Restart needed" shows on the
+  server's card and in the page head, with Restart now, in 5 to 60 minutes, or dismiss. It goes away once the server
+  has started again.
+- A plugin that was switched off after a start: next to its log lines, Simplify Explain's button asks why it did not load.
+- Plugins and mods: the list before you search says it shows the popular ones for this server.
+
 ## 1.1.6
 
 - Mods page on a modpack server: the modpack is one row in the installed list, with its name, version, the number of

@@ -40,6 +40,9 @@
                     @endif
                 </div>
 
+                @if (trim($query) === '' && $results)
+                    <p class="sm-note">{{ __('simplify-toolkit::packages.popular_'.($context['kind'] === 'plugins' ? 'plugins' : 'mods'), ['target' => ucfirst($context['loader']).' '.$context['minecraft']]) }}</p>
+                @endif
                 <ul class="sm-list" wire:loading.class="sm-busy" wire:target="query">
                     @forelse (array_slice($results, 0, $shown) as $card)
                         <li class="sm-row" wire:key="card-{{ $card['key'] }}">

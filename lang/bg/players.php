@@ -1,0 +1,31 @@
+<?php
+
+return [
+    'title' => 'Играчи',
+    'heading' => 'Управление на играчи',
+    'description' => 'Whitelist, оператори и модерация',
+    'name' => 'Име на играча',
+    'name_placeholder' => 'Потребителско име в Minecraft',
+    'online' => 'Играчи онлайн',
+    'online_help' => 'Сървърите може да скриват имената на играчите в отговора си за състояние.',
+    'online_badge' => 'Онлайн',
+    'no_names' => 'Не са отчетени имена на играчи.',
+    'whitelist' => 'Whitelist',
+    'operators' => 'Оператори',
+    'banned' => 'Блокирани играчи',
+    'nobody' => 'Още никой.',
+    'actions' => [
+        'whitelist' => 'В whitelist',
+        'unwhitelist' => 'Извън whitelist',
+        'op' => 'OP',
+        'deop' => 'DeOP',
+        'kick' => 'Изгони',
+        'ban' => 'Забрани',
+        'unban' => 'Премахни забраната',
+    ],
+    'confirm' => ':action :player?',
+    'op_message' => 'Операторите могат да изпълняват всяка команда на сървъра.',
+    'removed_message' => 'Играчът се премахва от сървъра.',
+    'sent' => ':action е изпратено',
+    'offline' => 'Стартирайте сървъра, за да променяте играчите.',
+];

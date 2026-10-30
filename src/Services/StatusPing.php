@@ -20,7 +20,7 @@ final class StatusPing
     /**
      * Empty when the server does not answer.
      *
-     * @return array{players: int, max_players: int, version: string, motd: string, favicon: string}|array{}
+     * @return array{players: int, max_players: int, version: string, motd: string, favicon: string, names: list<string>}|array{}
      */
     public static function get(Server $server): array
     {
@@ -82,7 +82,7 @@ final class StatusPing
     }
 
     /**
-     * @return array{players: int, max_players: int, version: string, motd: string, favicon: string}|array{}
+     * @return array{players: int, max_players: int, version: string, motd: string, favicon: string, names: list<string>}|array{}
      */
     public static function read(string $json): array
     {
@@ -98,6 +98,9 @@ final class StatusPing
             'version' => mb_substr((string) ($data['version']['name'] ?? ''), 0, 40),
             'motd' => mb_substr(self::legacy($data['description'] ?? ''), 0, 2048),
             'favicon' => str_starts_with($favicon, 'data:image/png;base64,') && strlen($favicon) <= 150000 ? $favicon : '',
+            // Up to twelve names a server shows in its list; some hide them or show text lines instead.
+            'names' => array_values(array_filter(array_map(fn ($player) => is_array($player) ? (string) ($player['name'] ?? '') : '',
+                array_slice((array) ($data['players']['sample'] ?? []), 0, 12)), fn (string $name) => Players::valid($name))),
         ];
     }
 

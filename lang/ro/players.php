@@ -1,0 +1,31 @@
+<?php
+
+return [
+    'title' => 'Jucători',
+    'heading' => 'Gestionarea jucătorilor',
+    'description' => 'Whitelist, operatori și moderare',
+    'name' => 'Numele jucătorului',
+    'name_placeholder' => 'Nume de utilizator Minecraft',
+    'online' => 'Jucători online',
+    'online_help' => 'Serverele pot ascunde numele jucătorilor în răspunsul de stare.',
+    'online_badge' => 'Online',
+    'no_names' => 'Niciun nume de jucător raportat.',
+    'whitelist' => 'Whitelist',
+    'operators' => 'Operatori',
+    'banned' => 'Jucători interziși',
+    'nobody' => 'Încă nimeni.',
+    'actions' => [
+        'whitelist' => 'Adăugați în whitelist',
+        'unwhitelist' => 'Scoateți din whitelist',
+        'op' => 'OP',
+        'deop' => 'DeOP',
+        'kick' => 'Dați afară',
+        'ban' => 'Interziceți',
+        'unban' => 'Anulați interdicția',
+    ],
+    'confirm' => ':action :player?',
+    'op_message' => 'Operatorii pot rula orice comandă de server.',
+    'removed_message' => 'Jucătorul este eliminat de pe server.',
+    'sent' => ':action trimis',
+    'offline' => 'Pornește serverul pentru a modifica jucătorii.',
+];

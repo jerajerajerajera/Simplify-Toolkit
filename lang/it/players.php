@@ -1,0 +1,31 @@
+<?php
+
+return [
+    'title' => 'Giocatori',
+    'heading' => 'Gestione giocatori',
+    'description' => 'Whitelist, operatori e moderazione',
+    'name' => 'Nome del giocatore',
+    'name_placeholder' => 'Nome utente Minecraft',
+    'online' => 'Giocatori online',
+    'online_help' => 'I server possono nascondere i nomi dei giocatori nella risposta di stato.',
+    'online_badge' => 'Online',
+    'no_names' => 'Nessun nome di giocatore segnalato.',
+    'whitelist' => 'Whitelist',
+    'operators' => 'Operatori',
+    'banned' => 'Giocatori bannati',
+    'nobody' => 'Ancora nessuno.',
+    'actions' => [
+        'whitelist' => 'Aggiungi alla whitelist',
+        'unwhitelist' => 'Togli dalla whitelist',
+        'op' => 'OP',
+        'deop' => 'DeOP',
+        'kick' => 'Espelli',
+        'ban' => 'Banna',
+        'unban' => 'Sbanna',
+    ],
+    'confirm' => ':action :player?',
+    'op_message' => 'Gli operatori possono eseguire ogni comando del server.',
+    'removed_message' => 'Il giocatore viene rimosso dal server.',
+    'sent' => ':action inviato',
+    'offline' => 'Avvia il server per modificare i giocatori.',
+];

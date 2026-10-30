@@ -1,0 +1,31 @@
+<?php
+
+return [
+    'title' => '플레이어',
+    'heading' => '플레이어 관리',
+    'description' => '화이트리스트, 운영자 및 관리',
+    'name' => '플레이어 이름',
+    'name_placeholder' => 'Minecraft 사용자 이름',
+    'online' => '온라인 플레이어',
+    'online_help' => '서버는 상태 응답에서 플레이어 이름을 숨길 수 있습니다.',
+    'online_badge' => '온라인',
+    'no_names' => '보고된 플레이어 이름이 없습니다.',
+    'whitelist' => '화이트리스트',
+    'operators' => '운영자',
+    'banned' => '차단된 플레이어',
+    'nobody' => '아직 아무도 없습니다.',
+    'actions' => [
+        'whitelist' => '화이트리스트 추가',
+        'unwhitelist' => '화이트리스트 제거',
+        'op' => 'OP 지정',
+        'deop' => 'OP 해제',
+        'kick' => '추방',
+        'ban' => '차단',
+        'unban' => '차단 해제',
+    ],
+    'confirm' => ':player — :action 할까요?',
+    'op_message' => '운영자는 모든 서버 명령을 실행할 수 있습니다.',
+    'removed_message' => '플레이어가 서버에서 제거됩니다.',
+    'sent' => ':action 보냄',
+    'offline' => '플레이어를 변경하려면 서버를 시작하세요.',
+];

@@ -8,6 +8,8 @@ return [
     'search_placeholder' => 'Etsi Modrinthista, Hangarista, SpigotMC:stä ja CurseForgesta',
     'offline' => 'Ei vastaa juuri nyt: :sites.',
     'nothing_found' => 'Mitään ei löytynyt.',
+    'popular_plugins' => 'Suositut lisäosat: :target',
+    'popular_mods' => 'Suositut modit: :target',
     'other_version' => 'Eri versio',
     'downloads' => ':count latausta',
     'also_on' => 'myös: :site',

@@ -8,6 +8,8 @@ return [
     'search_placeholder' => 'Modrinth、Hangar、SpigotMC、CurseForge を検索',
     'offline' => '現在応答なし: :sites。',
     'nothing_found' => '見つかりませんでした。',
+    'popular_plugins' => ':target の人気プラグイン',
+    'popular_mods' => ':target の人気 Mod',
     'other_version' => '別のバージョン',
     'downloads' => ':count ダウンロード',
     'also_on' => ':site にもあり',

@@ -8,6 +8,8 @@ return [
     'search_placeholder' => 'Hledat na Modrinth, Hangar, SpigotMC a CurseForge',
     'offline' => 'Teď neodpovídá: :sites.',
     'nothing_found' => 'Nic nenalezeno.',
+    'popular_plugins' => 'Oblíbené pluginy pro :target',
+    'popular_mods' => 'Oblíbené mody pro :target',
     'other_version' => 'Jiná verze',
     'downloads' => 'Stažení: :count',
     'also_on' => 'také na :site',

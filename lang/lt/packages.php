@@ -8,6 +8,8 @@ return [
     'search_placeholder' => 'Ieškoti Modrinth, Hangar, SpigotMC ir CurseForge',
     'offline' => 'Dabar neatsako: :sites.',
     'nothing_found' => 'Nieko nerasta.',
+    'popular_plugins' => 'Populiarūs įskiepiai: :target',
+    'popular_mods' => 'Populiarūs modai: :target',
     'other_version' => 'Kita versija',
     'downloads' => 'Atsisiuntimų: :count',
     'also_on' => 'taip pat :site',
