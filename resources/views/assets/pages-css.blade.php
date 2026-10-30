@@ -53,7 +53,14 @@ a.sm-title:hover, .sm-meta a:hover { text-decoration: underline; }
 .sm-side { display: flex; flex-direction: column; gap: 1.5rem; }
 /* Players: a name in a list fills in the player field above the buttons. */
 .sm-thumb.is-small { width: 1.75rem; height: 1.75rem; }
-.sm-thumb.is-pixel { image-rendering: pixelated; }
+/* A player head lies over the user icon; when mc-heads.net cannot be reached the image is removed and the icon stays. */
+.sm-thumb.sm-face { position: relative; overflow: hidden; }
+.sm-thumb.sm-face img { position: absolute; inset: 0; width: 100%; height: 100%; image-rendering: pixelated; }
+/* On a phone a button in a box's head goes under the title at full width, so the title keeps its line. */
+@media (max-width: 639px) {
+    .sm-columns .fi-section-header-after-ctn { flex-basis: 100%; }
+    .sm-columns .fi-section-header-after-ctn .fi-btn { width: 100%; }
+}
 .sm-row.is-pick { cursor: pointer; border-radius: .375rem; }
 .sm-row.is-pick:hover .sm-title { color: var(--s-accent, var(--primary-600)); }
 .sm-search + .sm-title { display: block; margin-top: .5rem; }

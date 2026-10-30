@@ -39,7 +39,7 @@
                 <ul class="sm-list">
                     @forelse ($lists['online'] ?? [] as $player)
                         <li class="sm-row is-compact is-pick" wire:key="online-{{ $player }}" wire:click="$set('name', @js($player))">
-                            <img src="{{ $head($player) }}" alt="" loading="lazy" class="sm-thumb is-small is-pixel">
+                            <span class="sm-thumb is-small is-empty sm-face"><x-filament::icon icon="tabler-user" /><img src="{{ $head($player) }}" alt="" loading="lazy" x-data x-init="$el.complete && ! $el.naturalWidth && $el.remove()" x-on:error="$el.remove()"></span>
                             <div class="sm-body"><p class="sm-title">{{ $player }}</p></div>
                             <x-filament::badge color="success" size="sm">{{ __('simplify-toolkit::players.online_badge') }}</x-filament::badge>
                         </li>
@@ -63,7 +63,7 @@
                         <ul class="sm-list">
                             @forelse ($lists[$key] ?? [] as $player)
                                 <li class="sm-row is-compact is-pick" wire:key="{{ $key }}-{{ $player['name'] }}" wire:click="$set('name', @js($player['name']))">
-                                    <img src="{{ $head($player) }}" alt="" loading="lazy" class="sm-thumb is-small is-pixel">
+                                    <span class="sm-thumb is-small is-empty sm-face"><x-filament::icon icon="tabler-user" /><img src="{{ $head($player) }}" alt="" loading="lazy" x-data x-init="$el.complete && ! $el.naturalWidth && $el.remove()" x-on:error="$el.remove()"></span>
                                     <div class="sm-body"><p class="sm-title">{{ $player['name'] }}</p></div>
                                 </li>
                             @empty
