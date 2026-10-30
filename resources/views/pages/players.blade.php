@@ -50,7 +50,7 @@
             @endif
         </x-filament::section>
 
-        <div class="sm-side">
+        <div class="sm-side is-lists">
             @foreach ($sides as $key)
                 <x-filament::section :heading="__('simplify-toolkit::players.'.$key)" compact>
                     @if (! $loaded)
