@@ -6,6 +6,8 @@
   newest release is made for another Minecraft version, Toolkit asks first. The old file goes to the backup folder.
 - Plugins and Mods pages: search one site (Modrinth, Hangar, SpigotMC or CurseForge) or all of them, as in 0.7.0.
   Only the sites that fit the server show.
+- A file saved in Pelican's file manager while a Minecraft server runs gives "File changes saved, restart to load
+  them" and the same "Restart needed" reminder as a change on the Minecraft or Plugins page (back from 0.7.0).
 
 ## 1.2.2
 

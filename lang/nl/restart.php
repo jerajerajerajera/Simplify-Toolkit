@@ -4,6 +4,7 @@ return [
     'needed' => 'Herstart nodig',
     'waiting' => 'Wijzigingen wachten op een herstart',
     'waiting_help' => 'Herstart de server om je opgeslagen wijzigingen toe te passen.',
+    'file_saved' => 'Bestandswijzigingen opgeslagen, herstart om ze te laden',
     'scheduled' => 'Herstart gepland',
     'scheduled_help' => 'Er is een herstart gepland om je wijzigingen toe te passen.',
     'now' => 'Nu herstarten',
