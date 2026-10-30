@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.4
+
+- The Plugins and Mods page opens at once: its boxes stand straight away with placeholder rows, and the search results
+  and installed plugins fill in once Wings and the plugin sites have answered. Before, the page only appeared after all
+  of that, and the boxes jumped as their content arrived. The server's files are also read once instead of twice.
+
 ## 1.1.3
 
 - The Plugins and Mods page follows Simplify's style: the pause, play, log and remove buttons of each installed plugin are

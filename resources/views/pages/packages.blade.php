@@ -11,9 +11,16 @@
         <p class="sm-note is-danger">{{ __('simplify-toolkit::packages.unreachable') }}</p>
     @endif
 
-    <div class="sm-columns">
-        <x-filament::section :heading="__('simplify-toolkit::packages.find')" :description="$this->ready() ? __('simplify-toolkit::packages.for', ['loader' => ucfirst($context['loader']), 'version' => $context['minecraft']]) : null">
-            @if (! $this->ready())
+    <div class="sm-columns" wire:init="load">
+        <x-filament::section :heading="__('simplify-toolkit::packages.find')" :description="$loaded && $this->ready() ? __('simplify-toolkit::packages.for', ['loader' => ucfirst($context['loader']), 'version' => $context['minecraft']]) : null">
+            @if (! $loaded)
+                {{-- The boxes stand at once; these rows hold the place of the results until load() is back. --}}
+                <ul class="sm-list sm-skeleton" aria-busy="true">
+                    @for ($row = 0; $row < 6; $row++)
+                        <li class="sm-row"><span class="sm-thumb"></span><div class="sm-body"><span class="sm-line is-title"></span><span class="sm-line"></span><span class="sm-line is-short"></span></div></li>
+                    @endfor
+                </ul>
+            @elseif (! $this->ready())
                 <div class="sm-stack">
                     <p class="sm-note">{{ __('simplify-toolkit::packages.unknown_software') }}</p>
                     {{ $this->chooseAction }}
@@ -82,6 +89,13 @@
         <div class="sm-side">
             <div @if ($watching) wire:poll.15s="checkStart" @endif>
                 <x-filament::section :heading="__('simplify-toolkit::packages.'.($mods ? 'installed_mods' : 'installed_plugins'))" :description="__('simplify-toolkit::packages.restart_help')">
+                    @if (! $loaded)
+                        <ul class="sm-list sm-skeleton" aria-busy="true">
+                            @for ($row = 0; $row < 4; $row++)
+                                <li class="sm-row is-compact"><div class="sm-body"><span class="sm-line is-title"></span><span class="sm-line is-short"></span></div></li>
+                            @endfor
+                        </ul>
+                    @else
                     <ul class="sm-list">
                         @forelse ($installed as $item)
                             <li @class(['sm-row is-compact', 'is-off' => ! $item['enabled']]) wire:key="file-{{ $item['file'] }}">
@@ -117,6 +131,7 @@
                             <li class="sm-empty">{{ __('simplify-toolkit::packages.'.($mods ? 'no_mods' : 'no_plugins')) }}</li>
                         @endforelse
                     </ul>
+                    @endif
                 </x-filament::section>
             </div>
 

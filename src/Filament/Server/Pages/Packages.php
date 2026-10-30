@@ -62,6 +62,9 @@ final class Packages extends Page implements HasActions
     /** A plugin installed here waits for its first start; the page then checks the log now and then. */
     public bool $watching = false;
 
+    /** False until load() ran: the page opens at once with its boxes, Wings and the plugin sites are asked right after. */
+    public bool $loaded = false;
+
     public static function canAccess(): bool
     {
         $server = Filament::getTenant();
@@ -105,10 +108,16 @@ final class Packages extends Page implements HasActions
     public function mount(): void
     {
         abort_unless(self::canAccess(), 403);
+    }
+
+    /** Called by the page itself (wire:init) once it is on screen. */
+    public function load(): void
+    {
         $this->checkStart();
         if ($this->ready()) {
             $this->search();
         }
+        $this->loaded = true;
     }
 
     /** Whether the loader and Minecraft version are known, so searching and installing can work. */
@@ -122,7 +131,7 @@ final class Packages extends Page implements HasActions
         try {
             $packages = $this->packages();
             $this->context = $packages->context();
-            $this->installed = $packages->installed();
+            $this->installed = $packages->installed($this->context);
             $this->watching = StartCheck::watching($this->server());
             $this->unreachable = false;
         } catch (Throwable $error) {

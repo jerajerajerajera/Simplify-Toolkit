@@ -246,7 +246,9 @@ step('the Plugins page finds plugins for the version the server runs', function 
         '/plugins/Chunky-1.4.jar' => 'jar',
     ];
     Filament::setTenant($paper);
-    $page = Livewire::actingAs($admin)->test(Packages::class)
+    // The page opens with its boxes only; load() (wire:init) fills them.
+    $page = Livewire::actingAs($admin)->test(Packages::class)->assertSet('loaded', false)->assertSee('sm-skeleton')
+        ->call('load')->assertSet('loaded', true)
         ->assertSet('context.loader', 'paper')->assertSet('context.minecraft', '1.21.4')->assertSet('unreachable', false)
         ->assertSee('Smoke Edit')->assertSee('Chunky');
     if (count($page->get('installed')) !== 1) {
@@ -254,7 +256,7 @@ step('the Plugins page finds plugins for the version the server runs', function 
     }
 });
 step('installing, switching off and removing a plugin goes through Wings', function () use ($admin, $paper) {
-    $page = Livewire::actingAs($admin)->test(Packages::class)
+    $page = Livewire::actingAs($admin)->test(Packages::class)->call('load')
         ->callAction('install', arguments: ['key' => 'modrinth:AAAA1111', 'fits' => true]);
     if (! isset(FakeFiles::$files['/plugins/SmokeEdit-1.0.jar']) || ! Package::query()->where('server_id', $paper->id)->where('key', 'modrinth:AAAA1111')->exists()) {
         throw new RuntimeException('not installed: '.json_encode(array_keys(FakeFiles::$files)));
@@ -270,7 +272,7 @@ step('installing, switching off and removing a plugin goes through Wings', funct
     }
 });
 step('a plugin that fails on the next start is switched off with its log line', function () use ($admin, $paper) {
-    $page = Livewire::actingAs($admin)->test(Packages::class)
+    $page = Livewire::actingAs($admin)->test(Packages::class)->call('load')
         ->callAction('install', arguments: ['key' => 'modrinth:AAAA1111', 'fits' => true])
         ->assertSet('watching', true);
     FakeFiles::$files['/logs/latest.log'] = "[12:00:01 INFO]: Starting\n[12:00:02 ERROR]: Could not load 'plugins/SmokeEdit-1.0.jar' in folder 'plugins'\n[12:00:03 INFO]: Done (2.0s)!\n";
