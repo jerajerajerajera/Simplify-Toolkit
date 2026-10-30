@@ -33,13 +33,18 @@ final class Catalog
     /**
      * One list of cards: one per plugin, from the preferred site, with the other sites under "also".
      *
+     * One site only when $site names one, as 0.7.0's site choice did.
+     *
      * @return array{items: list<array<string, mixed>>, offline: list<string>}
      */
-    public function search(string $query, string $kind, string $loader, string $minecraft): array
+    public function search(string $query, string $kind, string $loader, string $minecraft, string $site = ''): array
     {
         $query = trim(mb_substr($query, 0, 80));
         $requests = [];
         foreach ($this->sourcesFor($kind, $loader) as $source) {
+            if ($site !== '' && $source->id() !== $site) {
+                continue;
+            }
             $requests[$source->id()] = [$source->searchUrl($query, $kind, $loader), $source->headers()];
         }
         $answers = Web::many($requests);

@@ -6,6 +6,8 @@ return [
     'find' => 'Caută',
     'for' => 'Pentru :loader :version',
     'search_placeholder' => 'Caută pe Modrinth, Hangar, SpigotMC și CurseForge',
+    'site' => 'Site',
+    'all_sites' => 'Toate site-urile',
     'offline' => 'Nu răspunde acum: :sites.',
     'nothing_found' => 'Nu s-a găsit nimic.',
     'popular_plugins' => 'Pluginuri populare pentru :target',

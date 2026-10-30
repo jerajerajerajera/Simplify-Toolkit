@@ -295,6 +295,26 @@ step('the Plugins page finds plugins for the version the server runs', function 
         throw new RuntimeException('installed: '.json_encode($page->get('installed')));
     }
 });
+step('the search can be limited to one site, as in 0.7.0', function () use ($admin) {
+    $sites = Web::$transport;
+    $asked = [];
+    Web::$transport = function (string $url, array $headers = []) use (&$asked, $sites) {
+        $asked[] = $url;
+
+        return $sites($url, $headers);
+    };
+    try {
+        $page = Livewire::actingAs($admin)->test(Packages::class)->call('load')->assertSee('All sites')->assertSee('Hangar')->assertSee('Smoke Edit');
+        $asked = [];
+        $page->set('site', 'hangar')->assertDontSee('Smoke Edit');
+        if ($asked === [] || array_filter($asked, fn (string $url) => ! str_contains($url, 'hangar')) !== []) {
+            throw new RuntimeException('not only Hangar was asked: '.json_encode($asked));
+        }
+        $page->set('site', 'nowhere')->assertSet('site', '')->assertSee('Smoke Edit');
+    } finally {
+        Web::$transport = $sites;
+    }
+});
 step('installing, switching off and removing a plugin goes through Wings', function () use ($admin, $paper) {
     $page = Livewire::actingAs($admin)->test(Packages::class)->call('load')
         ->callAction('install', arguments: ['key' => 'modrinth:AAAA1111', 'fits' => true]);
@@ -431,7 +451,7 @@ step('servers without plugins or mods have no Plugins page', function () use ($a
     }
 });
 // Every step must have run: a step that never ran is a failure too.
-$expected = 20;
+$expected = 21;
 if ($passed !== $expected) {
     echo "FAIL $passed of $expected steps passed\n";
     exit(1);

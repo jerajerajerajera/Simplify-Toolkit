@@ -6,6 +6,8 @@ return [
     'find' => 'Buscar',
     'for' => 'Para :loader :version',
     'search_placeholder' => 'Buscar no Modrinth, Hangar, SpigotMC e CurseForge',
+    'site' => 'Site',
+    'all_sites' => 'Todos os sites',
     'offline' => 'Sem resposta agora: :sites.',
     'nothing_found' => 'Nada encontrado.',
     'popular_plugins' => 'Plugins populares para :target',

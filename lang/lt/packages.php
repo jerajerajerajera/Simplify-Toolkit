@@ -6,6 +6,8 @@ return [
     'find' => 'Paieška',
     'for' => ':loader :version',
     'search_placeholder' => 'Ieškoti Modrinth, Hangar, SpigotMC ir CurseForge',
+    'site' => 'Svetainė',
+    'all_sites' => 'Visos svetainės',
     'offline' => 'Dabar neatsako: :sites.',
     'nothing_found' => 'Nieko nerasta.',
     'popular_plugins' => 'Populiarūs įskiepiai: :target',

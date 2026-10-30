@@ -6,6 +6,8 @@ return [
     'find' => 'Pretraga',
     'for' => 'Za :loader :version',
     'search_placeholder' => 'Pretraži Modrinth, Hangar, SpigotMC i CurseForge',
+    'site' => 'Sajt',
+    'all_sites' => 'Svi sajtovi',
     'offline' => 'Trenutno ne odgovara: :sites.',
     'nothing_found' => 'Ništa nije pronađeno.',
     'popular_plugins' => 'Популарни додаци за :target',

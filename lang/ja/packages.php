@@ -6,6 +6,8 @@ return [
     'find' => '検索',
     'for' => ':loader :version 用',
     'search_placeholder' => 'Modrinth、Hangar、SpigotMC、CurseForge を検索',
+    'site' => 'サイト',
+    'all_sites' => 'すべてのサイト',
     'offline' => '現在応答なし: :sites。',
     'nothing_found' => '見つかりませんでした。',
     'popular_plugins' => ':target の人気プラグイン',

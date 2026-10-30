@@ -6,6 +6,8 @@ return [
     'find' => 'Søg',
     'for' => 'Til :loader :version',
     'search_placeholder' => 'Søg på Modrinth, Hangar, SpigotMC og CurseForge',
+    'site' => 'Side',
+    'all_sites' => 'Alle sider',
     'offline' => 'Svarer ikke lige nu: :sites.',
     'nothing_found' => 'Intet fundet.',
     'popular_plugins' => 'Populære plugins til :target',

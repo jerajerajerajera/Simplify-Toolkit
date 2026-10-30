@@ -6,6 +6,8 @@ return [
     'find' => '찾기',
     'for' => ':loader :version 용',
     'search_placeholder' => 'Modrinth, Hangar, SpigotMC, CurseForge에서 검색',
+    'site' => '사이트',
+    'all_sites' => '모든 사이트',
     'offline' => '지금 응답 없음: :sites.',
     'nothing_found' => '찾은 항목이 없습니다.',
     'popular_plugins' => ':target 인기 플러그인',

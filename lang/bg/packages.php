@@ -6,6 +6,8 @@ return [
     'find' => 'Търсене',
     'for' => 'За :loader :version',
     'search_placeholder' => 'Търси в Modrinth, Hangar, SpigotMC и CurseForge',
+    'site' => 'Сайт',
+    'all_sites' => 'Всички сайтове',
     'offline' => 'Не отговаря в момента: :sites.',
     'nothing_found' => 'Нищо не е намерено.',
     'popular_plugins' => 'Популярни плъгини за :target',

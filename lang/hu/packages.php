@@ -6,6 +6,8 @@ return [
     'find' => 'Keresés',
     'for' => ':loader :version',
     'search_placeholder' => 'Keresés a Modrinth, Hangar, SpigotMC és CurseForge oldalon',
+    'site' => 'Oldal',
+    'all_sites' => 'Minden oldal',
     'offline' => 'Most nem válaszol: :sites.',
     'nothing_found' => 'Nincs találat.',
     'popular_plugins' => 'Népszerű bővítmények: :target',

@@ -35,6 +35,14 @@
                     <x-filament::input.wrapper prefix-icon="tabler-search">
                         <x-filament::input type="search" wire:model.live.debounce.400ms="query" :placeholder="__('simplify-toolkit::packages.search_placeholder')" />
                     </x-filament::input.wrapper>
+                    @php $choices = $this->sites(); @endphp
+                    @if (count($choices) > 1)
+                        <div class="sm-sites" role="group" aria-label="{{ __('simplify-toolkit::packages.site') }}">
+                            @foreach (['' => __('simplify-toolkit::packages.all_sites'), ...$choices] as $id => $label)
+                                <button type="button" class="sm-site" aria-pressed="{{ $site === $id ? 'true' : 'false' }}" wire:click="$set('site', @js($id))">{{ $label }}</button>
+                            @endforeach
+                        </div>
+                    @endif
                     @if ($offline)
                         <p class="sm-note is-warn">{{ __('simplify-toolkit::packages.offline', ['sites' => implode(', ', $offline)]) }}</p>
                     @endif
