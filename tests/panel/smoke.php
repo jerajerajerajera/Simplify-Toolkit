@@ -323,7 +323,7 @@ step('the Plugins page finds plugins for the version the server runs', function 
         throw new RuntimeException('installed: '.json_encode($page->get('installed')));
     }
     // On a phone the button in a box's head goes under the title (style audit phone390).
-    if (! str_contains(view('simplify-toolkit::assets.pages-css')->render(), '.sm-columns .fi-section-header-after-ctn { flex-basis: 100%; }')) {
+    if (! str_contains(view('simplify-toolkit::assets.pages-css')->render(), '.sm-columns :is(.fi-section-header, .fi-section-header-content):has(> .fi-section-header-after-ctn) { flex-wrap: wrap; }')) {
         throw new RuntimeException('the phone rule for buttons in a box\'s head is missing');
     }
 });

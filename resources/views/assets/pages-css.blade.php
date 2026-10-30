@@ -56,8 +56,10 @@ a.sm-title:hover, .sm-meta a:hover { text-decoration: underline; }
 /* A player head lies over the user icon; when mc-heads.net cannot be reached the image is removed and the icon stays. */
 .sm-thumb.sm-face { position: relative; overflow: hidden; }
 .sm-thumb.sm-face img { position: absolute; inset: 0; width: 100%; height: 100%; image-rendering: pixelated; }
-/* On a phone a button in a box's head goes under the title at full width, so the title keeps its line. */
+/* On a phone a button in a box's head goes under the title at full width, so the title keeps its line. Filament 5
+   puts the button straight in the head, Filament 4 next to the title in the head's content; both wrap. */
 @media (max-width: 639px) {
+    .sm-columns :is(.fi-section-header, .fi-section-header-content):has(> .fi-section-header-after-ctn) { flex-wrap: wrap; }
     .sm-columns .fi-section-header-after-ctn { flex-basis: 100%; }
     .sm-columns .fi-section-header-after-ctn .fi-btn { width: 100%; }
 }
