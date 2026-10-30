@@ -261,7 +261,9 @@ step('a file saved in the file manager of a running Minecraft server leaves the 
             throw new RuntimeException('no reminder after saving a file');
         }
         RestartReminder::forget($paper);
-        // The Minecraft page writes files too, and says so itself: no second notice.
+        // The Minecraft page writes files too, and says so itself: no second notice. The notice above is still in
+        // the session, so that one goes first.
+        session()->forget('filament.notifications');
         Livewire::actingAs($admin)->test(Minecraft::class)->call('save')->assertNotNotified(__('simplify-toolkit::restart.file_saved'));
         RestartReminder::forget($paper);
         cache()->put($status, ContainerStatus::Offline, 60);
