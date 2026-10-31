@@ -177,6 +177,10 @@ step('the admin settings page renders', function () use ($admin) {
     if ($response->getStatusCode() !== 200 || ! str_contains($response->getContent(), e(__('simplify-toolkit::settings.no_key')))) {
         throw new RuntimeException('HTTP '.$response->getStatusCode().' at '.$url.($response->exception ? ': '.$response->exception->getMessage() : ''));
     }
+    // With Simplify the admin page never scrolls: its form gets the window's height and scrolls inside (style audit laag1366).
+    if (! str_contains($response->getContent(), '<form wire:submit="save" class="s-fit">')) {
+        throw new RuntimeException('the settings form is not marked s-fit');
+    }
 });
 $paper = Server::factory()->create([
     'owner_id' => $admin->id,
