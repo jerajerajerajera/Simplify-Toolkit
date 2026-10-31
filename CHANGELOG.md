@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.3.1
 
 - Admin settings: with Simplify installed the page no longer scrolls; only the settings scroll, under the Save button.
 
