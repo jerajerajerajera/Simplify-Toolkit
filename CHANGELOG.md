@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.3.0
 
 - Plugins and Mods pages: update a plugin or mod that was added here to its newest release (back from 0.7.0). When the
   newest release is made for another Minecraft version, Toolkit asks first. The old file goes to the backup folder.
