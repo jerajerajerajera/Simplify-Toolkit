@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Admin settings: with Simplify installed the page no longer scrolls; only the settings scroll, under the Save button.
+
 ## 1.3.0
 
 - Plugins and Mods pages: update a plugin or mod that was added here to its newest release (back from 0.7.0). When the
