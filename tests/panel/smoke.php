@@ -240,6 +240,11 @@ step('the Players page lists whitelist, operators and bans from their files', fu
     }
     // A head that does not load gives way to the user icon underneath (style audit: no broken images).
     $page->assertSee(__('simplify-toolkit::players.offline'))->assertSeeHtml('sm-face')->assertSeeHtml('x-on:error="$el.remove()"');
+    // A long whitelist scrolls inside its own box instead of running over Operators and Banned players (B9, 1.2.1).
+    $page->assertSeeHtml('class="sm-side is-lists"');
+    if (! str_contains(view('simplify-toolkit::assets.pages-css')->render(), '.sm-side.is-lists > .fi-section > .fi-section-content-ctn { flex: 1; min-height: 0; overflow-y: auto;')) {
+        throw new RuntimeException('the lists on the Players page no longer scroll inside their own box');
+    }
 });
 step('a saved change leaves a restart reminder on the card until it is dismissed', function () use ($admin, $paper) {
     Livewire::actingAs($admin)->test(Minecraft::class)->call('save')->assertHasNoErrors();
