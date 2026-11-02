@@ -4,11 +4,11 @@ A [Pelican](https://pelican.dev) plugin with handy tools for your servers: the h
 the [Simplify](https://github.com/jerajerajerajera/Simplify) core. New tools are added here over time. Today it has:
 
 - **Plugins and mods** for Minecraft: add plugins (Paper, Purpur, Spigot, Velocity) and mods (Fabric, Forge, NeoForge,
-  Quilt) from Modrinth, Hangar, SpigotMC and CurseForge, see which version fits your server, and switch them off or
-  remove them.
+  Quilt) from Modrinth, Hangar, SpigotMC and CurseForge, in one site or all of them, see which version fits your
+  server, update them to the newest release, and switch them off or remove them.
 - **Minecraft settings**: change the MOTD, the main server settings and the server icon without editing
-  `server.properties`, and accept the EULA. After a change, the server shows "Restart needed" with Restart now, later
-  or dismiss.
+  `server.properties`, and accept the EULA. After a change, also a file saved in Pelican's file manager, the server
+  shows "Restart needed" with Restart now, later or dismiss.
 - **Players**: who is online, the whitelist, operators and bans, with whitelist, OP, kick and ban.
 - **Automatic backups**: a backup every so many minutes per server, keeping a set number of recovery points. Only
   these automatic backups are ever deleted.
@@ -17,11 +17,17 @@ On a modpack server the modpack is one row in the installed mods, with its mods 
 
 It works on its own, and shows up inside Simplify when both are installed.
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/plugins-desktop-dark.png">
+  <img src="docs/screenshots/plugins-desktop-light.png" alt="The Plugins page of Simplify Toolkit" width="720">
+</picture>
+
 ## With Simplify
 
 With [Simplify](https://github.com/jerajerajerajera/Simplify) installed, a running Minecraft server shows its
 players, MOTD, version and server icon on its card and page, and its software, version, modpack and players in the
-server list on your website (event `simplify.embed.server`). Toolkit also shows up in Simplify's add-on list.
+server list on your website (event `simplify.embed.server`). Automatic backups is a tab of Backups & tasks in the
+server menu, and Toolkit also shows up in Simplify's add-on list.
 
 ## For other Simplify add-ons
 
