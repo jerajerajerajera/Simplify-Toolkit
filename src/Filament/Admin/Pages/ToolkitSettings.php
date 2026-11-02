@@ -139,6 +139,8 @@ final class ToolkitSettings extends Page implements HasSchemas
         }
         if (! Keys::curseForgeWorks($key)) {
             Notification::make()->title(__('simplify-toolkit::settings.key_refused'))->danger()->send();
+            // An error in the bag tells Simplify the changes were not saved, so its "Changes made" bar stays.
+            $this->addError('data', __('simplify-toolkit::settings.key_refused'));
 
             return;
         }
