@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Minecraft settings, Automatic backups and the admin settings keep their changes until Save: with Simplify a "Changes made" bar offers Discard and Save, and leaving the page asks first. A save that does not reach the server keeps the bar.
 - Checks: a change to docs or Markdown only skips the panel smoke; tests and pint still run.
 
 ## 1.3.1

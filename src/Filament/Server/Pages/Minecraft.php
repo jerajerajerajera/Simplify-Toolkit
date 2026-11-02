@@ -204,6 +204,8 @@ final class Minecraft extends Page implements HasSchemas
         } catch (Throwable $error) {
             report($error);
             $this->failedNotification();
+            // An error in the bag tells Simplify the changes were not saved, so its "Changes made" bar stays.
+            $this->addError('data', __('simplify-toolkit::minecraft.not_saved'));
 
             return;
         }

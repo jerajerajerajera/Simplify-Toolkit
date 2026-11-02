@@ -84,7 +84,7 @@ function visit(User $user, string $url): TestResponse
 }
 
 /** Wings stand-in: files live in memory. */
-final class FakeFiles extends DaemonFileRepository
+class FakeFiles extends DaemonFileRepository
 {
     /** @var array<string, string> */
     public static array $files = [];
@@ -147,6 +147,15 @@ final class FakeFiles extends DaemonFileRepository
     }
 }
 
+/** Wings that cannot be reached when a file is written. */
+final class OfflineFiles extends FakeFiles
+{
+    public function putContent(string $path, string $content): Response
+    {
+        throw new RuntimeException('Wings is offline');
+    }
+}
+
 $passed = 0;
 
 $admin = User::where('email', 'smoke-mods@example.com')->first()
@@ -178,8 +187,8 @@ step('the admin settings page renders', function () use ($admin) {
         throw new RuntimeException('HTTP '.$response->getStatusCode().' at '.$url.($response->exception ? ': '.$response->exception->getMessage() : ''));
     }
     // With Simplify the admin page never scrolls: its form gets the window's height and scrolls inside (style audit laag1366).
-    if (! str_contains($response->getContent(), '<form wire:submit="save" class="s-fit">')) {
-        throw new RuntimeException('the settings form is not marked s-fit');
+    if (! str_contains($response->getContent(), '<form wire:submit="save" data-simplify-unsaved="data" class="s-fit">')) {
+        throw new RuntimeException('the settings form is not marked s-fit and unsaved-changes');
     }
 });
 $paper = Server::factory()->create([
@@ -194,6 +203,10 @@ step('the Minecraft page renders while Wings is offline', function () use ($admi
     }
     if (! str_contains($response->getContent(), e(__('simplify-toolkit::minecraft.unreachable')))) {
         throw new RuntimeException('the page does not say the files cannot be reached');
+    }
+    // No autosave: Simplify keeps the changes until Save, and asks before leaving (P-38).
+    if (! str_contains($response->getContent(), '<form wire:submit="save" data-simplify-unsaved="data"')) {
+        throw new RuntimeException('the Minecraft form is not marked for unsaved changes');
     }
 });
 step('saving changes only the chosen lines of server.properties', function () use ($admin, $paper) {
@@ -215,6 +228,10 @@ step('saving changes only the chosen lines of server.properties', function () us
     if (trim(FakeFiles::$files['/eula.txt'] ?? '') !== 'eula=true') {
         throw new RuntimeException('the EULA was not accepted');
     }
+    // A save that does not reach the files keeps Simplify's "Changes made" bar: the error bag tells it so (P-38).
+    app()->bind(DaemonFileRepository::class, OfflineFiles::class);
+    Livewire::actingAs($admin)->test(Minecraft::class)->set('data.max_players', 7)->call('save')->assertHasErrors('data');
+    app()->bind(DaemonFileRepository::class, FakeFiles::class);
 });
 step('the server icon shows and can be removed', function () use ($admin) {
     $picture = imagecreatetruecolor(64, 64);
