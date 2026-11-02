@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Checks: a change to docs or Markdown only skips the panel smoke; tests and pint still run.
+
 ## 1.3.1
 
 - Admin settings: with Simplify installed the page no longer scrolls; only the settings scroll, under the Save button.
