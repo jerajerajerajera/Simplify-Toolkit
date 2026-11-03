@@ -56,7 +56,7 @@ written through Wings, like Pelican's own file manager. Outside services, only w
 | `api.modrinth.com` | Plugins or Mods page: searching, installing; "Use the modpack's icon"; the version of a Modrinth modpack | the search text, loader and Minecraft version; project and version ids |
 | `hangar.papermc.io` | Plugins page on Paper, Purpur, Folia, Velocity and Waterfall | the search text, platform and version; the plugin's name |
 | `api.spiget.org` (SpigotMC) | Plugins page on Paper, Spigot, Bukkit and BungeeCord | the search text; the resource id |
-| `api.curseforge.com` | Plugins or Mods page, only when a CurseForge API key is set | the search text, loader and version; the project id; the key |
+| `api.curseforge.com` | Plugins or Mods page, only when a CurseForge API key is set; Simplify Embed's server list for a CurseForge modpack, only with the panel's key | the search text, loader and version; the project and file id; the key |
 | `api.feed-the-beast.com` and its image host | "Use the modpack's icon"; the name and version of an FTB modpack | the modpack's id |
 
 The player count comes from the Minecraft server itself: the panel asks the server's own port what every Minecraft

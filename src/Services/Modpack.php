@@ -8,30 +8,49 @@ use App\Models\Server;
 use Illuminate\Support\Facades\Cache;
 
 /**
- * The modpack a server runs, from the Modrinth or FTB egg's variables and the modpack's site. Cached for six hours.
+ * The modpack a server runs, from the Modrinth, CurseForge or FTB egg's variables and the modpack's site. Cached for
+ * six hours. "download" is where players get the client of the installed version (Simplify Embed's server list).
+ *
+ * @phpstan-type Pack array{name: string, version: string, url: string, icon: string, download: string}
  */
 final class Modpack
 {
-    /** @return array{name: string, version: string, url: string, icon: string}|null */
+    /** @return Pack|null */
     public static function of(Server $server): ?array
     {
         $modpack = ServerKind::forServer($server)['modpack'];
-        if (! in_array($modpack, ['modrinth', 'ftb'], true)) {
+        if ($modpack === '') {
             return null;
         }
         $variables = [];
         foreach ($server->variables as $variable) {
             $variables[$variable->env_variable] = (string) ($variable->server_value ?? $variable->default_value);
         }
-        $pack = Cache::remember('simplify-toolkit.modpack-info.'.$server->uuid.'.'.md5(json_encode($variables) ?: ''), 21600,
-            fn () => $modpack === 'modrinth' ? self::modrinth($variables) : self::ftb($variables));
+        // CurseForge only answers with a key; the panel's own, never a user's, since the server list is public.
+        $key = $modpack === 'curseforge' ? (Keys::get(Keys::CURSEFORGE, null) ?? '') : '';
+        $pack = Cache::remember('simplify-toolkit.modpack-info.'.$server->uuid.'.'.md5((json_encode($variables) ?: '').$modpack.$key), 21600,
+            fn () => self::fromVariables($modpack, $variables, $key));
 
         return $pack['name'] === '' ? null : $pack;
     }
 
     /**
+     * @param  array<string, string>  $variables  the egg's variables
+     * @return Pack
+     */
+    public static function fromVariables(string $modpack, array $variables, string $key = ''): array
+    {
+        return match ($modpack) {
+            'modrinth' => self::modrinth($variables),
+            'ftb' => self::ftb($variables),
+            'curseforge' => $key !== '' ? self::curseForge($variables, $key) : self::none(),
+            default => self::none(),
+        };
+    }
+
+    /**
      * @param  array<string, string>  $variables
-     * @return array{name: string, version: string, url: string, icon: string}
+     * @return Pack
      */
     private static function modrinth(array $variables): array
     {
@@ -43,18 +62,21 @@ final class Modpack
         $version = preg_match('/^\w{1,64}$/', $variables['VERSION_ID'] ?? '') === 1
             ? (Web::json('https://api.modrinth.com/v2/version/'.$variables['VERSION_ID']) ?? []) : [];
         $slug = (string) ($project['slug'] ?? '');
+        $url = preg_match('/^[\w-]{1,64}$/', $slug) === 1 ? 'https://modrinth.com/modpack/'.$slug : '';
+        $versionId = (string) ($version['id'] ?? '');
 
         return [
             'name' => mb_substr((string) ($project['title'] ?? ''), 0, 80),
             'version' => mb_substr((string) ($version['version_number'] ?? ''), 0, 40),
-            'url' => preg_match('/^[\w-]{1,64}$/', $slug) === 1 ? 'https://modrinth.com/modpack/'.$slug : '',
+            'url' => $url,
             'icon' => Web::https($project['icon_url'] ?? null) ?? '',
+            'download' => $url !== '' && preg_match('/^\w{1,64}$/', $versionId) === 1 ? $url.'/version/'.$versionId : $url,
         ];
     }
 
     /**
      * @param  array<string, string>  $variables
-     * @return array{name: string, version: string, url: string, icon: string}
+     * @return Pack
      */
     private static function ftb(array $variables): array
     {
@@ -78,18 +100,50 @@ final class Modpack
             }
         }
         $slug = strtolower(trim((string) preg_replace('/[^a-z0-9]+/i', '-', (string) ($pack['name'] ?? '')), '-'));
+        $url = $slug !== '' ? 'https://www.feed-the-beast.com/modpacks/'.$id.'-'.$slug : '';
 
+        // FTB has no page per version: players install the client with the FTB app from the modpack's page.
         return [
             'name' => mb_substr((string) ($pack['name'] ?? ''), 0, 80),
             'version' => mb_substr($version, 0, 40),
-            'url' => $slug !== '' ? 'https://www.feed-the-beast.com/modpacks/'.$id.'-'.$slug : '',
+            'url' => $url,
             'icon' => $icon,
+            'download' => $url,
         ];
     }
 
-    /** @return array{name: string, version: string, url: string, icon: string} */
+    /**
+     * PROJECT_ID is the modpack's id, VERSION_ID the id of the installed file (the CurseForge egg).
+     *
+     * @param  array<string, string>  $variables
+     * @return Pack
+     */
+    private static function curseForge(array $variables, string $key): array
+    {
+        $id = $variables['PROJECT_ID'] ?? '';
+        if (preg_match('/^\d{1,10}$/', $id) !== 1) {
+            return self::none();
+        }
+        $headers = ['x-api-key' => $key];
+        $project = (array) (Web::json('https://api.curseforge.com/v1/mods/'.$id, $headers)['data'] ?? []);
+        $fileId = $variables['VERSION_ID'] ?? '';
+        $file = preg_match('/^\d{1,12}$/', $fileId) === 1
+            ? (array) (Web::json('https://api.curseforge.com/v1/mods/'.$id.'/files/'.$fileId, $headers)['data'] ?? []) : [];
+        $slug = (string) ($project['slug'] ?? '');
+        $url = preg_match('/^[\w-]{1,100}$/', $slug) === 1 ? 'https://www.curseforge.com/minecraft/modpacks/'.$slug : '';
+
+        return [
+            'name' => mb_substr((string) ($project['name'] ?? ''), 0, 80),
+            'version' => mb_substr((string) ($file['displayName'] ?? ''), 0, 40),
+            'url' => $url,
+            'icon' => Web::https($project['logo']['thumbnailUrl'] ?? null) ?? '',
+            'download' => $url !== '' && $file !== [] ? $url.'/files/'.$fileId : $url,
+        ];
+    }
+
+    /** @return Pack */
     private static function none(): array
     {
-        return ['name' => '', 'version' => '', 'url' => '', 'icon' => ''];
+        return ['name' => '', 'version' => '', 'url' => '', 'icon' => '', 'download' => ''];
     }
 }

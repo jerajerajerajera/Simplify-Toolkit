@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Simplify Embed's server list gets a client download for modpacks: the installed version's page on Modrinth, the installed file on CurseForge (with the panel's CurseForge key) and the modpack's page on FTB. CurseForge modpacks also get their name, version and icon.
+
 ## 2.0.0-beta.2
 
 - CurseForge is back on Simplify's Connections page (account menu): a row for your own CurseForge key, next to Steam. It saves only a key CurseForge accepts, and Remove is in its ⋯ menu.
