@@ -14,6 +14,7 @@ function __(string $key): string
     return $key;
 }
 
+use App\Models\User;
 use Simplify\Toolkit\ToolkitAddon;
 
 $addon = new ToolkitAddon;
@@ -25,7 +26,7 @@ if ($addon->description() !== 'simplify-toolkit::toolkit.addon.description') {
     $failures[] = 'the description is translated';
 }
 // Simplify's Connections page lists the CurseForge row (add-on API 6); without it the page shows only Steam (TK-B1).
-if (! method_exists($addon, 'connections') || $addon->connections(new App\Models\User) !== ['Simplify\\Toolkit\\Livewire\\CurseForgeConnection']) {
+if (! method_exists($addon, 'connections') || $addon->connections(new User) !== ['Simplify\\Toolkit\\Livewire\\CurseForgeConnection']) {
     $failures[] = 'the CurseForge row is on the Connections page';
 }
 if ($failures) {

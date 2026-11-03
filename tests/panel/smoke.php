@@ -506,12 +506,13 @@ step('the CurseForge row on Simplify\'s Connections page saves only a working ow
     if ((new ToolkitAddon)->connections($admin) !== [CurseForgeConnection::class]) {
         throw new RuntimeException('the add-on gives no CurseForge row');
     }
+    Filament::setCurrentPanel(Filament::getPanel('app'));
     $row = Livewire::actingAs($admin)->test(CurseForgeConnection::class)->assertSee('CurseForge')->assertSee('Toolkit');
-    $row->callAction('connect', ['key' => 'bad-key']);
+    $row->callAction('connect', data: ['key' => 'bad-key']);
     if (Keys::has(Keys::CURSEFORGE, $admin)) {
         throw new RuntimeException('a refused key was saved');
     }
-    $row->callAction('connect', ['key' => ' good-key '])->assertHasNoActionErrors();
+    $row->callAction('connect', data: ['key' => ' good-key '])->assertHasNoActionErrors();
     if (Keys::get(Keys::CURSEFORGE, $admin) !== 'good-key' || Keys::has(Keys::CURSEFORGE, null)) {
         throw new RuntimeException('the own key was not saved for this user only');
     }
