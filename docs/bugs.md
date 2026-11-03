@@ -9,6 +9,7 @@
 | Nr | Datum | Wat zag de gebruiker | Oorzaak | Fix (versie) | Regressietest | Teruggekomen | Regel |
 |---|---|---|---|---|---|---|---|
 | B9 | 1.2.1, 1.3.1 | Iets loopt buiten zijn vak of de pagina scrolt: lange whitelist over Operators heen (1.2.1), instellingspagina scrolt met Simplify (1.3.1) | Hoogte niet vast; formulier zonder `s-fit` | 1.2.1, 1.3.1 | `tests/panel/smoke.php`: "the admin settings page renders" (formulier heeft `s-fit`) en "the Players page lists whitelist, operators and bans" (lijsten scrollen in hun eigen vak) | 1× | P-7 |
+| TK-B1 | 2026-11-03 | Connections (Simplify 2.0.0-beta.3) toont alleen Steam; CurseForge ontbreekt | Toolkit gaf geen `connections()`-rij (add-on-API 6); de eigen sleutel stond alleen op de Plugins-pagina | Unreleased | `tests/addon.php` (connections geeft `CurseForgeConnection`; rood op a005a07) en `tests/panel/smoke.php`: "the CurseForge row on Simplify's Connections page …" | 0× | P-6 |
 
 ## Patronen
 

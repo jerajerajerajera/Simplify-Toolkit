@@ -26,6 +26,7 @@ use Simplify\Toolkit\Filament\Server\Pages\Backups;
 use Simplify\Toolkit\Filament\Server\Pages\Minecraft;
 use Simplify\Toolkit\Filament\Server\Pages\Packages;
 use Simplify\Toolkit\Filament\Server\Pages\Players;
+use Simplify\Toolkit\Livewire\CurseForgeConnection;
 use Simplify\Toolkit\Models\ApiKey;
 use Simplify\Toolkit\Models\Package;
 use Simplify\Toolkit\Services\AutomaticBackups;
@@ -501,6 +502,46 @@ step('Simplify\'s setup asks for the CurseForge key and saves only a working one
     }
     Keys::forget(Keys::CURSEFORGE, null);
 });
+step('the CurseForge row on Simplify\'s Connections page saves only a working own key, and removes it (TK-B1)', function () use ($admin) {
+    if ((new ToolkitAddon)->connections($admin) !== [CurseForgeConnection::class]) {
+        throw new RuntimeException('the add-on gives no CurseForge row');
+    }
+    Filament::setCurrentPanel(Filament::getPanel('app'));
+    // Plain Livewire calls and checks instead of Filament's test assertions: a failing PHPUnit assertion cannot report
+    // here. A fresh row for each popup, so no popup is still open from the call before.
+    $popup = function (string $action, array $data = []) use ($admin) {
+        $row = Livewire::actingAs($admin)->test(CurseForgeConnection::class)->call('mountAction', $action);
+        foreach ($data as $field => $value) {
+            $row->set("mountedActions.0.data.$field", $value);
+        }
+
+        return $row->call('callMountedAction');
+    };
+    $row = Livewire::actingAs($admin)->test(CurseForgeConnection::class);
+    foreach (['CurseForge', 'Toolkit', 'tk-connection'] as $text) {
+        if (! str_contains($row->html(), $text)) {
+            throw new RuntimeException("the row does not show: $text");
+        }
+    }
+    if ($row->instance()->getAction('disconnect')?->isVisible()) {
+        throw new RuntimeException('Remove shows without a key');
+    }
+    $popup('connect', ['key' => 'bad-key']);
+    if (Keys::has(Keys::CURSEFORGE, $admin)) {
+        throw new RuntimeException('a refused key was saved');
+    }
+    $saved = $popup('connect', ['key' => ' good-key ']);
+    if ($saved->errors()->isNotEmpty() || Keys::get(Keys::CURSEFORGE, $admin) !== 'good-key' || Keys::has(Keys::CURSEFORGE, null)) {
+        throw new RuntimeException('the own key was not saved for this user only: '.json_encode($saved->errors()->toArray()));
+    }
+    if (! Livewire::actingAs($admin)->test(CurseForgeConnection::class)->instance()->getAction('disconnect')?->isVisible()) {
+        throw new RuntimeException('Remove does not show with a key');
+    }
+    $popup('disconnect');
+    if (Keys::has(Keys::CURSEFORGE, $admin)) {
+        throw new RuntimeException('the own key was not removed');
+    }
+});
 step('servers without plugins or mods have no Plugins page', function () use ($admin) {
     $rust = Server::factory()->create(['owner_id' => $admin->id, 'egg_id' => Egg::factory()->create(['name' => 'Rust', 'features' => []])->id]);
     Filament::setTenant($rust);
@@ -509,7 +550,7 @@ step('servers without plugins or mods have no Plugins page', function () use ($a
     }
 });
 // Every step must have run: a step that never ran is a failure too.
-$expected = 22;
+$expected = 23;
 if ($passed !== $expected) {
     echo "FAIL $passed of $expected steps passed\n";
     exit(1);
