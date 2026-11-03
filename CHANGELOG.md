@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 2.0.0-beta.2
 
 - CurseForge is back on Simplify's Connections page (account menu): a row for your own CurseForge key, next to Steam. It saves only a key CurseForge accepts, and Remove is in its ⋯ menu.
 - For other add-ons: `Keys::curseForge(?User)` is a stable API (README), so they can use the CurseForge key saved in Toolkit.
