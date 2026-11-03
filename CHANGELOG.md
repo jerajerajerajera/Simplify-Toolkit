@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- For other add-ons: `Keys::curseForge(?User)` is a stable API (README), so they can use the CurseForge key saved in Toolkit.
+
 ## 2.0.0-beta.1
 
 - First version on the Hub.

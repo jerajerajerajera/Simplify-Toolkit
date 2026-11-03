@@ -31,7 +31,7 @@ server menu, and Toolkit also shows up in Simplify's add-on list.
 
 ## For other Simplify add-ons
 
-Two parts are meant to be used by other add-ons, behind `class_exists()`, and keep their signature:
+Three parts are meant to be used by other add-ons, behind `class_exists()`, and keep their signature:
 
 - `Simplify\Toolkit\Filament\Components\MotdEditor::make('motd')->serverName(string|Closure)->iconUrl(string|Closure|null)`:
   the MOTD editor of the Minecraft page as a Filament field. Its state is the MOTD with `§` codes, at most 512
@@ -39,6 +39,8 @@ Two parts are meant to be used by other add-ons, behind `class_exists()`, and ke
 - `Simplify\Toolkit\Services\AutomaticBackups::save(?Server $server, array $values)` with `enabled`, `every_minutes`
   (30 to 10080), `keep` (1 to 100) and `only_when_used`, all required and validated; `null` for the panel's own row.
   `AutomaticBackups::panel()` gives the panel's values, which new servers get on their own.
+- `Simplify\Toolkit\Services\Keys::curseForge(?User $user = null): string`: the CurseForge API key to use, the
+  user's own key before the panel's, or `''` without one. Both are tested with CurseForge before they are saved.
 
 ## Install
 
