@@ -26,6 +26,7 @@ use Simplify\Toolkit\Filament\Server\Pages\Backups;
 use Simplify\Toolkit\Filament\Server\Pages\Minecraft;
 use Simplify\Toolkit\Filament\Server\Pages\Packages;
 use Simplify\Toolkit\Filament\Server\Pages\Players;
+use Simplify\Toolkit\Livewire\CurseForgeConnection;
 use Simplify\Toolkit\Models\ApiKey;
 use Simplify\Toolkit\Models\Package;
 use Simplify\Toolkit\Services\AutomaticBackups;
@@ -501,6 +502,24 @@ step('Simplify\'s setup asks for the CurseForge key and saves only a working one
     }
     Keys::forget(Keys::CURSEFORGE, null);
 });
+step('the CurseForge row on Simplify\'s Connections page saves only a working own key, and removes it (TK-B1)', function () use ($admin) {
+    if ((new ToolkitAddon)->connections($admin) !== [CurseForgeConnection::class]) {
+        throw new RuntimeException('the add-on gives no CurseForge row');
+    }
+    $row = Livewire::actingAs($admin)->test(CurseForgeConnection::class)->assertSee('CurseForge')->assertSee('Toolkit');
+    $row->callAction('connect', ['key' => 'bad-key']);
+    if (Keys::has(Keys::CURSEFORGE, $admin)) {
+        throw new RuntimeException('a refused key was saved');
+    }
+    $row->callAction('connect', ['key' => ' good-key '])->assertHasNoActionErrors();
+    if (Keys::get(Keys::CURSEFORGE, $admin) !== 'good-key' || Keys::has(Keys::CURSEFORGE, null)) {
+        throw new RuntimeException('the own key was not saved for this user only');
+    }
+    $row->callAction('disconnect');
+    if (Keys::has(Keys::CURSEFORGE, $admin)) {
+        throw new RuntimeException('the own key was not removed');
+    }
+});
 step('servers without plugins or mods have no Plugins page', function () use ($admin) {
     $rust = Server::factory()->create(['owner_id' => $admin->id, 'egg_id' => Egg::factory()->create(['name' => 'Rust', 'features' => []])->id]);
     Filament::setTenant($rust);
@@ -509,7 +528,7 @@ step('servers without plugins or mods have no Plugins page', function () use ($a
     }
 });
 // Every step must have run: a step that never ran is a failure too.
-$expected = 22;
+$expected = 23;
 if ($passed !== $expected) {
     echo "FAIL $passed of $expected steps passed\n";
     exit(1);

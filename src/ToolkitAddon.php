@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace Simplify\Toolkit;
 
 use App\Models\Server;
+use App\Models\User;
 use Closure;
 use Filament\Forms\Components\TextInput;
 use Simplify\Core\Addons\Addon;
 use Simplify\Toolkit\Filament\Admin\Pages\ToolkitSettings;
+use Simplify\Toolkit\Livewire\CurseForgeConnection;
 use Simplify\Toolkit\Services\Keys;
 use Simplify\Toolkit\Services\RestartReminder;
 use Simplify\Toolkit\Services\ServerInfo;
@@ -56,6 +58,12 @@ final class ToolkitAddon extends Addon
     public function serverInfo(Server $server): array
     {
         return ServerInfo::for($server);
+    }
+
+    /** The CurseForge row on Simplify's Connections page (add-on API 6): the person's own key, before the panel's. */
+    public function connections(User $user): array
+    {
+        return [CurseForgeConnection::class];
     }
 
     /** In Simplify's setup (Simplify 1.3+, add-on API 3): the panel's CurseForge key, checked with CurseForge first. */

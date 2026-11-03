@@ -3,6 +3,8 @@
 // ToolkitAddon against Simplify's add-on contract, without Simplify or a panel.
 declare(strict_types=1);
 
+// Stand-in for Pelican's user model, only for the type of connections().
+eval('namespace App\\Models; class User {}');
 require __DIR__.'/fixtures/Addon.php';
 require __DIR__.'/fixtures/Button.php';
 require __DIR__.'/../src/ToolkitAddon.php';
@@ -21,6 +23,10 @@ if ($addon->id() !== 'simplify-toolkit') {
 }
 if ($addon->description() !== 'simplify-toolkit::toolkit.addon.description') {
     $failures[] = 'the description is translated';
+}
+// Simplify's Connections page lists the CurseForge row (add-on API 6); without it the page shows only Steam (TK-B1).
+if (! method_exists($addon, 'connections') || $addon->connections(new App\Models\User) !== ['Simplify\\Toolkit\\Livewire\\CurseForgeConnection']) {
+    $failures[] = 'the CurseForge row is on the Connections page';
 }
 if ($failures) {
     echo "FAIL add-on:\n  ".implode("\n  ", $failures)."\n";
