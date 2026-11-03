@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 2.0.0-beta.1
+
+- First version on the Hub.
+
 ## 1.4.0
 
 - Minecraft settings, Automatic backups and the admin settings keep their changes until Save: with Simplify a "Changes made" bar offers Discard and Save, and leaving the page asks first. A save that does not reach the server keeps the bar.
