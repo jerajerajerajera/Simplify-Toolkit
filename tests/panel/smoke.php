@@ -507,16 +507,17 @@ step('the CurseForge row on Simplify\'s Connections page saves only a working ow
         throw new RuntimeException('the add-on gives no CurseForge row');
     }
     Filament::setCurrentPanel(Filament::getPanel('app'));
-    $row = Livewire::actingAs($admin)->test(CurseForgeConnection::class)->assertSee('CurseForge')->assertSee('Toolkit');
-    $row->callAction('connect', data: ['key' => 'bad-key']);
+    // A fresh row for each popup: a refused key leaves the popup open, and the next call would look inside it.
+    $row = fn () => Livewire::actingAs($admin)->test(CurseForgeConnection::class);
+    $row()->assertSee('CurseForge')->assertSee('Toolkit')->assertActionHidden('disconnect')->callAction('connect', data: ['key' => 'bad-key']);
     if (Keys::has(Keys::CURSEFORGE, $admin)) {
         throw new RuntimeException('a refused key was saved');
     }
-    $row->callAction('connect', data: ['key' => ' good-key '])->assertHasNoActionErrors();
+    $row()->callAction('connect', data: ['key' => ' good-key '])->assertHasNoActionErrors();
     if (Keys::get(Keys::CURSEFORGE, $admin) !== 'good-key' || Keys::has(Keys::CURSEFORGE, null)) {
         throw new RuntimeException('the own key was not saved for this user only');
     }
-    $row->callAction('disconnect');
+    $row()->assertActionVisible('disconnect')->callAction('disconnect')->assertHasNoErrors();
     if (Keys::has(Keys::CURSEFORGE, $admin)) {
         throw new RuntimeException('the own key was not removed');
     }
