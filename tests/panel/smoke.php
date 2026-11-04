@@ -444,7 +444,8 @@ step('a plugin that fails on the next start is switched off with its log line', 
 });
 step('a switched-off plugin gets Simplify Explain\'s question button with its saved log lines', function () use ($admin, $paper) {
     $package = Package::query()->where('server_id', $paper->id)->where('key', 'modrinth:AAAA1111')->firstOrFail();
-    $package->update(['off_reason' => 'Could not load the plugin', 'off_lines' => ['[12:00:01 INFO]: Starting', '[12:00:02 ERROR]: Could not load the plugin']]);
+    // Not watched any more, so opening the page does not check the last start again.
+    $package->update(['watch_since' => null, 'off_reason' => 'Could not load the plugin', 'off_lines' => ['[12:00:01 INFO]: Starting', '[12:00:02 ERROR]: Could not load the plugin']]);
     $id = ToolkitProblems::pluginOffId($package->id);
     // Stand-in for Simplify Explain: it renders a button in this render hook.
     FilamentView::registerRenderHook('simplify::problem.actions', fn (array $scopes): string => '<i data-smoke-problem="'.e(implode(' ', $scopes)).'"></i>');
