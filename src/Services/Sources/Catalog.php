@@ -131,7 +131,7 @@ final class Catalog
         $parsed = [];
         $requests = [];
         foreach (array_slice(array_unique($keys), 0, 24) as $key) {
-            $parts = is_string($key) ? self::parseKey($key) : null;
+            $parts = self::parseKey($key);
             $source = $parts ? $this->sources[$parts[0]] : null;
             if ($source === null || ! $source->supports($kind, $loader)) {
                 continue;
