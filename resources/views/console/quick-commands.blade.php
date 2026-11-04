@@ -6,7 +6,7 @@
         .sm-quick-commands { display: flex; flex: none; gap: 6px; padding: 8px 12px 0; overflow-x: auto; scrollbar-width: none; border-top: 1px solid var(--ps-console-line, rgb(255 255 255 / .1)); }
         .sm-quick-commands::-webkit-scrollbar { display: none; }
         .sm-quick-command { flex: none; min-height: 36px; padding: 0 12px; border: 1px solid var(--ps-console-line, rgb(255 255 255 / .12)); border-radius: 999px; background: var(--ps-console-raised, rgb(255 255 255 / .06)); color: var(--ps-console-ink, #e5e7eb); font: 12px var(--ps-mono, ui-monospace, Menlo, Consolas, monospace); white-space: nowrap; }
-        .sm-quick-command:focus-visible { outline: 2px solid var(--s-accent, var(--primary-500)); outline-offset: 1px; }
+        .sm-quick-command:focus-visible { outline: 2px solid var(--ps-accent, var(--primary-500)); outline-offset: 1px; }
     }
 </style>
 <script>
