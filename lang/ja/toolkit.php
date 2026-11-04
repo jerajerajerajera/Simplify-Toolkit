@@ -10,4 +10,5 @@ return [
         'id_copied' => 'サーバー ID をコピーしました',
         'more' => 'その他',
     ],
+    'quick_commands' => 'クイックコマンド',
 ];

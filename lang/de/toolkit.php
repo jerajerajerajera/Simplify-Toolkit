@@ -10,4 +10,5 @@ return [
         'id_copied' => 'Server-ID kopiert',
         'more' => 'Mehr',
     ],
+    'quick_commands' => 'Schnellbefehle',
 ];

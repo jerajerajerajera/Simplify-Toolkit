@@ -10,4 +10,5 @@ return [
         'id_copied' => '已复制服务器 ID',
         'more' => '更多',
     ],
+    'quick_commands' => '快捷命令',
 ];

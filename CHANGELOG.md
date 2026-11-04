@@ -3,6 +3,7 @@
 ## Unreleased
 
 - One Settings page per server takes over Pelican's Settings and Startup pages and Toolkit's Minecraft page: the server's name, description and SFTP details, the Minecraft settings, the start command, image and variables, other add-ons' sections (such as Server Maker's) and the limits, with a list of sections beside them (a row of chips on a phone). One Save writes only the parts that changed; Reinstall and Copy server ID are in the ⋯ menu. The addresses of Pelican's Settings and Startup and of the former Minecraft page lead to the right section. With Simplify 2.0 (add-on API 9) Pelican's Settings and Startup leave the server menu; without Simplify the page keeps Pelican's look, with Pelican's backup notification switches as a section.
+- Quick commands (list, say, time set day, weather clear, save-all) above the console of a Minecraft server on a phone come from Toolkit now, with or without Simplify, for whoever may send commands.
 - With Simplify 2.0 (add-on API 9), Toolkit names its automatic backups page as a tab of Backups & tasks itself, so the core no longer needs to know Toolkit's classes.
 - Save is a text button "Save" with the floppy icon, last on the right, on every Toolkit page (Minecraft settings, Backups & tasks, Toolkit settings), as on Simplify's own pages.
 - Removing Toolkit keeps its data (keys, backup plans, installed plugins), so installing it again finds every setting. CI now updates from 1.3.1 with every setting filled in, removes and installs Toolkit again, and puts the previous release back over it.

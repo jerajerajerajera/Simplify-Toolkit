@@ -10,4 +10,5 @@ return [
         'id_copied' => 'Đã sao chép ID máy chủ',
         'more' => 'Thêm',
     ],
+    'quick_commands' => 'Lệnh nhanh',
 ];

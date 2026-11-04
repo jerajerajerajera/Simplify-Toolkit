@@ -10,4 +10,5 @@ return [
         'id_copied' => 'ID servera skopírované',
         'more' => 'Viac',
     ],
+    'quick_commands' => 'Rýchle príkazy',
 ];

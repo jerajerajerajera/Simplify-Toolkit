@@ -10,4 +10,5 @@ return [
         'id_copied' => '서버 ID를 복사했습니다',
         'more' => '더 보기',
     ],
+    'quick_commands' => '빠른 명령',
 ];

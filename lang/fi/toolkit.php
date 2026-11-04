@@ -10,4 +10,5 @@ return [
         'id_copied' => 'Palvelimen tunnus kopioitu',
         'more' => 'Lisää',
     ],
+    'quick_commands' => 'Pikakomennot',
 ];

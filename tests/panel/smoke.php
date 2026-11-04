@@ -4,6 +4,7 @@
 // `php artisan p:plugin:install simplify-toolkit`: php plugins/simplify-toolkit/tests/panel/smoke.php
 use App\Enums\ContainerStatus;
 use App\Facades\Activity;
+use App\Filament\Server\Pages\Console;
 use App\Models\Egg;
 use App\Models\EggVariable;
 use App\Models\Role;
@@ -15,6 +16,7 @@ use Filament\Facades\Filament;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
 use Filament\Support\Facades\FilamentView;
+use Filament\View\PanelsRenderHook;
 use GuzzleHttp\Psr7\Response as Psr7Response;
 use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
@@ -439,6 +441,20 @@ step('other games have Settings without a Minecraft section, and no Players page
         throw new RuntimeException('sections for Rust: '.json_encode($contents));
     }
 });
+step('quick commands come with the console of a Minecraft server, and not with other games', function () use ($admin, $paper) {
+    auth()->setUser($admin);
+    Filament::setCurrentPanel(Filament::getPanel('server'));
+    Filament::setTenant($paper);
+    $html = (string) FilamentView::renderHook(PanelsRenderHook::CONTENT_END, scopes: Console::class);
+    if (! str_contains($html, 'sm-quick-commands') || ! str_contains($html, 'time set day')) {
+        throw new RuntimeException('no quick commands on the console of a Minecraft server');
+    }
+    $rust = Server::query()->whereHas('egg', fn ($egg) => $egg->where('name', 'Rust'))->firstOrFail();
+    Filament::setTenant($rust);
+    if (str_contains((string) FilamentView::renderHook(PanelsRenderHook::CONTENT_END, scopes: Console::class), 'sm-quick-commands')) {
+        throw new RuntimeException('quick commands on the console of Rust');
+    }
+});
 // The plugin sites answer from here, so the steps below need no network.
 Web::$transport = fn (string $url, array $headers = []) => json_encode(match (true) {
     str_contains($url, 'api.curseforge.com/v1/games/432') => ($headers['x-api-key'] ?? '') === 'good-key' ? ['data' => ['id' => 432]] : null,
@@ -716,7 +732,7 @@ step('Pelican\'s Settings and Startup and the former Minecraft page lead to the 
     }
 });
 // Every step must have run: a step that never ran is a failure too.
-$expected = 27;
+$expected = 28;
 if ($passed !== $expected) {
     echo "FAIL $passed of $expected steps passed\n";
     exit(1);

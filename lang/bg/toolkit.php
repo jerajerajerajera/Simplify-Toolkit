@@ -10,4 +10,5 @@ return [
         'id_copied' => 'ID на сървъра е копиран',
         'more' => 'Още',
     ],
+    'quick_commands' => 'Бързи команди',
 ];

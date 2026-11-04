@@ -10,4 +10,5 @@ return [
         'id_copied' => 'Szerverazonosító másolva',
         'more' => 'Továbbiak',
     ],
+    'quick_commands' => 'Gyorsparancsok',
 ];
