@@ -4,7 +4,6 @@ return [
     'plugins' => 'Eklentiler',
     'mods' => 'Modlar',
     'find' => 'Ara',
-    'for' => ':loader :version için',
     'search_placeholder' => 'Modrinth, Hangar, SpigotMC ve CurseForge\'da ara',
     'site' => 'Site',
     'all_sites' => 'Tüm siteler',

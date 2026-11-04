@@ -4,7 +4,6 @@ return [
     'plugins' => 'Pluginy',
     'mods' => 'Mody',
     'find' => 'Hľadať',
-    'for' => 'Pre :loader :version',
     'search_placeholder' => 'Hľadať na Modrinth, Hangar, SpigotMC a CurseForge',
     'site' => 'Web',
     'all_sites' => 'Všetky weby',

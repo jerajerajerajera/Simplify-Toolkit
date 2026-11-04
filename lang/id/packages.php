@@ -4,7 +4,6 @@ return [
     'plugins' => 'Plugin',
     'mods' => 'Mod',
     'find' => 'Cari',
-    'for' => 'Untuk :loader :version',
     'search_placeholder' => 'Cari di Modrinth, Hangar, SpigotMC, dan CurseForge',
     'site' => 'Situs',
     'all_sites' => 'Semua situs',

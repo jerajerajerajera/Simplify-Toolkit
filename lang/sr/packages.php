@@ -4,7 +4,6 @@ return [
     'plugins' => 'Pluginovi',
     'mods' => 'Modovi',
     'find' => 'Pretraga',
-    'for' => 'Za :loader :version',
     'search_placeholder' => 'Pretraži Modrinth, Hangar, SpigotMC i CurseForge',
     'site' => 'Sajt',
     'all_sites' => 'Svi sajtovi',

@@ -4,7 +4,6 @@ return [
     'plugins' => '插件',
     'mods' => '模組',
     'find' => '尋找',
-    'for' => '適用於 :loader :version',
     'search_placeholder' => '搜尋 Modrinth、Hangar、SpigotMC 和 CurseForge',
     'site' => '網站',
     'all_sites' => '所有網站',

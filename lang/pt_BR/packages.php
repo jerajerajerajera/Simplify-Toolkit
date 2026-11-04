@@ -4,7 +4,6 @@ return [
     'plugins' => 'Plugins',
     'mods' => 'Mods',
     'find' => 'Buscar',
-    'for' => 'Para :loader :version',
     'search_placeholder' => 'Buscar no Modrinth, Hangar, SpigotMC e CurseForge',
     'site' => 'Site',
     'all_sites' => 'Todos os sites',

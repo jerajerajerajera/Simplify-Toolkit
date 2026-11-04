@@ -4,7 +4,6 @@ return [
     'plugins' => 'Plugin',
     'mods' => 'Mod',
     'find' => 'Tìm',
-    'for' => 'Cho :loader :version',
     'search_placeholder' => 'Tìm trên Modrinth, Hangar, SpigotMC và CurseForge',
     'site' => 'Trang',
     'all_sites' => 'Tất cả các trang',

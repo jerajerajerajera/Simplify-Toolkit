@@ -4,7 +4,6 @@ return [
     'plugins' => 'Pluginuri',
     'mods' => 'Moduri',
     'find' => 'Caută',
-    'for' => 'Pentru :loader :version',
     'search_placeholder' => 'Caută pe Modrinth, Hangar, SpigotMC și CurseForge',
     'site' => 'Site',
     'all_sites' => 'Toate site-urile',

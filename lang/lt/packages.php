@@ -4,7 +4,6 @@ return [
     'plugins' => 'Įskiepiai',
     'mods' => 'Modai',
     'find' => 'Paieška',
-    'for' => ':loader :version',
     'search_placeholder' => 'Ieškoti Modrinth, Hangar, SpigotMC ir CurseForge',
     'site' => 'Svetainė',
     'all_sites' => 'Visos svetainės',
