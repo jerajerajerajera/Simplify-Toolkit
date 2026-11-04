@@ -191,7 +191,8 @@ step('the admin settings page renders', function () use ($admin) {
         throw new RuntimeException('HTTP '.$response->getStatusCode().' at '.$url.($response->exception ? ': '.$response->exception->getMessage() : ''));
     }
     // With Simplify the admin page never scrolls: its form gets the window's height and scrolls inside (style audit laag1366).
-    if (! str_contains($response->getContent(), '<div class="s-fit">') || ! str_contains($response->getContent(), '<div data-simplify-unsaved="data" data-simplify-save="save"')) {
+    // Livewire puts its own attributes on the form's root element first.
+    if (! str_contains($response->getContent(), 'class="s-fit"') || ! str_contains($response->getContent(), 'data-simplify-unsaved="data" data-simplify-save="save"')) {
         throw new RuntimeException('the settings are not marked s-fit and unsaved-changes');
     }
 });
