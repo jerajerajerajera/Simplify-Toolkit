@@ -10,4 +10,5 @@ return [
         'id_copied' => 'Sunucu kimliği kopyalandı',
         'more' => 'Daha fazla',
     ],
+    'quick_commands' => 'Hızlı komutlar',
 ];

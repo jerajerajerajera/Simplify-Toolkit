@@ -10,4 +10,5 @@ return [
         'id_copied' => 'ID-ul serverului a fost copiat',
         'more' => 'Mai mult',
     ],
+    'quick_commands' => 'Comenzi rapide',
 ];

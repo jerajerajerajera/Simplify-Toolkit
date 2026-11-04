@@ -10,4 +10,5 @@ return [
         'id_copied' => 'ID server disalin',
         'more' => 'Lainnya',
     ],
+    'quick_commands' => 'Perintah cepat',
 ];

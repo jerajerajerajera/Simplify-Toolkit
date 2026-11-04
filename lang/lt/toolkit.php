@@ -10,4 +10,5 @@ return [
         'id_copied' => 'Serverio ID nukopijuotas',
         'more' => 'Daugiau',
     ],
+    'quick_commands' => 'Greitos komandos',
 ];
