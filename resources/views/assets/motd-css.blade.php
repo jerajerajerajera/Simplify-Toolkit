@@ -4,9 +4,9 @@
 .sm-motd-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1rem; }
 .sm-motd-colors { display: grid; grid-template-columns: repeat(8, 1.375rem); gap: .3rem; }
 .sm-motd-swatch { width: 1.375rem; height: 1.375rem; border-radius: .375rem; border: 1px solid rgb(0 0 0 / .25); cursor: pointer; }
-.sm-motd-swatch[aria-pressed="true"] { outline: 2px solid var(--primary-500); outline-offset: 1px; }
+.sm-motd-swatch[aria-pressed="true"] { outline: 2px solid var(--s-accent, var(--primary-500)); outline-offset: 1px; }
 .sm-motd-styles { display: flex; flex-wrap: wrap; align-items: center; gap: .125rem; }
-.sm-motd-styles [aria-pressed="true"] { background: color-mix(in oklab, var(--primary-500) 18%, transparent); }
+.sm-motd-styles [aria-pressed="true"] { background: color-mix(in oklab, var(--s-accent, var(--primary-500)) 18%, transparent); }
 
 /* Minecraft's own colours, so the row looks the same in light and dark themes. */
 .sm-motd-row { display: grid; grid-template-columns: 3.5rem minmax(0, 1fr); gap: .25rem .75rem; padding: .625rem .75rem; border-radius: .5rem; background: #202024; }
@@ -27,7 +27,7 @@
 .sm-motd-field input::selection { background: rgb(120 160 255 / .45); }
 .sm-motd-field input::placeholder { color: #6b6b73; -webkit-text-fill-color: #6b6b73; }
 
-.sm-motd-meta { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .375rem .75rem; font-size: .75rem; color: var(--gray-500); }
-.sm-motd-meta .is-warn { color: var(--warning-600); }
+.sm-motd-meta { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .375rem .75rem; font-size: .75rem; color: var(--s-muted, var(--gray-500)); }
+.sm-motd-meta .is-warn { color: var(--s-warn, var(--warning-600)); }
 .sm-motd-link { padding: 0; border: 0; background: none; color: inherit; font: inherit; text-decoration: underline; text-underline-offset: 2px; cursor: pointer; }
 .sm-motd-codes { width: 100%; min-height: 4rem; font: .8125rem/1.5 ui-monospace, monospace; }

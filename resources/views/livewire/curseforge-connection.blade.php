@@ -14,13 +14,13 @@
     <x-filament-actions::modals />
     <style>
         .tk-connection { display: flex; align-items: center; gap: 16px; padding: 14px 0; }
-        .tk-connection-icon { display: grid; place-items: center; flex: none; width: 40px; height: 40px; border-radius: 10px; background: var(--gray-100); }
-        .dark .tk-connection-icon { background: var(--gray-800); }
+        .tk-connection-icon { display: grid; place-items: center; flex: none; width: 40px; height: 40px; border-radius: 10px; background: var(--s-raised, var(--gray-100)); }
+        .dark .tk-connection-icon { background: var(--s-raised, var(--gray-800)); }
         .tk-connection-icon svg { width: 22px; height: 22px; }
-        .tk-connection-text { display: flex; flex: 1; min-width: 0; flex-direction: column; gap: 3px; font-size: 13px; color: var(--gray-500); }
-        .tk-connection-text strong { font-size: 15px; color: var(--gray-950); }
-        .dark .tk-connection-text strong { color: #fff; }
-        .tk-connection-addon { font-size: 12px; color: var(--gray-500); }
+        .tk-connection-text { display: flex; flex: 1; min-width: 0; flex-direction: column; gap: 3px; font-size: 13px; color: var(--s-muted, var(--gray-500)); }
+        .tk-connection-text strong { font-size: 15px; color: var(--s-ink, var(--gray-950)); }
+        .dark .tk-connection-text strong { color: var(--s-ink, #fff); }
+        .tk-connection-addon { font-size: 12px; color: var(--s-muted, var(--gray-500)); }
         @media (max-width: 600px) { .tk-connection { flex-wrap: wrap; } .tk-connection-text { flex-basis: calc(100% - 56px); } .tk-connection-addon { flex: 1; } }
     </style>
 </div>
