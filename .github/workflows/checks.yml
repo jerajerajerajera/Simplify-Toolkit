@@ -127,3 +127,76 @@ jobs:
       - name: Laravel log
         if: failure()
         run: grep -h -E '^\[[0-9-]+ [0-9:]+\]' panel/storage/logs/*.log | cut -c1-600 | tail -n 12 || true
+  # The way panels get this version: from the oldest release on the Hub (1.3.1) with every setting filled in, then
+  # removed and installed again (the data stays), and the previous release put back over it.
+  upgrade:
+    needs: changes
+    if: needs.changes.outputs.code == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: plugin
+          fetch-depth: 0
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: bcmath, gd, intl, mbstring, pdo_sqlite, sqlite3, zip
+          tools: composer
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install -g yarn
+      - name: Install Pelican 1.0.0-rc.2
+        run: |
+          git clone --quiet --depth 1 --branch v1.0.0-rc.2 https://github.com/pelican-dev/panel.git panel
+          cd panel
+          composer install --no-interaction --no-progress --prefer-dist
+          sed -i "s/'version' => 'canary'/'version' => '1.0.0-rc.2'/" config/app.php
+          cp .env.example .env
+          sed -i 's/^APP_INSTALLED=.*/APP_INSTALLED=true/; s/^APP_DEBUG=.*/APP_DEBUG=true/; s#^APP_URL=.*#APP_URL=http://localhost#' .env
+          printf 'DB_CONNECTION=sqlite\nQUEUE_CONNECTION=database\nCACHE_STORE=file\nSESSION_DRIVER=file\nMAIL_MAILER=log\n' >> .env
+          touch database/database.sqlite
+          php artisan key:generate --force
+          php artisan migrate --force
+          yarn install --silent
+      - name: Install Simplify Toolkit 1.3.1 with its settings filled in
+        run: |
+          mkdir -p panel/plugins/simplify-toolkit
+          git -C plugin archive v1.3.1 | tar -C panel/plugins/simplify-toolkit -xf -
+          cd panel
+          php artisan p:plugin:install simplify-toolkit
+          php ../plugin/tests/panel/upgrade.php fill
+      - name: Install this version over it
+        run: |
+          rm -rf panel/plugins/simplify-toolkit && mkdir -p panel/plugins/simplify-toolkit
+          tar -C plugin --exclude=.git --exclude=dist -cf - . | tar -C panel/plugins/simplify-toolkit -xf -
+          cd panel
+          # As Admin → Plugins and the Hub install it: in a queue job.
+          php artisan tinker --execute="App\Jobs\Plugin\InstallPlugin::dispatch(App\Models\User::factory()->create(), 'simplify-toolkit');"
+          php artisan queue:work --max-jobs=1 --stop-when-empty
+          php artisan p:plugin:list | grep -E 'Simplify Toolkit .*\| enabled' || { echo 'Simplify Toolkit did not install'; exit 1; }
+          php ../plugin/tests/panel/upgrade.php check
+          php ../plugin/tests/panel/upgrade.php open
+      - name: Remove it and install it again
+        working-directory: panel
+        run: |
+          php artisan tinker --execute="app(App\Services\Helpers\PluginService::class)->uninstallPlugin(App\Models\Plugin::findOrFail('simplify-toolkit'));"
+          php ../plugin/tests/panel/upgrade.php gone
+          php artisan p:plugin:install simplify-toolkit
+          php ../plugin/tests/panel/upgrade.php kept
+          php ../plugin/tests/panel/upgrade.php open
+      - name: Put the previous release back over it
+        run: |
+          previous="$(git -C plugin tag --list 'v*' --sort=-v:refname | head -n 1)"
+          echo "Previous release: $previous"
+          rm -rf panel/plugins/simplify-toolkit && mkdir -p panel/plugins/simplify-toolkit
+          git -C plugin archive "$previous" | tar -C panel/plugins/simplify-toolkit -xf -
+          cd panel
+          php artisan p:plugin:install simplify-toolkit
+          php ../plugin/tests/panel/upgrade.php check
+          php ../plugin/tests/panel/upgrade.php open
+      - name: Laravel log
+        if: failure()
+        run: grep -h -E '^\[[0-9-]+ [0-9:]+\]' panel/storage/logs/*.log | cut -c1-600 | tail -n 12 || true

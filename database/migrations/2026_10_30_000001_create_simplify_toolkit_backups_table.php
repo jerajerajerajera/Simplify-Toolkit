@@ -29,8 +29,6 @@ return new class extends Migration
         });
     }
 
-    public function down(): void
-    {
-        Schema::dropIfExists('simplify_toolkit_backups');
-    }
+    /** Removing Toolkit keeps its data (Pelican rolls back a plugin's migrations on removal), so a reinstall finds every setting again. */
+    public function down(): void {}
 };
