@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
 use Simplify\Toolkit\Livewire\CurseForgeConnection;
+use Simplify\Toolkit\Livewire\ToolkitSettingsForm;
 use Simplify\Toolkit\Services\AutomaticBackups;
 use Simplify\Toolkit\Services\EmbedDetails;
 use Simplify\Toolkit\Services\RestartReminder;
@@ -33,6 +34,8 @@ final class ToolkitServiceProvider extends ServiceProvider
     {
         // The CurseForge row on Simplify's Connections page; its own popups post back to it by this name.
         Livewire::component('simplify-toolkit-curseforge-connection', CurseForgeConnection::class);
+        // Toolkit's settings, in Simplify settings › Add-ons and on Toolkit's own settings page.
+        Livewire::component(ToolkitSettingsForm::NAME, ToolkitSettingsForm::class);
         // Players, version and modpack in Simplify Embed's public server list. A plain event name: without Simplify
         // Embed nobody fires it.
         Event::listen('simplify.embed.server', fn (Server $server, bool $running) => EmbedDetails::for($server, $running));
