@@ -1,4 +1,7 @@
 <x-filament-panels::page>
+    @once
+        <style>@include('simplify-toolkit::assets.pages-css')</style>
+    @endonce
     {{-- data-simplify-unsaved: Simplify shows "Changes made" with Discard and Save, and asks before leaving (ADDONS.md, "Unsaved changes"). --}}
     {{-- The list of sections follows the scrolling and jumps to a section; an address with #settings-… opens there. --}}
     <form wire:submit="save" data-simplify-unsaved="data" class="sm-settings" x-data="{
