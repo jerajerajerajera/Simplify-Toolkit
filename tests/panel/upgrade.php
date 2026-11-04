@@ -126,14 +126,16 @@ switch ($argv[1] ?? '') {
         break;
     case 'open':
         [$user, $server] = admin();
-        // The Minecraft page of every version so far; Wings is not there, so it shows its offline state.
-        $minecraft = 'Simplify\\Toolkit\\Filament\\Server\\Pages\\Minecraft';
-        foreach (['/admin/simplify-toolkit', $minecraft::getUrl(panel: 'server', tenant: $server)] as $url) {
+        // The server's settings of every version so far: the Settings page, before 2.0 the Minecraft page. Wings is not
+        // there, so it shows its offline state.
+        $settings = class_exists('Simplify\\Toolkit\\Filament\\Server\\Pages\\ServerSettings')
+            ? 'Simplify\\Toolkit\\Filament\\Server\\Pages\\ServerSettings' : 'Simplify\\Toolkit\\Filament\\Server\\Pages\\Minecraft';
+        foreach (['/admin/simplify-toolkit', $settings::getUrl(panel: 'server', tenant: $server)] as $url) {
             if (($status = visit($user, $url)->getStatusCode()) !== 200) {
                 fail("$url gives HTTP $status");
             }
         }
-        echo "PASS the settings page and the Minecraft page open\n";
+        echo "PASS the settings page and the server's settings open\n";
         break;
     case 'gone':
         [$user] = admin();

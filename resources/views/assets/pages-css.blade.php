@@ -100,3 +100,22 @@ a.sm-title:hover, .sm-meta a:hover { text-decoration: underline; }
     html.ps-fit body:has(.ps-server-top) .sm-side.is-lists > .fi-section > .fi-section-header { flex: none; }
     html.ps-fit body:has(.ps-server-top) .sm-side.is-lists > .fi-section > .fi-section-content-ctn { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; }
 }
+/* The Settings page of a server: the list of sections, the start command and the limits. Simplify's tokens first,
+   Pelican's own colours without Simplify. */
+.sm-settings-contents { display: flex; gap: .375rem; overflow-x: auto; scrollbar-width: none; }
+.sm-settings-contents a { display: inline-flex; align-items: center; gap: .5rem; flex: none; padding: .25rem .75rem; border-radius: 999px; border: 1px solid var(--s-line, var(--gray-200)); font-size: .8125rem; color: var(--s-muted, var(--gray-600)); white-space: nowrap; }
+.sm-settings-contents a.is-open { background: color-mix(in oklab, var(--s-accent, var(--primary-600)) 12%, transparent); border-color: transparent; color: var(--s-accent, var(--primary-600)); font-weight: 600; }
+.sm-settings-contents a:focus-visible { outline: 2px solid var(--s-accent, var(--primary-600)); outline-offset: 1px; }
+.sm-settings-icon { width: 1rem; height: 1rem; flex: none; }
+@media (min-width: 1024px) {
+    .sm-settings-contents { position: sticky; top: 0; flex-direction: column; overflow: visible; }
+    .sm-settings-contents a { border: 0; border-radius: var(--s-radius-sm, .375rem); padding: .375rem .625rem; }
+}
+.sm-settings-body [id^=settings-] { scroll-margin-top: .5rem; }
+.sm-command { display: block; overflow-x: auto; white-space: nowrap; padding: .5rem .75rem; border-radius: var(--s-radius-sm, .375rem); background: var(--s-raised, var(--gray-100)); color: var(--s-muted, var(--gray-600)); font-size: .75rem; }
+.sm-limits { display: flex; flex-wrap: wrap; gap: .375rem 1rem; font-size: .8125rem; color: var(--s-muted, var(--gray-600)); }
+.sm-limits b { color: var(--s-ink, var(--gray-950)); font-weight: 600; font-variant-numeric: tabular-nums; }
+.dark .sm-settings-contents a:not(.is-open) { border-color: var(--s-line, rgb(255 255 255 / .1)); color: var(--s-muted, var(--gray-400)); }
+.dark .sm-command { background: var(--s-raised, rgb(255 255 255 / .05)); color: var(--s-muted, var(--gray-400)); }
+.dark .sm-limits { color: var(--s-muted, var(--gray-400)); }
+.dark .sm-limits b { color: var(--s-ink, #fff); }
