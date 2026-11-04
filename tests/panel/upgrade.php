@@ -20,6 +20,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Testing\TestResponse;
 
+// Pelican's footer shows the page's render time.
+define('LARAVEL_START', microtime(true));
 require getcwd().'/vendor/autoload.php';
 
 /** A fresh panel: Filament keeps the current panel for the whole process, so every page visit gets its own (as in smoke.php). */
