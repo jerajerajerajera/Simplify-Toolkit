@@ -14,7 +14,6 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
-use Simplify\Explain\Filament\ExplainAction;
 use Simplify\Toolkit\Filament\Server\Actions\RestartActions;
 use Simplify\Toolkit\Services\Keys;
 use Simplify\Toolkit\Services\Packages as ServerPackages;
@@ -387,9 +386,7 @@ final class Packages extends Page implements HasActions
             ->modalContent(fn (array $arguments) => view('simplify-toolkit::components.log-lines', [
                 'lines' => $this->packages()->offLines((string) ($arguments['file'] ?? '')),
             ]))
-            ->modalSubmitAction(false)->modalCancelActionLabel(__('simplify-toolkit::packages.close'))
-            // With Simplify Explain installed, its Explain button asks the AI why the plugin did not load.
-            ->extraModalFooterActions(fn () => class_exists(ExplainAction::class) ? [ExplainAction::console()] : []);
+            ->modalSubmitAction(false)->modalCancelActionLabel(__('simplify-toolkit::packages.close'));
     }
 
     /** Asks for the loader and Minecraft version when the egg does not tell them. */

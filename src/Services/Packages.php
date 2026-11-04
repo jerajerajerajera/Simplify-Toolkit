@@ -217,6 +217,7 @@ final class Packages
                 'page' => $package?->page ?? '',
                 'size' => (int) ($file['size'] ?? 0),
                 'off_reason' => $package?->off_reason ?? '',
+                'package_id' => $package?->id,
                 'watched' => $package?->watch_since !== null,
             ];
         }

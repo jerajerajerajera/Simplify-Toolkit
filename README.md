@@ -29,6 +29,11 @@ players, MOTD, version and server icon on its card and page, and its software, v
 server list on your website (event `simplify.embed.server`). Automatic backups is a tab of Backups & tasks in the
 server menu, and Toolkit also shows up in Simplify's add-on list.
 
+With [Simplify Explain](https://github.com/jerajerajerajera/Simplify-Explain) installed, a plugin that was switched
+off after a start gets Explain's question button next to the reason (render hook `simplify::problem.actions`, id
+`simplify-toolkit:plugin-off:<id>`). Explain then reads the console lines saved at that start, on the panel; only
+users who may read the server's files get the button.
+
 ## For other Simplify add-ons
 
 Three parts are meant to be used by other add-ons, behind `class_exists()`, and keep their signature:

@@ -10,6 +10,7 @@ use App\Models\Server;
 use App\Models\User;
 use App\Repositories\Daemon\DaemonFileRepository;
 use Filament\Facades\Filament;
+use Filament\Support\Facades\FilamentView;
 use GuzzleHttp\Psr7\Response as Psr7Response;
 use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
@@ -34,6 +35,7 @@ use Simplify\Toolkit\Services\Keys;
 use Simplify\Toolkit\Services\RestartReminder;
 use Simplify\Toolkit\Services\ServerKind;
 use Simplify\Toolkit\Services\Software;
+use Simplify\Toolkit\Services\ToolkitProblems;
 use Simplify\Toolkit\Services\Web;
 use Simplify\Toolkit\ToolkitAddon;
 
@@ -440,6 +442,36 @@ step('a plugin that fails on the next start is switched off with its log line', 
         throw new RuntimeException('switching it on again does not watch it again');
     }
 });
+step('a switched-off plugin gets Simplify Explain\'s question button with its saved log lines', function () use ($admin, $paper) {
+    $package = Package::query()->where('server_id', $paper->id)->where('key', 'modrinth:AAAA1111')->firstOrFail();
+    // Not watched any more, so opening the page does not check the last start again.
+    $package->update(['watch_since' => null, 'off_reason' => 'Could not load the plugin', 'off_lines' => ['[12:00:01 INFO]: Starting', '[12:00:02 ERROR]: Could not load the plugin']]);
+    $id = ToolkitProblems::pluginOffId($package->id);
+    // Stand-in for Simplify Explain: it renders a button in this render hook.
+    FilamentView::registerRenderHook('simplify::problem.actions', fn (array $scopes): string => '<i data-smoke-problem="'.e(implode(' ', $scopes)).'"></i>');
+    Filament::setTenant($paper);
+    $html = Livewire::actingAs($admin)->test(Packages::class)->call('load')->html();
+    if (! str_contains($html, 'data-smoke-problem="simplify-problem simplify-problem:'.$id.'"')) {
+        throw new RuntimeException('no question button after the reason');
+    }
+    $tags = (fn () => $this->tags['simplify.problems'] ?? [])->call(app());
+    if (! in_array(ToolkitProblems::class, $tags, true)) {
+        throw new RuntimeException('the problem source is not tagged: '.json_encode($tags));
+    }
+    $source = app(ToolkitProblems::class);
+    $stranger = User::factory()->create();
+    $problem = $source->explainProblem($id, $admin);
+    if (! $source->canExplainProblem($id, $admin) || ($problem['lines'] ?? null) !== $package->off_lines || ! str_contains($problem['title'] ?? '', $package->title)) {
+        throw new RuntimeException('the source does not give the saved lines: '.json_encode($problem));
+    }
+    if ($source->canExplainProblem($id, $stranger) || $source->explainProblem($id, $stranger) !== null || $source->canExplainProblem('simplify-toolkit:plugin-off:x', $admin) || $source->canExplainProblem('simplify:install:'.$package->id, $admin)) {
+        throw new RuntimeException('the source answers for another user or another id');
+    }
+    $package->update(['off_reason' => '', 'off_lines' => null]);
+    if ($source->canExplainProblem($id, $admin)) {
+        throw new RuntimeException('the source answers for a plugin that is on again');
+    }
+});
 step('a modpack is one row in the installed list, and its mods only show when asked for', function () use ($admin) {
     $forge = Server::factory()->create(['owner_id' => $admin->id, 'egg_id' => Egg::factory()->create(['name' => 'Forge', 'features' => ['eula']])->id]);
     FakeFiles::$files = [
@@ -550,7 +582,7 @@ step('servers without plugins or mods have no Plugins page', function () use ($a
     }
 });
 // Every step must have run: a step that never ran is a failure too.
-$expected = 23;
+$expected = 24;
 if ($passed !== $expected) {
     echo "FAIL $passed of $expected steps passed\n";
     exit(1);

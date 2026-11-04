@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- With Simplify Explain, a plugin that was switched off after a start gets Explain's question button right after the reason, and Explain reads the console lines saved at that start. This replaces the Explain button in the log lines window.
 - Checks: PHPStan (level 5) runs in CI, and the panel smoke also runs with the real Simplify core (main) instead of a stub.
 
 ## 2.0.0-beta.5

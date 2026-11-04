@@ -171,6 +171,11 @@
                                     </p>
                                     @if ($item['off_reason'])
                                         <p class="sm-warn">{{ __('simplify-toolkit::packages.off_after_start') }}: {{ $item['off_reason'] }}</p>
+                                        @if ($item['package_id'] ?? null)
+                                            {{-- Simplify Explain's question button for this error; nothing without Explain. --}}
+                                            @php $problemId = \Simplify\Toolkit\Services\ToolkitProblems::pluginOffId((int) $item['package_id']); @endphp
+                                            {{ \Filament\Support\Facades\FilamentView::renderHook('simplify::problem.actions', scopes: ['simplify-problem', 'simplify-problem:'.$problemId]) }}
+                                        @endif
                                     @endif
                                 </div>
                                 <div class="sm-actions">
