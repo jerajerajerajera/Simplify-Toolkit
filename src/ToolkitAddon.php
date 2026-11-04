@@ -11,6 +11,7 @@ use Filament\Forms\Components\TextInput;
 use Simplify\Core\Addons\Addon;
 use Simplify\Core\Filament\Admin\Pages\Settings;
 use Simplify\Toolkit\Filament\Admin\Pages\ToolkitSettings;
+use Simplify\Toolkit\Filament\Server\Pages\Backups;
 use Simplify\Toolkit\Livewire\CurseForgeConnection;
 use Simplify\Toolkit\Livewire\ToolkitSettingsForm;
 use Simplify\Toolkit\Services\Keys;
@@ -61,6 +62,16 @@ final class ToolkitAddon extends Addon
     public function settingsForm(): string
     {
         return ToolkitSettingsForm::class;
+    }
+
+    /**
+     * Automatic backups as a tab in Simplify's "Backups & tasks", between Backups and Schedules (add-on API 9).
+     *
+     * @return array<string, list<class-string>>
+     */
+    public function serverTabs(): array
+    {
+        return ['backups' => [Backups::class]];
     }
 
     /** "Paper 1.21.4" on Minecraft tiles, and "Restart needed" after a change here; from the database and cache only. */

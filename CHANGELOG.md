@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- With Simplify 2.0 (add-on API 9), Toolkit names its automatic backups page as a tab of Backups & tasks itself, so the core no longer needs to know Toolkit's classes.
 - Save is a text button "Save" with the floppy icon, last on the right, on every Toolkit page (Minecraft settings, Backups & tasks, Toolkit settings), as on Simplify's own pages.
 - Removing Toolkit keeps its data (keys, backup plans, installed plugins), so installing it again finds every setting. CI now updates from 1.3.1 with every setting filled in, removes and installs Toolkit again, and puts the previous release back over it.
 - With Simplify 2.0 (add-on API 8), Toolkit's settings (the panel's CurseForge key and automatic backups) are its section of Simplify settings › Add-ons, and Toolkit's own settings page leaves the menu. Without Simplify the page stays, with the same form.
