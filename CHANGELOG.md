@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Checks: PHPStan (level 5) runs in CI, and the panel smoke also runs with the real Simplify core (main) instead of a stub.
+
 ## 2.0.0-beta.5
 
 - The Pelican Hub accepts the repository again: a test no longer uses `eval()`, and the Hub check now also refuses `eval`, `assert` and `create_function`.
