@@ -9,6 +9,7 @@ use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Validation\ValidationException;
 use Throwable;
 
 /**
@@ -18,7 +19,8 @@ use Throwable;
  * - serverSettingsKey(): string                  a short key, unique per add-on, such as 'simplify-servermaker'
  * - serverSettingsSections(Server): list<Section> its sections; [] when they do not apply to this server or person
  * - serverSettingsFill(Server): array             the sections' state, relative to the sections
- * - serverSettingsSave(Server, array): bool       saves the state Save gives it; false when it could not
+ * - serverSettingsSave(Server, array): bool       saves the state Save gives it; false when it could not, or a
+ *                                                 ValidationException (keys data.sections.<key>.<field>) for a field
  * - serverSettingsVariables(Server): list<string> (optional) egg variables its sections handle, left out of Startup
  *
  * Each section needs a heading; an icon (Section::icon) shows in the list of sections.
@@ -109,6 +111,9 @@ final class SettingsSections
         }
         try {
             return (bool) $source->serverSettingsSave($server, $state);
+        } catch (ValidationException $error) {
+            // A field of the section was refused: the page shows the message at that field.
+            throw $error;
         } catch (Throwable $error) {
             report($error);
 

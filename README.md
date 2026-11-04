@@ -52,7 +52,7 @@ Four parts are meant to be used by other add-ons, behind `class_exists()`, and k
   when they do not apply), `serverSettingsFill(Server $server): array`, `serverSettingsSave(Server $server, array
   $state): bool` and, optionally, `serverSettingsVariables(Server $server): array` (egg variables the sections handle,
   left out of Startup). The sections' state is at `data.sections.<key>`; Save calls `serverSettingsSave` only when it
-  changed, and `false` keeps the changes unsaved. They come after Startup, before Limits.
+  changed; `false` keeps the changes unsaved, and a `ValidationException` with keys `data.sections.<key>.<field>` shows its message at that field. They come after Startup, before Limits.
 - `Simplify\Toolkit\Services\AutomaticBackups::save(?Server $server, array $values)` with `enabled`, `every_minutes`
   (30 to 10080), `keep` (1 to 100) and `only_when_used`, all required and validated; `null` for the panel's own row.
   `AutomaticBackups::panel()` gives the panel's values, which new servers get on their own.
