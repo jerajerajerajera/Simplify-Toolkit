@@ -9,8 +9,10 @@ use App\Models\User;
 use Closure;
 use Filament\Forms\Components\TextInput;
 use Simplify\Core\Addons\Addon;
+use Simplify\Core\Filament\Admin\Pages\Settings;
 use Simplify\Toolkit\Filament\Admin\Pages\ToolkitSettings;
 use Simplify\Toolkit\Livewire\CurseForgeConnection;
+use Simplify\Toolkit\Livewire\ToolkitSettingsForm;
 use Simplify\Toolkit\Services\Keys;
 use Simplify\Toolkit\Services\RestartReminder;
 use Simplify\Toolkit\Services\ServerInfo;
@@ -43,7 +45,18 @@ final class ToolkitAddon extends Addon
 
     public function settingsUrl(): ?string
     {
-        return ToolkitSettings::canAccess() ? ToolkitSettings::getUrl(panel: 'admin') : null;
+        if (! ToolkitSettings::canAccess()) {
+            return null;
+        }
+
+        // With Simplify's settings sections (add-on API 8): Toolkit's own section, opened.
+        return method_exists(Settings::class, 'addonUrl') ? Settings::addonUrl($this->id()) : ToolkitSettings::getUrl(panel: 'admin');
+    }
+
+    /** The CurseForge key and automatic backups as a section of Simplify settings › Add-ons (add-on API 8). */
+    public function settingsForm(): ?string
+    {
+        return ToolkitSettingsForm::class;
     }
 
     /** "Paper 1.21.4" on Minecraft tiles, and "Restart needed" after a change here; from the database and cache only. */

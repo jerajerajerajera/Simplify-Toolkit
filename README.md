@@ -27,7 +27,9 @@ It works on its own, and shows up inside Simplify when both are installed.
 With [Simplify](https://github.com/jerajerajerajera/Simplify) installed, a running Minecraft server shows its
 players, MOTD, version and server icon on its card and page, and its software, version, modpack and players in the
 server list on your website (event `simplify.embed.server`). Automatic backups is a tab of Backups & tasks in the
-server menu, and Toolkit also shows up in Simplify's add-on list.
+server menu, and Toolkit also shows up in Simplify's add-on list. From Simplify 2.0 (add-on API 8) the panel's
+CurseForge key and automatic backups are Toolkit's section of Simplify settings › Add-ons; Toolkit's own settings page
+then leaves the menu.
 
 With [Simplify Explain](https://github.com/jerajerajerajera/Simplify-Explain) installed, a plugin that was switched
 off after a start gets Explain's question button next to the reason (render hook `simplify::problem.actions`, id

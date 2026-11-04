@@ -28,6 +28,7 @@ use Simplify\Toolkit\Filament\Server\Pages\Minecraft;
 use Simplify\Toolkit\Filament\Server\Pages\Packages;
 use Simplify\Toolkit\Filament\Server\Pages\Players;
 use Simplify\Toolkit\Livewire\CurseForgeConnection;
+use Simplify\Toolkit\Livewire\ToolkitSettingsForm;
 use Simplify\Toolkit\Models\ApiKey;
 use Simplify\Toolkit\Models\Package;
 use Simplify\Toolkit\Services\AutomaticBackups;
@@ -190,9 +191,29 @@ step('the admin settings page renders', function () use ($admin) {
         throw new RuntimeException('HTTP '.$response->getStatusCode().' at '.$url.($response->exception ? ': '.$response->exception->getMessage() : ''));
     }
     // With Simplify the admin page never scrolls: its form gets the window's height and scrolls inside (style audit laag1366).
-    if (! str_contains($response->getContent(), '<form wire:submit="save" data-simplify-unsaved="data" class="s-fit">')) {
-        throw new RuntimeException('the settings form is not marked s-fit and unsaved-changes');
+    if (! str_contains($response->getContent(), '<div class="s-fit">') || ! str_contains($response->getContent(), '<div data-simplify-unsaved="data" data-simplify-save="save"')) {
+        throw new RuntimeException('the settings are not marked s-fit and unsaved-changes');
     }
+});
+step('the settings are one form, for Simplify settings › Add-ons and for Toolkit\'s own page', function () use ($admin) {
+    if (! class_exists(Addon::class)) {
+        require dirname(__DIR__).'/fixtures/Addon.php';
+        require dirname(__DIR__).'/fixtures/Button.php';
+    }
+    if ((new ToolkitAddon)->settingsForm() !== ToolkitSettingsForm::class) {
+        throw new RuntimeException('Simplify does not get the settings form');
+    }
+    // With Simplify's settings sections (add-on API 8) the page leaves the menu; without them it stays.
+    if (ToolkitSettings::shouldRegisterNavigation() === method_exists(Addon::class, 'settingsForm')) {
+        throw new RuntimeException('the settings page is in the menu next to its section, or missing without it');
+    }
+    $form = Livewire::actingAs($admin)->test(ToolkitSettingsForm::class)
+        ->set('data.backups.every_minutes', 480)->set('data.backups.keep', 4)->call('save');
+    $plan = AutomaticBackups::panel();
+    if ($form->errors()->isNotEmpty() || $plan->every_minutes !== 480 || $plan->keep !== 4) {
+        throw new RuntimeException('the form did not save: '.json_encode([$form->errors()->toArray(), $plan->every_minutes, $plan->keep]));
+    }
+    AutomaticBackups::save(null, ['enabled' => true, 'every_minutes' => 360, 'keep' => 2, 'only_when_used' => true]);
 });
 $paper = Server::factory()->create([
     'owner_id' => $admin->id,
@@ -582,7 +603,7 @@ step('servers without plugins or mods have no Plugins page', function () use ($a
     }
 });
 // Every step must have run: a step that never ran is a failure too.
-$expected = 24;
+$expected = 25;
 if ($passed !== $expected) {
     echo "FAIL $passed of $expected steps passed\n";
     exit(1);
