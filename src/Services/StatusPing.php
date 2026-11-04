@@ -25,10 +25,14 @@ final class StatusPing
     public static function get(Server $server): array
     {
         return Cache::remember('simplify-toolkit.ping.'.$server->uuid, 30, function () use ($server): array {
-            $port = (int) $server->allocation?->port;
-            $node = (string) parse_url((string) $server->node?->getConnectionAddress(), PHP_URL_HOST);
-            foreach ($port > 0 ? self::targets($server->allocation?->ip, $server->allocation?->ip_alias, $node) : [] as $host) {
-                $answer = self::ask($host, $port);
+            // A server can have no allocation (Pelican 1.0), and then there is nothing to ask.
+            $allocation = $server->allocation;
+            if ($allocation === null || $allocation->port < 1) {
+                return [];
+            }
+            $node = (string) parse_url($server->node->getConnectionAddress(), PHP_URL_HOST);
+            foreach (self::targets($allocation->ip, $allocation->ip_alias, $node) as $host) {
+                $answer = self::ask($host, $allocation->port);
                 if ($answer !== null) {
                     return self::read($answer);
                 }
@@ -155,7 +159,13 @@ final class StatusPing
         return $bytes;
     }
 
-    /** @param  resource  $socket */
+    /**
+     * Reads the next number from the socket, so two calls give two different numbers.
+     *
+     * @param  resource  $socket
+     *
+     * @phpstan-impure
+     */
     private static function readVarint($socket): int
     {
         $value = 0;

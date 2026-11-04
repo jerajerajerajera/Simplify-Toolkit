@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Static analysis (PHPStan level 5) finds nothing left in Toolkit's code, so its list of known findings is empty. The live player count no longer asks a server without an allocation for its status.
 - All of Toolkit's own styles take Simplify's design tokens (`--ps-*`) when it is installed and Pelican's otherwise, and the layout of the Plugins and Players columns inside Simplify's server page is Toolkit's own now instead of the core's.
 - One Settings page per server takes over Pelican's Settings and Startup pages and Toolkit's Minecraft page: the server's name, description and SFTP details, the Minecraft settings, the start command, image and variables, other add-ons' sections (such as Server Maker's) and the limits, with a list of sections beside them (a row of chips on a phone). One Save writes only the parts that changed; Reinstall and Copy server ID are in the ⋯ menu. The addresses of Pelican's Settings and Startup and of the former Minecraft page lead to the right section. With Simplify 2.0 (add-on API 9) Pelican's Settings and Startup leave the server menu; without Simplify the page keeps Pelican's look, with Pelican's backup notification switches as a section.
 - Quick commands (list, say, time set day, weather clear, save-all) above the console of a Minecraft server on a phone come from Toolkit now, with or without Simplify, for whoever may send commands.

@@ -29,7 +29,7 @@ final class EmbedDetails
             $pack = Modpack::of($server);
             if ($pack !== null) {
                 $details['modpack'] = array_filter($pack);
-                if (($pack['icon'] ?? '') !== '') {
+                if ($pack['icon'] !== '') {
                     $details['icon'] = $pack['icon'];
                 }
             }
