@@ -357,6 +357,7 @@ step('Settings saves the name, a start variable and an add-on section, only what
         ServerVariable::query()->where('server_id', $paper->id)->delete();
         $handled->delete();
         $variable->delete();
+        $paper->refresh();
     }
 });
 step('the Players page lists whitelist, operators and bans from their files', function () use ($admin) {
