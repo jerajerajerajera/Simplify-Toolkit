@@ -112,7 +112,7 @@ final class ServerSettings extends Page implements HasSchemas
         return trans('server/setting.title');
     }
 
-    public function getSubheading(): ?string
+    public function getSubheading(): string
     {
         $server = $this->server();
         $software = ServerKind::forServer($server)['minecraft'] ? Software::label($server) : '';
@@ -496,8 +496,8 @@ final class ServerSettings extends Page implements HasSchemas
         $failed = false;
         $restart = false;
 
-        if ($changed('server')) {
-            $failed = ! $this->saveServer((array) ($state['server'] ?? [])) || $failed;
+        if ($changed('server') && ! $this->saveServer((array) ($state['server'] ?? []))) {
+            $failed = true;
         }
         if ($changed('game') && $this->hasGame()) {
             if ($this->saveGame((array) ($state['game'] ?? []))) {
@@ -506,8 +506,8 @@ final class ServerSettings extends Page implements HasSchemas
                 $failed = true;
             }
         }
-        if ($changed('startup') && $this->hasStartup()) {
-            $failed = ! $this->saveStartup((array) ($raw['startup'] ?? [])) || $failed;
+        if ($changed('startup') && $this->hasStartup() && ! $this->saveStartup((array) ($raw['startup'] ?? []))) {
+            $failed = true;
         }
         foreach (array_keys((array) ($raw['sections'] ?? [])) as $key) {
             if (($raw['sections'][$key] ?? null) != ($this->saved['sections'][$key] ?? null)
