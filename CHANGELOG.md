@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 2.0.0-beta.5
 
 - The Pelican Hub accepts the repository again: a test no longer uses `eval()`, and the Hub check now also refuses `eval`, `assert` and `create_function`.
 
