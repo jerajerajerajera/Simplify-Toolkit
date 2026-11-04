@@ -53,8 +53,12 @@ final class ToolkitAddon extends Addon
         return method_exists(Settings::class, 'addonUrl') ? Settings::addonUrl($this->id()) : ToolkitSettings::getUrl(panel: 'admin');
     }
 
-    /** The CurseForge key and automatic backups as a section of Simplify settings › Add-ons (add-on API 8). */
-    public function settingsForm(): ?string
+    /**
+     * The CurseForge key and automatic backups as a section of Simplify settings › Add-ons (add-on API 8).
+     *
+     * @return class-string<ToolkitSettingsForm>
+     */
+    public function settingsForm(): string
     {
         return ToolkitSettingsForm::class;
     }
