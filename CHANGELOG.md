@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 2.0.0-beta.6
 
 - Automatic backups recognise their own backups in every language, so a change of the panel's language no longer leaves old ones behind, and they keep to the server's backup limit: the extra slot for a new backup is only taken when one of its own goes once it is done.
 - With Simplify Explain, a plugin that was switched off after a start gets Explain's question button right after the reason, and Explain reads the console lines saved at that start. This replaces the Explain button in the log lines window.
