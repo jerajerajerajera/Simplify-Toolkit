@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.0-beta.4
+
+- Version aligned with Simplify 2.0.0-beta.4.
+
 ## 2.0.0-beta.3
 
 - Simplify Embed's server list gets a client download for modpacks: the installed version's page on Modrinth, the installed file on CurseForge (with the panel's CurseForge key) and the modpack's page on FTB. CurseForge modpacks also get their name, version and icon.
