@@ -43,7 +43,7 @@ final class ToolkitProblems
             'context' => 'Simplify Toolkit switched off the server plugin "'.$package->title.'" ('.$package->filename
                 .') because it failed to load on the last start of the game server. The lines come from the server\'s'
                 .' console at that start, around the error.',
-            'lines' => array_slice(array_values(array_map('strval', (array) ($package->off_lines ?? []))), -100),
+            'lines' => array_slice($package->off_lines ?? [], -100),
         ];
     }
 
