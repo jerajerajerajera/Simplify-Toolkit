@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Simplify\Toolkit\Services;
 
+use App\Models\Backup;
 use App\Models\BackupHost;
 use App\Models\Server;
 use App\Services\Backups\DeleteBackupService;
@@ -93,10 +94,13 @@ final class AutomaticBackups
             }
             $plan->last_active = $running ? $now : $plan->last_active;
         }
-        $mine = fn () => $server->backups()->where('is_scheduled', true)->where('name', 'like', __('simplify-toolkit::backups.name').' · %');
-        // After a new backup finished, the oldest recovery points beyond the plan go, once.
+        // Its own backups by their name in any language, so a change of APP_LOCALE never leaves old ones behind (TK-B3).
+        $kept = fn () => $server->backups()->nonFailed()->get()->filter(fn (Backup $backup) => ! $backup->is_scheduled || ! self::isOwn((string) $backup->name));
+        $mine = fn () => $server->backups()->where('is_scheduled', true)->where('is_successful', true)->where('is_locked', false)
+            ->orderByDesc('created_at')->get()->filter(fn (Backup $backup) => self::isOwn((string) $backup->name))->values();
+        // After a new backup finished, the oldest recovery points beyond the plan or the server's limit go, once.
         if ($plan->pruned_at < $plan->last_attempt && ! $server->backups()->whereNull('completed_at')->exists()) {
-            foreach ($mine()->where('is_successful', true)->where('is_locked', false)->orderByDesc('created_at')->get()->slice($plan->keep) as $old) {
+            foreach ($mine()->slice(self::keep($plan->keep, (int) $server->backup_limit, $kept()->count())) as $old) {
                 app(DeleteBackupService::class)->handle($old);
             }
             $plan->pruned_at = $now;
@@ -106,20 +110,60 @@ final class AutomaticBackups
             $latest = $server->backups()->where('is_successful', true)->max('created_at');
             $latestAt = $latest ? (int) strtotime((string) $latest) : 0;
             $unused = $plan->only_when_used && $latestAt > 0 && $plan->last_active < $latestAt;
-            if ($unused || ! self::storage($server) || $now - $latestAt < $plan->every_minutes * 60) {
+            $slot = self::slot((int) $server->backup_limit, $server->backups()->nonFailed()->count(), $mine()->count(), $kept()->count());
+            if ($unused || $slot === null || ! self::storage($server) || $now - $latestAt < $plan->every_minutes * 60) {
                 // Looked at again in five minutes, not every minute.
                 $plan->last_attempt = max($plan->last_attempt, $now - $plan->every_minutes * 60 + 300);
             } else {
                 $plan->last_attempt = $now;
                 $plan->save();
-                // One slot more for the new backup, so the oldest recovery point only goes once it is done.
-                $slot = clone $server;
-                $slot->backup_limit = $server->backups()->nonFailed()->count() + 1;
+                // At most one slot more for the new backup, so the oldest recovery point only goes once it is done.
+                $limited = clone $server;
+                $limited->backup_limit = $slot;
                 app(InitiateBackupService::class)->setIsScheduled(true)->setIsLocked(false)
-                    ->handle($slot, __('simplify-toolkit::backups.name').' · '.now()->format('Y-m-d H:i'));
+                    ->handle($limited, __('simplify-toolkit::backups.name').' · '.now()->format('Y-m-d H:i'));
             }
         }
         $plan->save();
+    }
+
+    /** Whether a backup name is one of the automatic ones, "<name in any language> · Y-m-d H:i". */
+    public static function isOwn(string $name): bool
+    {
+        static $pattern = null;
+        if ($pattern === null) {
+            $names = [];
+            foreach (glob(dirname(__DIR__, 2).'/lang/*/backups.php') ?: [] as $file) {
+                $names[] = (string) ((require $file)['name'] ?? '');
+            }
+            if (function_exists('__')) {
+                // A panel that overrides the translation names them this way too.
+                $names[] = (string) __('simplify-toolkit::backups.name');
+            }
+            $names = array_unique(array_filter($names, fn (string $name) => $name !== '' && $name !== 'simplify-toolkit::backups.name'));
+            $pattern = '/^(?:'.implode('|', array_map(fn (string $name) => preg_quote($name, '/'), $names)).') · \d{4}-\d{2}-\d{2} \d{2}:\d{2}$/u';
+        }
+
+        return preg_match($pattern, $name) === 1;
+    }
+
+    /** How many automatic recovery points stay: the plan's number within the room the server's other backups leave. */
+    public static function keep(int $keep, int $limit, int $others): int
+    {
+        return max(1, min($keep, $limit - $others));
+    }
+
+    /**
+     * The backup limit a new automatic backup is made with: the server's own while there is room, one more only when
+     * one of its own goes once the new one is done, null when the server's other backups fill the limit.
+     */
+    public static function slot(int $limit, int $count, int $own, int $others): ?int
+    {
+        if ($count < $limit) {
+            return $limit;
+        }
+
+        return $own >= 1 && $others < $limit ? $count + 1 : null;
     }
 
     /** @return array{every_minutes: int, keep: int, only_when_used: bool} */
