@@ -64,7 +64,7 @@ final class ToolkitSettings extends Page
     protected function getHeaderActions(): array
     {
         return [
-            Action::make('save')->label(__('simplify-toolkit::settings.save'))->icon('tabler-device-floppy')
+            Action::make('save')->label(__('simplify-toolkit::minecraft.save'))->icon('tabler-device-floppy')
                 ->visible(fn () => ToolkitSettingsForm::canChange())
                 ->action(fn () => $this->dispatch(ToolkitSettingsForm::SAVE)->to(ToolkitSettingsForm::class)),
         ];
