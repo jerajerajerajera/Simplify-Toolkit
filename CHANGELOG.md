@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- The Pelican Hub accepts the repository again: a test no longer uses `eval()`, and the Hub check now also refuses `eval`, `assert` and `create_function`.
+
 ## 2.0.0-beta.4
 
 - Version aligned with Simplify 2.0.0-beta.4.

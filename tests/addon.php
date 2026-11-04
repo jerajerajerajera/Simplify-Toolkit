@@ -3,8 +3,7 @@
 // ToolkitAddon against Simplify's add-on contract, without Simplify or a panel.
 declare(strict_types=1);
 
-// Stand-in for Pelican's user model, only for the type of connections().
-eval('namespace App\\Models; class User {}');
+require __DIR__.'/fixtures/User.php';
 require __DIR__.'/fixtures/Addon.php';
 require __DIR__.'/fixtures/Button.php';
 require __DIR__.'/../src/ToolkitAddon.php';

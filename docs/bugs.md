@@ -19,3 +19,4 @@ Bugs met dezelfde oorzaak, en de regel of check die het hele patroon voorkomt.
 - **Updatepad** (B11, kern 1.4.4 en 1.5.1): P-28. Upgradetest met echte 0.7.0-instellingen in `checks.yml`.
 - **Testpaneel lijkt niet op het echte paneel** (B15 Egg Updates 1.1.3/1.1.4, kern-audit): P-31. Smoke en audit bootsen
   het echte paneel na (volle nodes, echte eggs, 20+ servers, nep-plugin).
+| TK-B2 | 2026-11-04 | De Pelican Hub weigert 2.0.0-beta.4: "Banned file or process operations detected (tests/addon.php:7 eval())" | `tests/addon.php` maakte de stand-in voor `App\Models\User` met `eval()`; `tests/hub-check.py` kende `eval` niet als verboden naam | Unreleased | `tests/hub-check.py` (`eval`, `assert`, `create_function` in BANNED; rood op a3dbd53) | 0× | P-26 |
