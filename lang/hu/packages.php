@@ -4,7 +4,6 @@ return [
     'plugins' => 'Pluginok',
     'mods' => 'Modok',
     'find' => 'Keresés',
-    'for' => ':loader :version',
     'search_placeholder' => 'Keresés a Modrinth, Hangar, SpigotMC és CurseForge oldalon',
     'site' => 'Oldal',
     'all_sites' => 'Minden oldal',

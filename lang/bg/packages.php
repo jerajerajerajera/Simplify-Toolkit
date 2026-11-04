@@ -4,7 +4,6 @@ return [
     'plugins' => 'Плъгини',
     'mods' => 'Модове',
     'find' => 'Търсене',
-    'for' => 'За :loader :version',
     'search_placeholder' => 'Търси в Modrinth, Hangar, SpigotMC и CurseForge',
     'site' => 'Сайт',
     'all_sites' => 'Всички сайтове',

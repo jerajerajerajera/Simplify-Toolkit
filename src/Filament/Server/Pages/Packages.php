@@ -98,9 +98,35 @@ final class Packages extends Page implements HasActions
         return self::getNavigationLabel();
     }
 
+    /**
+     * The filter in the title bar: the software and version the search is for, to choose them when Toolkit could not
+     * tell them from the server itself (Plugins page head, T2).
+     */
     protected function getHeaderActions(): array
     {
-        return [RestartActions::group()];
+        return [
+            $this->chooseAction()->color('gray')
+                ->label(fn () => $this->ready() ? $this->target() : __('simplify-toolkit::packages.choose'))
+                ->visible(fn () => $this->loaded && ! $this->context['detected'] && ($this->can(SubuserPermission::StartupUpdate) || $this->can(SubuserPermission::FileUpdate))),
+            RestartActions::group(),
+        ];
+    }
+
+    /** "Paper 1.21.1": the software and Minecraft version the search is for. */
+    public function target(): string
+    {
+        return ucfirst($this->context['loader']).' '.$this->context['minecraft'];
+    }
+
+    /** The subtitle of the page: "Paper 1.21.1 · Modrinth, Hangar, SpigotMC, CurseForge", once that is known. */
+    public function subtitle(): ?string
+    {
+        if (! $this->loaded || ! $this->ready()) {
+            return null;
+        }
+        $sites = $this->sites();
+
+        return $this->target().($sites !== [] ? ' · '.implode(', ', $sites) : '');
     }
 
     public function server(): Server

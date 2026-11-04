@@ -4,7 +4,6 @@ return [
     'plugins' => 'Lisäosat',
     'mods' => 'Modit',
     'find' => 'Etsi',
-    'for' => ':loader :version',
     'search_placeholder' => 'Etsi Modrinthista, Hangarista, SpigotMC:stä ja CurseForgesta',
     'site' => 'Sivusto',
     'all_sites' => 'Kaikki sivustot',

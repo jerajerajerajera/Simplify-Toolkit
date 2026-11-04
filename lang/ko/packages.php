@@ -4,7 +4,6 @@ return [
     'plugins' => '플러그인',
     'mods' => '모드',
     'find' => '찾기',
-    'for' => ':loader :version 용',
     'search_placeholder' => 'Modrinth, Hangar, SpigotMC, CurseForge에서 검색',
     'site' => '사이트',
     'all_sites' => '모든 사이트',
