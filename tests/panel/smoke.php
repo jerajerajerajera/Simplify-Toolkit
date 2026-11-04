@@ -277,25 +277,6 @@ step('the server icon shows and can be removed', function () use ($admin) {
         throw new RuntimeException('the icon was not removed');
     }
 });
-step('Pelican\'s Settings and Startup and the former Minecraft page lead to the right section of the Settings page', function () use ($admin, $paper) {
-    $target = ServerSettings::getUrl(panel: 'server', tenant: $paper);
-    $pages = [
-        'App\\Filament\\Server\\Pages\\Settings' => 'settings-server',
-        'App\\Filament\\Server\\Pages\\Startup' => 'settings-startup',
-        'Simplify\\Toolkit\\Filament\\Server\\Pages\\Minecraft' => 'settings-minecraft',
-    ];
-    foreach ($pages as $page => $section) {
-        $url = $page::getUrl(panel: 'server', tenant: $paper);
-        $response = visit($admin, $url);
-        if (! $response->isRedirect() || $response->headers->get('Location') !== "$target#$section") {
-            throw new RuntimeException("$url gives HTTP ".$response->getStatusCode().' to '.$response->headers->get('Location'));
-        }
-    }
-    // The Settings page itself is not sent anywhere.
-    if (($status = visit($admin, $target)->getStatusCode()) !== 200) {
-        throw new RuntimeException("the Settings page gives HTTP $status");
-    }
-});
 step('Settings saves the name, a start variable and an add-on section, only what changed, with Pelican\'s checks', function () use ($admin, $paper) {
     $variable = EggVariable::query()->create([
         'egg_id' => $paper->egg_id, 'name' => 'Server jar file', 'description' => 'The jar to start', 'env_variable' => 'SERVER_JARFILE',
@@ -337,6 +318,8 @@ step('Settings saves the name, a start variable and an add-on section, only what
             return ['BUILD_NUMBER'];
         }
     };
+    // The server keeps the egg's variables it loaded before; read them again.
+    $paper->refresh();
     app()->instance('smoke.settings-source', $source);
     app()->tag(['smoke.settings-source'], SettingsSections::TAG);
     Filament::setCurrentPanel(Filament::getPanel('server'));
@@ -709,6 +692,26 @@ step('servers without plugins or mods have no Plugins page', function () use ($a
     Filament::setTenant($rust);
     if (Packages::canAccess()) {
         throw new RuntimeException('Rust got a Plugins page');
+    }
+});
+// Last of all: a page visit boots a fresh panel, which drops the stand-ins the steps above bind.
+step('Pelican\'s Settings and Startup and the former Minecraft page lead to the right section of the Settings page', function () use ($admin, $paper) {
+    $target = ServerSettings::getUrl(panel: 'server', tenant: $paper);
+    $pages = [
+        'App\\Filament\\Server\\Pages\\Settings' => 'settings-server',
+        'App\\Filament\\Server\\Pages\\Startup' => 'settings-startup',
+        'Simplify\\Toolkit\\Filament\\Server\\Pages\\Minecraft' => 'settings-minecraft',
+    ];
+    foreach ($pages as $page => $section) {
+        $url = $page::getUrl(panel: 'server', tenant: $paper);
+        $response = visit($admin, $url);
+        if (! $response->isRedirect() || $response->headers->get('Location') !== "$target#$section") {
+            throw new RuntimeException("$url gives HTTP ".$response->getStatusCode().' to '.$response->headers->get('Location'));
+        }
+    }
+    // The Settings page itself is not sent anywhere.
+    if (($status = visit($admin, $target)->getStatusCode()) !== 200) {
+        throw new RuntimeException("the Settings page gives HTTP $status");
     }
 });
 // Every step must have run: a step that never ran is a failure too.
