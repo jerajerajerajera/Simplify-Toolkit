@@ -6,8 +6,10 @@ the [Simplify](https://github.com/jerajerajerajera/Simplify) core. New tools are
 - **Plugins and mods** for Minecraft: add plugins (Paper, Purpur, Spigot, Velocity) and mods (Fabric, Forge, NeoForge,
   Quilt) from Modrinth, Hangar, SpigotMC and CurseForge, in one site or all of them, see which version fits your
   server, update them to the newest release, and switch them off or remove them.
-- **Minecraft settings**: change the MOTD, the main server settings and the server icon without editing
-  `server.properties`, and accept the EULA. After a change, also a file saved in Pelican's file manager, the server
+- **Settings**: one Settings page per server with the server's name and description, its start command, image and
+  variables, and on Minecraft servers the MOTD, the main server settings and the server icon without editing
+  `server.properties`, and accepting the EULA. It takes over Pelican's Settings and Startup pages: their addresses
+  lead to it, and one Save writes every change. After a change, also a file saved in Pelican's file manager, the server
   shows "Restart needed" with Restart now, later or dismiss.
 - **Players**: who is online, the whitelist, operators and bans, with whitelist, OP, kick and ban.
 - **Automatic backups**: a backup every so many minutes per server, keeping a set number of recovery points. Only
@@ -27,7 +29,8 @@ It works on its own, and shows up inside Simplify when both are installed.
 With [Simplify](https://github.com/jerajerajerajera/Simplify) installed, a running Minecraft server shows its
 players, MOTD, version and server icon on its card and page, and its software, version, modpack and players in the
 server list on your website (event `simplify.embed.server`). Automatic backups is a tab of Backups & tasks in the
-server menu, and Toolkit also shows up in Simplify's add-on list. From Simplify 2.0 (add-on API 8) the panel's
+server menu, and Toolkit also shows up in Simplify's add-on list. From Simplify 2.0 (add-on API 9) Pelican's Settings
+and Startup leave the server menu, since Toolkit's Settings page holds them. From Simplify 2.0 (add-on API 8) the panel's
 CurseForge key and automatic backups are Toolkit's section of Simplify settings › Add-ons; Toolkit's own settings page
 then leaves the menu.
 
@@ -38,11 +41,18 @@ users who may read the server's files get the button.
 
 ## For other Simplify add-ons
 
-Three parts are meant to be used by other add-ons, behind `class_exists()`, and keep their signature:
+Four parts are meant to be used by other add-ons, behind `class_exists()`, and keep their signature:
 
 - `Simplify\Toolkit\Filament\Components\MotdEditor::make('motd')->serverName(string|Closure)->iconUrl(string|Closure|null)`:
-  the MOTD editor of the Minecraft page as a Filament field. Its state is the MOTD with `§` codes, at most 512
+  the MOTD editor of the Settings page as a Filament field. Its state is the MOTD with `§` codes, at most 512
   characters, as `server.properties` holds it. CSS and JavaScript come with the field.
+- Sections on a server's Settings page: tag an object `simplify.server-settings-sections`
+  (`Simplify\Toolkit\Services\SettingsSections::TAG`) with `serverSettingsKey(): string`,
+  `serverSettingsSections(Server $server): array` (a list of Filament `Section`s, each with a heading and an icon; `[]`
+  when they do not apply), `serverSettingsFill(Server $server): array`, `serverSettingsSave(Server $server, array
+  $state): bool` and, optionally, `serverSettingsVariables(Server $server): array` (egg variables the sections handle,
+  left out of Startup). The sections' state is at `data.sections.<key>`; Save calls `serverSettingsSave` only when it
+  changed, and `false` keeps the changes unsaved. They come after Startup, before Limits.
 - `Simplify\Toolkit\Services\AutomaticBackups::save(?Server $server, array $values)` with `enabled`, `every_minutes`
   (30 to 10080), `keep` (1 to 100) and `only_when_used`, all required and validated; `null` for the panel's own row.
   `AutomaticBackups::panel()` gives the panel's values, which new servers get on their own.

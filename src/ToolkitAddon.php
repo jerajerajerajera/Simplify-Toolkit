@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Simplify\Toolkit;
 
+use App\Filament\Server\Pages\Settings as PelicanSettings;
+use App\Filament\Server\Pages\Startup as PelicanStartup;
 use App\Models\Server;
 use App\Models\User;
 use Closure;
@@ -12,6 +14,7 @@ use Simplify\Core\Addons\Addon;
 use Simplify\Core\Filament\Admin\Pages\Settings;
 use Simplify\Toolkit\Filament\Admin\Pages\ToolkitSettings;
 use Simplify\Toolkit\Filament\Server\Pages\Backups;
+use Simplify\Toolkit\Filament\Server\Pages\ServerSettings;
 use Simplify\Toolkit\Livewire\CurseForgeConnection;
 use Simplify\Toolkit\Livewire\ToolkitSettingsForm;
 use Simplify\Toolkit\Services\Keys;
@@ -72,6 +75,17 @@ final class ToolkitAddon extends Addon
     public function serverTabs(): array
     {
         return ['backups' => [Backups::class]];
+    }
+
+    /**
+     * Pelican's Settings and Startup are sections of Toolkit's Settings page, so Simplify leaves them out of the menu
+     * (add-on API 9). Their addresses lead to that page (RedirectReplacedPages).
+     *
+     * @return list<class-string>
+     */
+    public function replacedServerPages(): array
+    {
+        return ServerSettings::canAccess() ? [PelicanSettings::class, PelicanStartup::class] : [];
     }
 
     /** "Paper 1.21.4" on Minecraft tiles, and "Restart needed" after a change here; from the database and cache only. */
