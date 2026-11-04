@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- With Simplify Explain, a plugin that was switched off after a start gets Explain's question button right after the reason, and Explain reads the console lines saved at that start. This replaces the Explain button in the log lines window.
+
 ## 2.0.0-beta.5
 
 - The Pelican Hub accepts the repository again: a test no longer uses `eval()`, and the Hub check now also refuses `eval`, `assert` and `create_function`.

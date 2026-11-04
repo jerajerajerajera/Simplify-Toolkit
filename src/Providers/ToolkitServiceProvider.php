@@ -15,6 +15,7 @@ use Simplify\Toolkit\Livewire\CurseForgeConnection;
 use Simplify\Toolkit\Services\AutomaticBackups;
 use Simplify\Toolkit\Services\EmbedDetails;
 use Simplify\Toolkit\Services\RestartReminder;
+use Simplify\Toolkit\Services\ToolkitProblems;
 use Simplify\Toolkit\ToolkitAddon;
 use Throwable;
 
@@ -24,6 +25,8 @@ final class ToolkitServiceProvider extends ServiceProvider
     {
         // Only the class name is stored: without Simplify, ToolkitAddon is never loaded. See Simplify's ADDONS.md.
         $this->app->tag([ToolkitAddon::class], 'simplify.addons');
+        // The logs behind Toolkit's errors for Simplify Explain's question button; without Explain nobody asks.
+        $this->app->tag([ToolkitProblems::class], 'simplify.problems');
     }
 
     public function boot(): void
