@@ -11,6 +11,7 @@ php tests/sources.php
 php tests/start-check.php
 php tests/status-ping.php
 php tests/addon.php
+php tests/automatic-backups.php
 php tests/lang.php
 python3 tests/hub-check.py
 # What a download of the repository holds (the Hub's zip): every file the plugin runs on, nothing of the tests or docs.
