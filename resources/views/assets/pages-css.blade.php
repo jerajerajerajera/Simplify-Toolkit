@@ -109,11 +109,18 @@ a.sm-title:hover, .sm-meta a:hover { text-decoration: underline; }
 .sm-settings-icon { width: 1rem; height: 1rem; flex: none; }
 @media (min-width: 1024px) {
     .sm-settings-contents { position: sticky; top: 0; flex-direction: column; overflow: visible; }
-    .sm-settings-contents a { border: 0; border-radius: var(--ps-radius-sm, .375rem); padding: .375rem .625rem; }
+    .sm-settings-contents a { border: 0; border-radius: var(--ps-radius-sm, .375rem); padding: .375rem .625rem; white-space: normal; }
 }
+/* With Simplify, the page's buttons sit at the right of the card's title row (ADDONS.md, "Page head"), as the core does
+   for a page with icon buttons only, instead of in a bar of their own above the title. */
+html body:has(.ps-server-top) .fi-page:not(.fi-resource-list-records-page):has(form.sm-settings) .fi-page-header-main-ctn:has(> .fi-header) { position: relative; }
+html body:has(.ps-server-top) .fi-page:not(.fi-resource-list-records-page):has(form.sm-settings) .fi-page-header-main-ctn:has(> .fi-header) > .fi-header:has(.fi-header-actions-ctn) { position: absolute; top: 14px; inset-inline-end: 16px; z-index: 2; padding: 0; border-bottom: 0; }
+body:has(.ps-server-top) form.sm-settings .fi-section:not(.fi-section .fi-section) > .fi-section-header { padding-inline-end: 10rem; }
+/* Long names and commands wrap inside their column, so nothing pushes the card wider than the screen. */
+.sm-settings-body, .sm-settings :has(> .sm-settings-contents) { min-width: 0; }
 .sm-settings-body [id^=settings-] { scroll-margin-top: .5rem; }
 .sm-settings-icon-label { display: block; margin-bottom: -.75rem; font-size: .875rem; font-weight: 500; line-height: 1.5rem; color: var(--ps-ink, var(--gray-950)); }
-.sm-command { display: block; overflow-x: auto; white-space: nowrap; padding: .5rem .75rem; border-radius: var(--ps-radius-sm, .375rem); background: var(--ps-raised, var(--gray-100)); color: var(--ps-muted, var(--gray-600)); font-size: .75rem; }
+.sm-command { display: block; white-space: pre-wrap; overflow-wrap: anywhere; padding: .5rem .75rem; border-radius: var(--ps-radius-sm, .375rem); background: var(--ps-raised, var(--gray-100)); color: var(--ps-muted, var(--gray-600)); font-size: .75rem; }
 .sm-limits { display: flex; flex-wrap: wrap; gap: .375rem 1rem; font-size: .8125rem; color: var(--ps-muted, var(--gray-600)); }
 .sm-limits b { color: var(--ps-ink, var(--gray-950)); font-weight: 600; font-variant-numeric: tabular-nums; }
 .dark .sm-settings-contents a:not(.is-open) { border-color: var(--ps-line, rgb(255 255 255 / .1)); color: var(--ps-muted, var(--gray-400)); }

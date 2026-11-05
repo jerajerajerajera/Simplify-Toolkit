@@ -266,6 +266,7 @@ jobs:
           npm install --silent playwright@1.48.2
           npx playwright install --with-deps chromium > /dev/null
           node tests/panel/browser.cjs --base http://127.0.0.1:8001 --urls ../panel/urls.json --out ../result | tee ../result/browser.txt
+          tail -n 1 ../result/browser.txt | grep -qx 'All steps passed'
       - if: always()
         uses: actions/upload-artifact@v4
         with:

@@ -44,6 +44,9 @@ const measure = () => page.evaluate(() => {
   const shown = (el) => !!el && el.getClientRects().length > 0 && getComputedStyle(el).visibility !== 'hidden';
   const form = document.querySelector('form.sm-settings');
   const title = form && form.querySelector('.fi-section-header-heading');
+  // The words themselves (the heading is a block as wide as the card): the title and the subtitle under it.
+  const words = (el) => { if (!el) return null; const range = document.createRange(); range.selectNodeContents(el); const r = range.getBoundingClientRect(); return { top: Math.round(r.top), bottom: Math.round(r.bottom), left: Math.round(r.left), right: Math.round(r.right) }; };
+  const subtitle = form && form.querySelector('.fi-section-header-description');
   const actions = [...document.querySelectorAll('.fi-header-actions-ctn')].find(shown) || null;
   // Every box in the page's content that can scroll sideways and does, with what sticks out of it.
   const sideways = [];
@@ -58,7 +61,7 @@ const measure = () => page.evaluate(() => {
   // The server icon's upload button (Pelican's UploadIcon) and the label of the field it stands in.
   const upload = [...document.querySelectorAll('form.sm-settings button')].find((b) => shown(b) && /icon/i.test((b.getAttribute('x-tooltip') || '') + (b.getAttribute('aria-label') || '') + (b.getAttribute('title') || '')));
   const field = upload && upload.closest('.sm-settings-icon-field');
-  return { title: title ? title.textContent.trim() : null, titleBox: box(title), actionsBox: box(actions), sideways, upload: !!upload, iconLabel: field ? (field.querySelector('.sm-settings-icon-label')?.textContent.trim() || '') : null };
+  return { title: title ? title.textContent.trim() : null, titleBox: words(title), subtitleBox: words(subtitle), actionsBox: box(actions), sideways, upload: !!upload, iconLabel: field ? (field.querySelector('.sm-settings-icon-label')?.textContent.trim() || '') : null };
 });
 
 async function run(browser, viewport) {
@@ -79,7 +82,8 @@ async function run(browser, viewport) {
   console.log(`INFO ${stand} ${JSON.stringify(m)}`);
   const oneRow = m.titleBox && m.actionsBox && m.titleBox.top < m.actionsBox.bottom && m.actionsBox.top < m.titleBox.bottom;
   say('the title stands in one row with the buttons', !!oneRow, { title: m.titleBox, buttons: m.actionsBox });
-  if (m.titleBox && m.actionsBox) say('the buttons do not cover the title', m.titleBox.right <= m.actionsBox.left || m.actionsBox.right <= m.titleBox.left, { title: m.titleBox, buttons: m.actionsBox });
+  const clear = (text) => !text || text.right <= m.actionsBox.left || text.bottom <= m.actionsBox.top || text.top >= m.actionsBox.bottom;
+  if (m.titleBox && m.actionsBox) say('the buttons do not cover the title or subtitle', clear(m.titleBox) && clear(m.subtitleBox), { title: m.titleBox, subtitle: m.subtitleBox, buttons: m.actionsBox });
   say('nothing scrolls sideways', m.sideways.length === 0, m.sideways.slice(0, 3));
   say('the server icon has a label', !m.upload || !!m.iconLabel, { label: m.iconLabel });
   if (stand === 'phone390') await quickCommands();
