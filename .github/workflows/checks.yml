@@ -200,3 +200,80 @@ jobs:
       - name: Laravel log
         if: failure()
         run: grep -h -E '^\[[0-9-]+ [0-9:]+\]' panel/storage/logs/*.log | cut -c1-600 | tail -n 12 || true
+  # A real browser on a panel with Simplify (main) and Toolkit, seeded with Simplify's audit seed and fake Wings (its
+  # branch audit-tools): a server's Settings page on a computer and a phone, for what only a browser sees (the title row,
+  # sideways scrolling). Screenshots go to the artifact browser-smoke.
+  browser:
+    needs: changes
+    if: needs.changes.outputs.code == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      PELICAN: '1.0.0-rc.2'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: plugin
+      - uses: actions/checkout@v4
+        with:
+          repository: jerajerajerajera/simplify
+          ref: audit-tools
+          path: audit
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: bcmath, gd, intl, mbstring, pdo_sqlite, sqlite3, zip
+          tools: composer
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install -g yarn
+      - name: Install Pelican, Simplify and Simplify Toolkit
+        run: |
+          git clone --quiet --depth 1 --branch "v$PELICAN" https://github.com/pelican-dev/panel.git panel
+          cd panel
+          composer install --no-interaction --no-progress --prefer-dist
+          sed -i "s/'version' => 'canary'/'version' => '$PELICAN'/" config/app.php
+          cp .env.example .env
+          sed -i 's/^APP_INSTALLED=.*/APP_INSTALLED=true/; s/^APP_DEBUG=.*/APP_DEBUG=false/; s#^APP_URL=.*#APP_URL=http://127.0.0.1:8001#' .env
+          printf 'DB_CONNECTION=sqlite\nQUEUE_CONNECTION=sync\nCACHE_STORE=file\nSESSION_DRIVER=file\nMAIL_MAILER=log\n' >> .env
+          touch database/database.sqlite
+          php artisan key:generate --force
+          php artisan migrate --force --seed
+          php artisan storage:link || true
+          yarn install --silent
+          yarn build
+          git clone --quiet --depth 1 https://github.com/jerajerajerajera/simplify.git plugins/simplify
+          rm -rf plugins/simplify/.git
+          php artisan p:plugin:install simplify
+          mkdir -p plugins/simplify-toolkit
+          tar -C ../plugin --exclude=.git --exclude=tests --exclude=.github -cf - . | tar -C plugins/simplify-toolkit -xf -
+          php artisan p:plugin:install simplify-toolkit
+          php artisan p:plugin:list
+      - name: Seed and start the panel and the fake Wings
+        working-directory: panel
+        run: |
+          php ../audit/seed.php 8090 > servers.json
+          php ../audit/urls.php > urls.json
+          nohup node ../audit/fake-wings.cjs --port 8090 --servers servers.json --log wings.log > wings.out 2>&1 &
+          PHP_CLI_SERVER_WORKERS=8 nohup php artisan serve --host 127.0.0.1 --port 8001 > serve.log 2>&1 &
+          for i in $(seq 1 30); do curl -sf -o /dev/null http://127.0.0.1:8001/login && break; sleep 1; done
+      - name: Open the Settings page in a browser
+        working-directory: plugin
+        run: |
+          mkdir -p ../result
+          npm init -y > /dev/null
+          npm install --silent playwright@1.48.2
+          npx playwright install --with-deps chromium > /dev/null
+          node tests/panel/browser.cjs --base http://127.0.0.1:8001 --urls ../panel/urls.json --out ../result | tee ../result/browser.txt
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: browser-smoke
+          path: result
+          retention-days: 14
+      - if: failure()
+        name: Logs
+        run: |
+          tail -n 20 panel/serve.log panel/wings.log || true
+          grep -h -E '^\[[0-9-]+ [0-9:]+\]' panel/storage/logs/*.log | cut -c1-600 | tail -n 12 || true
