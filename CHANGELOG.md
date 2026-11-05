@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 2.0.0-beta.10
+
+- Released together with Simplify 2.0.0-beta.10, which runs the new code right after an update (no "Unable to find component" error).
+
 ## 2.0.0-beta.7
 
 - On a phone, the quick commands of a Minecraft console sit just above the command line again, no longer over the console's title row.
