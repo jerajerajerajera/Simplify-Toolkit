@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 2.0.0-beta.6
 
 - Static analysis (PHPStan level 5) finds nothing left in Toolkit's code, so its list of known findings is empty. The live player count no longer asks a server without an allocation for its status.
 - All of Toolkit's own styles take Simplify's design tokens (`--ps-*`) when it is installed and Pelican's otherwise, and the layout of the Plugins and Players columns inside Simplify's server page is Toolkit's own now instead of the core's.
