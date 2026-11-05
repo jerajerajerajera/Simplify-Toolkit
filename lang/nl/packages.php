@@ -4,7 +4,6 @@ return [
     'plugins' => 'Plugins',
     'mods' => 'Mods',
     'find' => 'Zoeken',
-    'for' => 'Voor :loader :version',
     'search_placeholder' => 'Zoek op Modrinth, Hangar, SpigotMC en CurseForge',
     'site' => 'Site',
     'all_sites' => 'Alle sites',

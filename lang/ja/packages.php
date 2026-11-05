@@ -4,7 +4,6 @@ return [
     'plugins' => 'プラグイン',
     'mods' => 'Mod',
     'find' => '検索',
-    'for' => ':loader :version 用',
     'search_placeholder' => 'Modrinth、Hangar、SpigotMC、CurseForge を検索',
     'site' => 'サイト',
     'all_sites' => 'すべてのサイト',

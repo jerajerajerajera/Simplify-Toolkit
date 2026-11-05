@@ -100,7 +100,8 @@ final class AutomaticBackups
             ->orderByDesc('created_at')->get()->filter(fn (Backup $backup) => self::isOwn((string) $backup->name))->values();
         // After a new backup finished, the oldest recovery points beyond the plan or the server's limit go, once.
         if ($plan->pruned_at < $plan->last_attempt && ! $server->backups()->whereNull('completed_at')->exists()) {
-            foreach ($mine()->slice(self::keep($plan->keep, (int) $server->backup_limit, $kept()->count())) as $old) {
+            // Sliced in PHP: which backups are Toolkit's own is known only after reading their names.
+            foreach (array_slice($mine()->all(), self::keep($plan->keep, (int) $server->backup_limit, $kept()->count())) as $old) {
                 app(DeleteBackupService::class)->handle($old);
             }
             $plan->pruned_at = $now;

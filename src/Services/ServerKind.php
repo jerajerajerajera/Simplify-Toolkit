@@ -94,6 +94,6 @@ final class ServerKind
             $variables[$variable->env_variable] = (string) ($variable->server_value ?? $variable->default_value);
         }
 
-        return self::of((string) $server->egg?->name, (array) ($server->egg?->features ?? []), $variables);
+        return self::of($server->egg->name, (array) ($server->egg->features ?? []), $variables);
     }
 }

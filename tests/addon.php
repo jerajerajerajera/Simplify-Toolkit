@@ -28,6 +28,10 @@ if ($addon->description() !== 'simplify-toolkit::toolkit.addon.description') {
 if (! method_exists($addon, 'connections') || $addon->connections(new User) !== ['Simplify\\Toolkit\\Livewire\\CurseForgeConnection']) {
     $failures[] = 'the CurseForge row is on the Connections page';
 }
+// Simplify 2.0 (add-on API 9) shows automatic backups as a tab only when the add-on names the page.
+if (! method_exists($addon, 'serverTabs') || $addon->serverTabs() !== ['backups' => ['Simplify\\Toolkit\\Filament\\Server\\Pages\\Backups']]) {
+    $failures[] = 'automatic backups are a tab in Backups & tasks';
+}
 if ($failures) {
     echo "FAIL add-on:\n  ".implode("\n  ", $failures)."\n";
     exit(1);

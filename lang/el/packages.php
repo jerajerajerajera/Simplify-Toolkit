@@ -4,7 +4,6 @@ return [
     'plugins' => 'Plugins',
     'mods' => 'Mods',
     'find' => 'Αναζήτηση',
-    'for' => 'Για :loader :version',
     'search_placeholder' => 'Αναζήτηση σε Modrinth, Hangar, SpigotMC και CurseForge',
     'site' => 'Ιστότοπος',
     'all_sites' => 'Όλοι οι ιστότοποι',

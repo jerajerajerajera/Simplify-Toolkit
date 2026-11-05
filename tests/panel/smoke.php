@@ -4,13 +4,19 @@
 // `php artisan p:plugin:install simplify-toolkit`: php plugins/simplify-toolkit/tests/panel/smoke.php
 use App\Enums\ContainerStatus;
 use App\Facades\Activity;
+use App\Filament\Server\Pages\Console;
 use App\Models\Egg;
+use App\Models\EggVariable;
 use App\Models\Role;
 use App\Models\Server;
+use App\Models\ServerVariable;
 use App\Models\User;
 use App\Repositories\Daemon\DaemonFileRepository;
 use Filament\Facades\Filament;
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Section;
 use Filament\Support\Facades\FilamentView;
+use Filament\View\PanelsRenderHook;
 use GuzzleHttp\Psr7\Response as Psr7Response;
 use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
@@ -24,16 +30,18 @@ use Livewire\Livewire;
 use Simplify\Core\Addons\Addon;
 use Simplify\Toolkit\Filament\Admin\Pages\ToolkitSettings;
 use Simplify\Toolkit\Filament\Server\Pages\Backups;
-use Simplify\Toolkit\Filament\Server\Pages\Minecraft;
 use Simplify\Toolkit\Filament\Server\Pages\Packages;
 use Simplify\Toolkit\Filament\Server\Pages\Players;
+use Simplify\Toolkit\Filament\Server\Pages\ServerSettings;
 use Simplify\Toolkit\Livewire\CurseForgeConnection;
+use Simplify\Toolkit\Livewire\ToolkitSettingsForm;
 use Simplify\Toolkit\Models\ApiKey;
 use Simplify\Toolkit\Models\Package;
 use Simplify\Toolkit\Services\AutomaticBackups;
 use Simplify\Toolkit\Services\Keys;
 use Simplify\Toolkit\Services\RestartReminder;
 use Simplify\Toolkit\Services\ServerKind;
+use Simplify\Toolkit\Services\SettingsSections;
 use Simplify\Toolkit\Services\Software;
 use Simplify\Toolkit\Services\ToolkitProblems;
 use Simplify\Toolkit\Services\Web;
@@ -190,16 +198,37 @@ step('the admin settings page renders', function () use ($admin) {
         throw new RuntimeException('HTTP '.$response->getStatusCode().' at '.$url.($response->exception ? ': '.$response->exception->getMessage() : ''));
     }
     // With Simplify the admin page never scrolls: its form gets the window's height and scrolls inside (style audit laag1366).
-    if (! str_contains($response->getContent(), '<form wire:submit="save" data-simplify-unsaved="data" class="s-fit">')) {
-        throw new RuntimeException('the settings form is not marked s-fit and unsaved-changes');
+    // Livewire puts its own attributes on the form's root element first.
+    if (! str_contains($response->getContent(), 'class="s-fit"') || ! str_contains($response->getContent(), 'data-simplify-unsaved="data" data-simplify-save="save"')) {
+        throw new RuntimeException('the settings are not marked s-fit and unsaved-changes');
     }
+});
+step('the settings are one form, for Simplify settings › Add-ons and for Toolkit\'s own page', function () use ($admin) {
+    if (! class_exists(Addon::class)) {
+        require dirname(__DIR__).'/fixtures/Addon.php';
+        require dirname(__DIR__).'/fixtures/Button.php';
+    }
+    if ((new ToolkitAddon)->settingsForm() !== ToolkitSettingsForm::class) {
+        throw new RuntimeException('Simplify does not get the settings form');
+    }
+    // With Simplify's settings sections (add-on API 8) the page leaves the menu; without them it stays.
+    if (ToolkitSettings::shouldRegisterNavigation() === method_exists(Addon::class, 'settingsForm')) {
+        throw new RuntimeException('the settings page is in the menu next to its section, or missing without it');
+    }
+    $form = Livewire::actingAs($admin)->test(ToolkitSettingsForm::class)
+        ->set('data.backups.every_minutes', 480)->set('data.backups.keep', 4)->call('save');
+    $plan = AutomaticBackups::panel();
+    if ($form->errors()->isNotEmpty() || $plan->every_minutes !== 480 || $plan->keep !== 4) {
+        throw new RuntimeException('the form did not save: '.json_encode([$form->errors()->toArray(), $plan->every_minutes, $plan->keep]));
+    }
+    AutomaticBackups::save(null, ['enabled' => true, 'every_minutes' => 360, 'keep' => 2, 'only_when_used' => true]);
 });
 $paper = Server::factory()->create([
     'owner_id' => $admin->id,
     'egg_id' => Egg::factory()->create(['name' => 'Paper', 'features' => ['eula', 'java_version']])->id,
 ]);
-step('the Minecraft page renders while Wings is offline', function () use ($admin, $paper) {
-    $url = Minecraft::getUrl(panel: 'server', tenant: $paper);
+step('the Settings page renders while Wings is offline', function () use ($admin, $paper) {
+    $url = ServerSettings::getUrl(panel: 'server', tenant: $paper);
     $response = visit($admin, $url);
     if ($response->getStatusCode() !== 200) {
         throw new RuntimeException('HTTP '.$response->getStatusCode().' at '.$url.($response->exception ? ': '.$response->exception->getMessage() : ''));
@@ -209,7 +238,7 @@ step('the Minecraft page renders while Wings is offline', function () use ($admi
     }
     // No autosave: Simplify keeps the changes until Save, and asks before leaving (P-38).
     if (! str_contains($response->getContent(), '<form wire:submit="save" data-simplify-unsaved="data"')) {
-        throw new RuntimeException('the Minecraft form is not marked for unsaved changes');
+        throw new RuntimeException('the Settings form is not marked for unsaved changes');
     }
 });
 step('saving changes only the chosen lines of server.properties', function () use ($admin, $paper) {
@@ -217,9 +246,9 @@ step('saving changes only the chosen lines of server.properties', function () us
     FakeFiles::$files = ['/server.properties' => "#Minecraft server properties\nmax-players=20\ndifficulty=easy\nlevel-seed=oak\n"];
     Filament::setCurrentPanel(Filament::getPanel('server'));
     Filament::setTenant($paper);
-    Livewire::actingAs($admin)->test(Minecraft::class)
-        ->assertSet('data.max_players', 20)
-        ->set('data.max_players', 42)->set('data.difficulty', 'hard')->set('data.motd', '§aHello')
+    Livewire::actingAs($admin)->test(ServerSettings::class)
+        ->assertSet('data.game.max_players', 20)
+        ->set('data.game.max_players', 42)->set('data.game.difficulty', 'hard')->set('data.game.motd', '§aHello')
         ->call('save')->assertHasNoErrors()
         ->call('acceptEula');
     $file = FakeFiles::$files['/server.properties'];
@@ -233,7 +262,7 @@ step('saving changes only the chosen lines of server.properties', function () us
     }
     // A save that does not reach the files keeps Simplify's "Changes made" bar: the error bag tells it so (P-38).
     app()->bind(DaemonFileRepository::class, OfflineFiles::class);
-    Livewire::actingAs($admin)->test(Minecraft::class)->set('data.max_players', 7)->call('save')->assertHasErrors('data');
+    Livewire::actingAs($admin)->test(ServerSettings::class)->set('data.game.max_players', 7)->call('save')->assertHasErrors('data');
     app()->bind(DaemonFileRepository::class, FakeFiles::class);
 });
 step('the server icon shows and can be removed', function () use ($admin) {
@@ -241,13 +270,96 @@ step('the server icon shows and can be removed', function () use ($admin) {
     ob_start();
     imagepng($picture);
     FakeFiles::$files['/server-icon.png'] = (string) ob_get_clean();
-    $page = Livewire::actingAs($admin)->test(Minecraft::class);
+    $page = Livewire::actingAs($admin)->test(ServerSettings::class);
     if (! str_starts_with((string) $page->get('icon'), 'data:image/png;base64,')) {
         throw new RuntimeException('the icon is not shown');
     }
     $page->call('removeIcon')->assertSet('icon', '');
     if (isset(FakeFiles::$files['/server-icon.png'])) {
         throw new RuntimeException('the icon was not removed');
+    }
+});
+step('Settings saves the name, a start variable and an add-on section, only what changed, with Pelican\'s checks', function () use ($admin, $paper) {
+    $variable = EggVariable::query()->create([
+        'egg_id' => $paper->egg_id, 'name' => 'Server jar file', 'description' => 'The jar to start', 'env_variable' => 'SERVER_JARFILE',
+        'default_value' => 'server.jar', 'user_viewable' => true, 'user_editable' => true, 'rules' => ['required', 'string', 'max:40'], 'sort' => 1,
+    ]);
+    $handled = EggVariable::query()->create([
+        'egg_id' => $paper->egg_id, 'name' => 'Build', 'description' => 'Handled by an add-on', 'env_variable' => 'BUILD_NUMBER',
+        'default_value' => 'latest', 'user_viewable' => true, 'user_editable' => true, 'rules' => ['required', 'string'], 'sort' => 2,
+    ]);
+    $source = new class
+    {
+        /** @var list<array<string, mixed>> */
+        public static array $saved = [];
+
+        public function serverSettingsKey(): string
+        {
+            return 'smoke-addon';
+        }
+
+        public function serverSettingsSections(Server $server): array
+        {
+            return [Section::make('Smoke section')->icon('tabler-flask')->schema([TextInput::make('speed')])];
+        }
+
+        public function serverSettingsFill(Server $server): array
+        {
+            return ['speed' => 'slow'];
+        }
+
+        public function serverSettingsSave(Server $server, array $state): bool
+        {
+            self::$saved[] = $state;
+
+            return true;
+        }
+
+        public function serverSettingsVariables(Server $server): array
+        {
+            return ['BUILD_NUMBER'];
+        }
+    };
+    // The server keeps the egg's variables it loaded before; read them again.
+    $paper->refresh();
+    app()->instance('smoke.settings-source', $source);
+    app()->tag(['smoke.settings-source'], SettingsSections::TAG);
+    Filament::setCurrentPanel(Filament::getPanel('server'));
+    Filament::setTenant($paper);
+    try {
+        $page = Livewire::actingAs($admin)->test(ServerSettings::class)->assertSet('data.sections.smoke-addon.speed', 'slow');
+        $items = (array) $page->get('data.startup.variables');
+        if (array_column($items, 'env_variable') !== ['SERVER_JARFILE']) {
+            throw new RuntimeException('the start variables are not the ones left to Startup: '.json_encode($items));
+        }
+        $key = array_key_first($items);
+        if (! in_array('Smoke section', array_column($page->instance()->contents(), 'label'), true)) {
+            throw new RuntimeException('the add-on section is not in the list of sections');
+        }
+        // A value the egg's rules refuse is not saved, and the changes stay unsaved.
+        $page->set("data.startup.variables.$key.variable_value", str_repeat('x', 50))->call('save')->assertHasErrors();
+        $page->set("data.startup.variables.$key.variable_value", 'paper.jar')->set('data.server.name', 'Renamed by Settings')->call('save')->assertHasNoErrors();
+        $paper->refresh();
+        $value = ServerVariable::query()->where('server_id', $paper->id)->where('variable_id', $variable->id)->value('variable_value');
+        if ($paper->name !== 'Renamed by Settings' || $value !== 'paper.jar') {
+            throw new RuntimeException('not saved: '.json_encode([$paper->name, $value]));
+        }
+        if ($source::$saved !== []) {
+            throw new RuntimeException('an unchanged add-on section was saved');
+        }
+        $page->set('data.sections.smoke-addon.speed', 'fast')->call('save')->assertHasNoErrors();
+        if ($source::$saved !== [['speed' => 'fast']]) {
+            throw new RuntimeException('the add-on section got: '.json_encode($source::$saved));
+        }
+        // With Simplify (add-on API 9) Pelican's own pages leave the menu while this page can be opened.
+        if ((new ToolkitAddon)->replacedServerPages() !== ['App\\Filament\\Server\\Pages\\Settings', 'App\\Filament\\Server\\Pages\\Startup']) {
+            throw new RuntimeException('Pelican\'s pages are not named as replaced');
+        }
+    } finally {
+        ServerVariable::query()->where('server_id', $paper->id)->delete();
+        $handled->delete();
+        $variable->delete();
+        $paper->refresh();
     }
 });
 step('the Players page lists whitelist, operators and bans from their files', function () use ($admin) {
@@ -267,7 +379,7 @@ step('the Players page lists whitelist, operators and bans from their files', fu
     }
 });
 step('a saved change leaves a restart reminder on the card until it is dismissed', function () use ($admin, $paper) {
-    Livewire::actingAs($admin)->test(Minecraft::class)->call('save')->assertHasNoErrors();
+    Livewire::actingAs($admin)->test(ServerSettings::class)->set('data.game.max_players', 24)->call('save')->assertHasNoErrors();
     // The card's badge reads the same reminder (ToolkitAddon::tileBadges, checked with Simplify further on).
     if (RestartReminder::get($paper) === null) {
         throw new RuntimeException('no reminder after saving: '.json_encode(RestartReminder::get($paper)));
@@ -291,10 +403,10 @@ step('a file saved in the file manager of a running Minecraft server leaves the 
             throw new RuntimeException('no reminder after saving a file');
         }
         RestartReminder::forget($paper);
-        // The Minecraft page writes files too, and says so itself: no second notice. The notice above is still in
+        // The Settings page writes files too, and says so itself: no second notice. The notice above is still in
         // the session, so that one goes first.
         session()->forget('filament.notifications');
-        Livewire::actingAs($admin)->test(Minecraft::class)->call('save')->assertNotNotified(__('simplify-toolkit::restart.file_saved'));
+        Livewire::actingAs($admin)->test(ServerSettings::class)->set('data.game.max_players', 25)->call('save')->assertNotNotified(__('simplify-toolkit::restart.file_saved'));
         RestartReminder::forget($paper);
         cache()->put($status, ContainerStatus::Offline, 60);
         Activity::event('server:file.write')->property('file', '/plugins/Essentials/config.yml')->log();
@@ -318,11 +430,29 @@ step('automatic backups: new servers get the panel plan, root admins change it',
         throw new RuntimeException('the plan was not saved');
     }
 });
-step('other games have no Minecraft page', function () use ($admin) {
+step('other games have Settings without a Minecraft section, and no Players page', function () use ($admin) {
     $rust = Server::factory()->create(['owner_id' => $admin->id, 'egg_id' => Egg::factory()->create(['name' => 'Rust', 'features' => []])->id]);
     Filament::setTenant($rust);
-    if (Minecraft::canAccess() || Players::canAccess()) {
-        throw new RuntimeException('Rust got a Minecraft page');
+    if (! ServerSettings::canAccess() || Players::canAccess()) {
+        throw new RuntimeException('Rust has no Settings page, or a Players page');
+    }
+    $contents = array_column(Livewire::actingAs($admin)->test(ServerSettings::class)->instance()->contents(), 'id');
+    if (in_array('settings-minecraft', $contents, true) || ! in_array('settings-startup', $contents, true)) {
+        throw new RuntimeException('sections for Rust: '.json_encode($contents));
+    }
+});
+step('quick commands come with the console of a Minecraft server, and not with other games', function () use ($admin, $paper) {
+    auth()->setUser($admin);
+    Filament::setCurrentPanel(Filament::getPanel('server'));
+    Filament::setTenant($paper);
+    $html = (string) FilamentView::renderHook(PanelsRenderHook::CONTENT_END, scopes: Console::class);
+    if (! str_contains($html, 'sm-quick-commands') || ! str_contains($html, 'time set day')) {
+        throw new RuntimeException('no quick commands on the console of a Minecraft server');
+    }
+    $rust = Server::query()->whereHas('egg', fn ($egg) => $egg->where('name', 'Rust'))->firstOrFail();
+    Filament::setTenant($rust);
+    if (str_contains((string) FilamentView::renderHook(PanelsRenderHook::CONTENT_END, scopes: Console::class), 'sm-quick-commands')) {
+        throw new RuntimeException('quick commands on the console of Rust');
     }
 });
 // The plugin sites answer from here, so the steps below need no network.
@@ -581,8 +711,28 @@ step('servers without plugins or mods have no Plugins page', function () use ($a
         throw new RuntimeException('Rust got a Plugins page');
     }
 });
+// Last of all: a page visit boots a fresh panel, which drops the stand-ins the steps above bind.
+step('Pelican\'s Settings and Startup and the former Minecraft page lead to the right section of the Settings page', function () use ($admin, $paper) {
+    $target = ServerSettings::getUrl(panel: 'server', tenant: $paper);
+    $pages = [
+        'App\\Filament\\Server\\Pages\\Settings' => 'settings-server',
+        'App\\Filament\\Server\\Pages\\Startup' => 'settings-startup',
+        'Simplify\\Toolkit\\Filament\\Server\\Pages\\Minecraft' => 'settings-minecraft',
+    ];
+    foreach ($pages as $page => $section) {
+        $url = $page::getUrl(panel: 'server', tenant: $paper);
+        $response = visit($admin, $url);
+        if (! $response->isRedirect() || $response->headers->get('Location') !== "$target#$section") {
+            throw new RuntimeException("$url gives HTTP ".$response->getStatusCode().' to '.$response->headers->get('Location'));
+        }
+    }
+    // The Settings page itself is not sent anywhere.
+    if (($status = visit($admin, $target)->getStatusCode()) !== 200) {
+        throw new RuntimeException("the Settings page gives HTTP $status");
+    }
+});
 // Every step must have run: a step that never ran is a failure too.
-$expected = 24;
+$expected = 28;
 if ($passed !== $expected) {
     echo "FAIL $passed of $expected steps passed\n";
     exit(1);

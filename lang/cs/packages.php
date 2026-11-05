@@ -4,7 +4,6 @@ return [
     'plugins' => 'Pluginy',
     'mods' => 'Mody',
     'find' => 'Hledat',
-    'for' => 'Pro :loader :version',
     'search_placeholder' => 'Hledat na Modrinth, Hangar, SpigotMC a CurseForge',
     'site' => 'Web',
     'all_sites' => 'Všechny weby',

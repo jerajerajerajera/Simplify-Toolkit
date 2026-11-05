@@ -12,7 +12,9 @@
     @endif
 
     <div class="sm-columns" wire:init="load">
-        <x-filament::section :heading="__('simplify-toolkit::packages.find')" :description="$loaded && $this->ready() ? __('simplify-toolkit::packages.for', ['loader' => ucfirst($context['loader']), 'version' => $context['minecraft']]) : null">
+        {{-- With Simplify the first box holds the page's title and subtitle, the filter and restart at its right (ADDONS.md,
+             "Page head"); without it Pelican shows the title above and this box searches. --}}
+        <x-filament::section :heading="class_exists('Simplify\\Core\\Addons\\Addon') ? $this->getTitle() : __('simplify-toolkit::packages.find')" :description="$this->subtitle()">
             @if (! $loaded)
                 {{-- The boxes stand at once; these rows hold the place of the results until load() is back. --}}
                 <ul class="sm-list sm-skeleton" aria-busy="true">
@@ -26,11 +28,6 @@
                     {{ $this->chooseAction }}
                 </div>
             @else
-                @unless ($context['detected'])
-                    <x-slot name="afterHeader">
-                        {{ ($this->chooseAction)->color('gray')->size('sm') }}
-                    </x-slot>
-                @endunless
                 <div class="sm-search">
                     <x-filament::input.wrapper prefix-icon="tabler-search">
                         <x-filament::input type="search" wire:model.live.debounce.400ms="query" :placeholder="__('simplify-toolkit::packages.search_placeholder')" />

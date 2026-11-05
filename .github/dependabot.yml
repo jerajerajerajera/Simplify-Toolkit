@@ -1,0 +1,11 @@
+# Updates for the GitHub Actions the workflows use. The plugin itself has no Composer or npm dependencies of its own:
+# Pelican brings Laravel, Filament and Livewire.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      actions:
+        patterns: ['*']

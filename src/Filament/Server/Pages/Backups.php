@@ -116,7 +116,7 @@ final class Backups extends Page implements HasSchemas
     protected function getHeaderActions(): array
     {
         return [
-            Action::make('save')->hiddenLabel()->icon('tabler-device-floppy')->tooltip(__('simplify-toolkit::minecraft.save'))
+            Action::make('save')->label(__('simplify-toolkit::minecraft.save'))->icon('tabler-device-floppy')
                 ->action('save')->keyBindings(['mod+s'])->visible(fn () => $this->canChange()),
         ];
     }

@@ -14,6 +14,7 @@ php tests/addon.php
 php tests/automatic-backups.php
 php tests/lang.php
 python3 tests/hub-check.py
+bash tests/secrets.sh
 # What a download of the repository holds (the Hub's zip): every file the plugin runs on, nothing of the tests or docs.
 archive="$(git archive HEAD 2>/dev/null | tar -t 2>/dev/null || true)"
 if [ -n "$archive" ]; then

@@ -4,16 +4,21 @@ declare(strict_types=1);
 
 namespace Simplify\Toolkit\Providers;
 
+use App\Filament\Server\Pages\Console;
 use App\Models\ActivityLog;
 use App\Models\Server;
 use Filament\Facades\Filament;
+use Filament\Support\Facades\FilamentView;
+use Filament\View\PanelsRenderHook;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
 use Simplify\Toolkit\Livewire\CurseForgeConnection;
+use Simplify\Toolkit\Livewire\ToolkitSettingsForm;
 use Simplify\Toolkit\Services\AutomaticBackups;
 use Simplify\Toolkit\Services\EmbedDetails;
+use Simplify\Toolkit\Services\QuickCommands;
 use Simplify\Toolkit\Services\RestartReminder;
 use Simplify\Toolkit\Services\ToolkitProblems;
 use Simplify\Toolkit\ToolkitAddon;
@@ -33,6 +38,14 @@ final class ToolkitServiceProvider extends ServiceProvider
     {
         // The CurseForge row on Simplify's Connections page; its own popups post back to it by this name.
         Livewire::component('simplify-toolkit-curseforge-connection', CurseForgeConnection::class);
+        // Toolkit's settings, in Simplify settings › Add-ons and on Toolkit's own settings page.
+        Livewire::component(ToolkitSettingsForm::NAME, ToolkitSettingsForm::class);
+        // Quick commands above the console of a Minecraft server, on a phone; with or without Simplify.
+        FilamentView::registerRenderHook(
+            PanelsRenderHook::CONTENT_END,
+            fn () => ($server = Filament::getTenant()) instanceof Server && QuickCommands::shownFor($server) ? view('simplify-toolkit::console.quick-commands') : '',
+            scopes: Console::class,
+        );
         // Players, version and modpack in Simplify Embed's public server list. A plain event name: without Simplify
         // Embed nobody fires it.
         Event::listen('simplify.embed.server', fn (Server $server, bool $running) => EmbedDetails::for($server, $running));

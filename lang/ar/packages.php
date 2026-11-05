@@ -4,7 +4,6 @@ return [
     'plugins' => 'الإضافات',
     'mods' => 'المودات',
     'find' => 'بحث',
-    'for' => 'لـ :loader :version',
     'search_placeholder' => 'ابحث في Modrinth وHangar وSpigotMC وCurseForge',
     'site' => 'الموقع',
     'all_sites' => 'كل المواقع',
