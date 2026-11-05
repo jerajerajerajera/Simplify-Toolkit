@@ -33,7 +33,7 @@ final class CurseForgeConnection extends Component implements HasActions, HasSch
             ->icon('tabler-key')
             ->modalDescription(fn () => __('simplify-toolkit::settings.'.(Keys::has(Keys::CURSEFORGE, user()) ? 'own_key_saved' : 'own_key_help')))
             ->schema([
-                TextInput::make('key')->label(__('simplify-toolkit::settings.key'))->password()->autocomplete('off')->required()->maxLength(200),
+                TextInput::make('key')->label(__('simplify-toolkit::settings.key'))->password()->autocomplete('new-password')->required()->maxLength(200),
             ])
             ->modalSubmitActionLabel(__('simplify-toolkit::settings.save'))
             ->action(function (array $data): void {

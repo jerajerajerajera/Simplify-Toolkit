@@ -378,7 +378,7 @@ final class Packages extends Page implements HasActions
             ->label(__('simplify-toolkit::settings.own_key'))->icon('tabler-key')->color('gray')->button()
             ->modalDescription(fn () => __('simplify-toolkit::settings.'.(Keys::has(Keys::CURSEFORGE, user()) ? 'own_key_saved' : 'own_key_help')))
             ->schema([
-                TextInput::make('key')->label(__('simplify-toolkit::settings.key'))->password()->autocomplete('off')->required()->maxLength(200),
+                TextInput::make('key')->label(__('simplify-toolkit::settings.key'))->password()->autocomplete('new-password')->required()->maxLength(200),
             ])
             ->modalSubmitActionLabel(__('simplify-toolkit::settings.save'))
             ->extraModalFooterActions(fn () => Keys::has(Keys::CURSEFORGE, user()) ? [

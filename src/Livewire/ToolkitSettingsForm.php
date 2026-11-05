@@ -76,7 +76,7 @@ final class ToolkitSettingsForm extends Component implements HasActions, HasSche
                     Text::make(fn () => __('simplify-toolkit::settings.'.($this->hasKey ? 'key_saved' : 'no_key')))
                         ->color(fn () => $this->hasKey ? 'success' : 'gray'),
                     TextInput::make('curseforge')->label(fn () => __('simplify-toolkit::settings.'.($this->hasKey ? 'new_key' : 'key')))
-                        ->password()->autocomplete('off')->maxLength(200),
+                        ->password()->autocomplete('new-password')->maxLength(200),
                     Actions::make([
                         Action::make('testKey')->label(__('simplify-toolkit::settings.test'))->icon('tabler-plug-connected')->color('gray')
                             ->action(fn () => $this->testKey()),
