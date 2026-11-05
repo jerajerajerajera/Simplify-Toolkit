@@ -70,6 +70,9 @@ async function run(browser, viewport) {
   if (!entry) return context.close();
   await goto(entry.url);
   await page.screenshot({ path: path.join(out, `${stand}-settings.png`) }).catch(() => {});
+  // A small copy in the log as well, to look at without downloading the artifact.
+  const small = await page.screenshot({ type: 'jpeg', quality: 45 }).catch(() => null);
+  if (small) console.log(`SHOT ${stand} ${small.toString('base64')}`);
   const m = await measure();
   console.log(`INFO ${stand} ${JSON.stringify(m)}`);
   const oneRow = m.titleBox && m.actionsBox && m.titleBox.top < m.actionsBox.bottom && m.actionsBox.top < m.titleBox.bottom;

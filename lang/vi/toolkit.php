@@ -9,6 +9,7 @@ return [
         'copy_id' => 'Sao chép ID máy chủ',
         'id_copied' => 'Đã sao chép ID máy chủ',
         'more' => 'Thêm',
+        'panel_icon' => 'Biểu tượng trên bảng điều khiển',
     ],
     'quick_commands' => 'Lệnh nhanh',
 ];

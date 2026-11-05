@@ -9,6 +9,7 @@ return [
         'copy_id' => 'Копирај ID сервера',
         'id_copied' => 'ID сервера је копиран',
         'more' => 'Више',
+        'panel_icon' => 'Ikonica u panelu',
     ],
     'quick_commands' => 'Брзе команде',
 ];

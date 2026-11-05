@@ -9,6 +9,7 @@ return [
         'copy_id' => 'Kopijuoti serverio ID',
         'id_copied' => 'Serverio ID nukopijuotas',
         'more' => 'Daugiau',
+        'panel_icon' => 'Piktograma skydelyje',
     ],
     'quick_commands' => 'Greitos komandos',
 ];

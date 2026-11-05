@@ -112,11 +112,13 @@ a.sm-title:hover, .sm-meta a:hover { text-decoration: underline; }
     .sm-settings-contents a { border: 0; border-radius: var(--ps-radius-sm, .375rem); padding: .375rem .625rem; }
 }
 .sm-settings-body [id^=settings-] { scroll-margin-top: .5rem; }
+.sm-settings-icon-label { display: block; margin-bottom: -.75rem; font-size: .875rem; font-weight: 500; line-height: 1.5rem; color: var(--ps-ink, var(--gray-950)); }
 .sm-command { display: block; overflow-x: auto; white-space: nowrap; padding: .5rem .75rem; border-radius: var(--ps-radius-sm, .375rem); background: var(--ps-raised, var(--gray-100)); color: var(--ps-muted, var(--gray-600)); font-size: .75rem; }
 .sm-limits { display: flex; flex-wrap: wrap; gap: .375rem 1rem; font-size: .8125rem; color: var(--ps-muted, var(--gray-600)); }
 .sm-limits b { color: var(--ps-ink, var(--gray-950)); font-weight: 600; font-variant-numeric: tabular-nums; }
 .dark .sm-settings-contents a:not(.is-open) { border-color: var(--ps-line, rgb(255 255 255 / .1)); color: var(--ps-muted, var(--gray-400)); }
 .dark .sm-command { background: var(--ps-raised, rgb(255 255 255 / .05)); color: var(--ps-muted, var(--gray-400)); }
+.dark .sm-settings-icon-label { color: var(--ps-ink, #fff); }
 .dark .sm-limits { color: var(--ps-muted, var(--gray-400)); }
 .dark .sm-limits b { color: var(--ps-ink, #fff); }
 /* Two columns in one card (Plugins, Players) inside Simplify's server page: a line between them, and the boxes of the

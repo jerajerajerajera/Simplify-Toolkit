@@ -9,6 +9,7 @@ return [
         'copy_id' => 'Kopírovat ID serveru',
         'id_copied' => 'ID serveru zkopírováno',
         'more' => 'Více',
+        'panel_icon' => 'Ikona v panelu',
     ],
     'quick_commands' => 'Rychlé příkazy',
 ];

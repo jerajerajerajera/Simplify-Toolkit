@@ -9,6 +9,7 @@ return [
         'copy_id' => 'Szerverazonosító másolása',
         'id_copied' => 'Szerverazonosító másolva',
         'more' => 'Továbbiak',
+        'panel_icon' => 'Ikon a panelen',
     ],
     'quick_commands' => 'Gyorsparancsok',
 ];

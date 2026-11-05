@@ -9,6 +9,7 @@ return [
         'copy_id' => 'Copiar ID del servidor',
         'id_copied' => 'ID del servidor copiado',
         'more' => 'Más',
+        'panel_icon' => 'Icono en el panel',
     ],
     'quick_commands' => 'Comandos rápidos',
 ];

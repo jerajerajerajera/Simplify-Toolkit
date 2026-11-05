@@ -9,6 +9,7 @@ return [
         'copy_id' => 'Salin ID server',
         'id_copied' => 'ID server disalin',
         'more' => 'Lainnya',
+        'panel_icon' => 'Ikon di panel',
     ],
     'quick_commands' => 'Perintah cepat',
 ];
