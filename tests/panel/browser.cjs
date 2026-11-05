@@ -3,7 +3,9 @@
 // checks what the HTTP smoke cannot see:
 // - the title and subtitle stand in one row with the buttons (ADDONS.md, "Page head"), not under an empty bar;
 // - nothing makes the page scroll sideways (P-7);
-// - the server icon's buttons stand under a label, not as a loose icon.
+// - the server icon's buttons stand under a label, not as a loose icon;
+// - on a phone, the quick commands of a Minecraft console sit just above the command line, clear of the console's
+//   title row.
 // Writes a screenshot per screen to --out. The last line says "All steps passed" or lists the failures.
 // node tests/panel/browser.cjs --base http://127.0.0.1:8001 --urls panel/urls.json --out result
 const fs = require('fs'), path = require('path');
@@ -80,7 +82,32 @@ async function run(browser, viewport) {
   if (m.titleBox && m.actionsBox) say('the buttons do not cover the title', m.titleBox.right <= m.actionsBox.left || m.actionsBox.right <= m.titleBox.left, { title: m.titleBox, buttons: m.actionsBox });
   say('nothing scrolls sideways', m.sideways.length === 0, m.sideways.slice(0, 3));
   say('the server icon has a label', !m.upload || !!m.iconLabel, { label: m.iconLabel });
+  if (stand === 'phone390') await quickCommands();
   await context.close();
+}
+
+async function quickCommands() {
+  await goto(urls.servers[SERVER]);
+  await page.waitForSelector('#terminal > .sm-quick-commands', { timeout: 15000 }).catch(() => {});
+  await sleep(500);
+  await page.screenshot({ path: path.join(out, `${stand}-console.png`) }).catch(() => {});
+  const small = await page.screenshot({ type: 'jpeg', quality: 45 }).catch(() => null);
+  if (small) console.log(`SHOT ${stand}-console ${small.toString('base64')}`);
+  const m = await page.evaluate(() => {
+    const box = (el) => { if (!el) return null; const r = el.getBoundingClientRect(); return { top: Math.round(r.top), bottom: Math.round(r.bottom), left: Math.round(r.left), right: Math.round(r.right) }; };
+    const input = document.getElementById('send-command');
+    return {
+      row: box(document.querySelector('#terminal > .sm-quick-commands')),
+      title: box(document.querySelector('#terminal > .ps-console-title')),
+      terminal: box(document.getElementById('terminal')),
+      line: box(input && (input.closest('div:has(> #send-command)') || input)),
+    };
+  });
+  console.log(`INFO ${stand} console ${JSON.stringify(m)}`);
+  say('a Minecraft console has quick commands', !!m.row, m);
+  if (!m.row) return;
+  say('the quick commands keep clear of the console title', !m.title || m.row.top >= m.title.bottom, { row: m.row, title: m.title });
+  say('the quick commands sit just above the command line', !!m.line && m.row.bottom <= m.line.top + 1 && m.line.top - m.row.bottom <= 2 && m.row.top >= m.terminal.top, { row: m.row, line: m.line });
 }
 
 (async () => {
