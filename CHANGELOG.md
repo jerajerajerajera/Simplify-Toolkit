@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+- On a phone, the quick commands of a Minecraft console sit just above the command line again, no longer over the console's title row.
+- The Settings page has its title and subtitle in one row with its buttons, the server's panel icon has a label, and nothing on the page scrolls sideways.
+- The browser no longer fills a saved panel password into the CurseForge key fields, which marked the page as changed.
+- CI opens the Settings page and a Minecraft console in a real browser, on a computer and a phone.
+
 ## 2.0.0-beta.6
 
 - Static analysis (PHPStan level 5) finds nothing left in Toolkit's code, so its list of known findings is empty. The live player count no longer asks a server without an allocation for its status.

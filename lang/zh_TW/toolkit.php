@@ -9,6 +9,7 @@ return [
         'copy_id' => '複製伺服器 ID',
         'id_copied' => '已複製伺服器 ID',
         'more' => '更多',
+        'panel_icon' => '面板圖示',
     ],
     'quick_commands' => '快捷指令',
 ];

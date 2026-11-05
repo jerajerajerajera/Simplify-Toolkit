@@ -9,6 +9,7 @@ return [
         'copy_id' => 'Server-ID kopieren',
         'id_copied' => 'Server-ID kopiert',
         'more' => 'Mehr',
+        'panel_icon' => 'Symbol im Panel',
     ],
     'quick_commands' => 'Schnellbefehle',
 ];

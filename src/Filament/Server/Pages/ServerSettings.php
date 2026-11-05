@@ -273,10 +273,14 @@ final class ServerSettings extends Page implements HasSchemas
                 TextInput::make('sftp_username')->label(trans('server/setting.server_info.sftp.username'))
                     ->visible($sftp)->dehydrated(false)->disabled()->copyable()
                     ->formatStateUsing(fn () => user()?->username.'.'.$server->uuid_short),
-                Actions::make([
-                    UploadIcon::make()->authorize(fn () => $this->can(SubuserPermission::SettingsChangeIcon)),
-                    DeleteIcon::make()->iconStoragePath(Server::getIconStoragePath())->authorize(fn () => $this->can(SubuserPermission::SettingsChangeIcon)),
-                ])->visible(fn () => $this->can(SubuserPermission::SettingsChangeIcon)),
+                // The icon the panel shows for this server, with its buttons under a label like the fields beside it.
+                Group::make([
+                    Text::make(new HtmlString('<span class="sm-settings-icon-label">'.e(__('simplify-toolkit::toolkit.settings_page.panel_icon')).'</span>')),
+                    Actions::make([
+                        UploadIcon::make()->authorize(fn () => $this->can(SubuserPermission::SettingsChangeIcon)),
+                        DeleteIcon::make()->iconStoragePath(Server::getIconStoragePath())->authorize(fn () => $this->can(SubuserPermission::SettingsChangeIcon)),
+                    ]),
+                ])->extraAttributes(['class' => 'sm-settings-icon-field'])->visible(fn () => $this->can(SubuserPermission::SettingsChangeIcon)),
             ]);
     }
 

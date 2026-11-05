@@ -9,6 +9,7 @@ return [
         'copy_id' => 'Sunucu kimliğini kopyala',
         'id_copied' => 'Sunucu kimliği kopyalandı',
         'more' => 'Daha fazla',
+        'panel_icon' => 'Paneldeki simge',
     ],
     'quick_commands' => 'Hızlı komutlar',
 ];

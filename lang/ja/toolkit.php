@@ -9,6 +9,7 @@ return [
         'copy_id' => 'サーバー ID をコピー',
         'id_copied' => 'サーバー ID をコピーしました',
         'more' => 'その他',
+        'panel_icon' => 'パネルのアイコン',
     ],
     'quick_commands' => 'クイックコマンド',
 ];

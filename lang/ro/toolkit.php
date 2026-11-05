@@ -9,6 +9,7 @@ return [
         'copy_id' => 'Copiază ID-ul serverului',
         'id_copied' => 'ID-ul serverului a fost copiat',
         'more' => 'Mai mult',
+        'panel_icon' => 'Pictogramă în panou',
     ],
     'quick_commands' => 'Comenzi rapide',
 ];
