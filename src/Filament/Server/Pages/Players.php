@@ -104,9 +104,10 @@ final class Players extends Page implements HasActions
         return Action::make('player')->label($label)->button()->size('sm')->outlined()
             ->color(fn (array $arguments) => in_array(self::command($arguments), ['kick', 'ban'], true) ? 'danger' : 'gray')
             ->disabled(fn () => ! $this->canAct() || ! ServerPlayers::valid($this->name))
+            // The other commands run at once: a heading or description on its own already opens the window (TK-B5).
             ->requiresConfirmation($asks)
-            ->modalHeading(fn (array $arguments) => __('simplify-toolkit::players.confirm', ['action' => $label($arguments), 'player' => $this->name]))
-            ->modalDescription(fn (array $arguments) => __('simplify-toolkit::players.'.(self::command($arguments) === 'op' ? 'op_message' : 'removed_message')))
+            ->modalHeading(fn (array $arguments) => $asks($arguments) ? __('simplify-toolkit::players.confirm', ['action' => $label($arguments), 'player' => $this->name]) : null)
+            ->modalDescription(fn (array $arguments) => $asks($arguments) ? __('simplify-toolkit::players.'.(self::command($arguments) === 'op' ? 'op_message' : 'removed_message')) : null)
             ->modalSubmitActionLabel($label)
             ->action(function (array $arguments) use ($label): void {
                 abort_unless($this->canAct(), 403);

@@ -26,6 +26,7 @@ use Illuminate\Foundation\Testing\Concerns\InteractsWithSession;
 use Illuminate\Foundation\Testing\Concerns\MakesHttpRequests;
 use Illuminate\Http\Client\Response;
 use Illuminate\Testing\TestResponse;
+use Livewire\Features\SupportScriptsAndAssets\SupportScriptsAndAssets;
 use Livewire\Livewire;
 use Simplify\Core\Addons\Addon;
 use Simplify\Toolkit\Filament\Admin\Pages\ToolkitSettings;
@@ -46,6 +47,9 @@ use Simplify\Toolkit\Services\Software;
 use Simplify\Toolkit\Services\ToolkitProblems;
 use Simplify\Toolkit\Services\Web;
 use Simplify\Toolkit\ToolkitAddon;
+
+use function Livewire\on;
+use function Livewire\store;
 
 define('LARAVEL_START', microtime(true));
 require getcwd().'/vendor/autoload.php';
@@ -167,6 +171,15 @@ final class OfflineFiles extends FakeFiles
     }
 }
 
+/** A node that does not answer at all: nothing can be read either. */
+final class UnreachableFiles extends FakeFiles
+{
+    public function getContent(string $path, ?int $notLargerThan = null): string
+    {
+        throw new RuntimeException('Wings is offline');
+    }
+}
+
 $passed = 0;
 
 $admin = User::where('email', 'smoke-mods@example.com')->first()
@@ -264,6 +277,37 @@ step('saving changes only the chosen lines of server.properties', function () us
     app()->bind(DaemonFileRepository::class, OfflineFiles::class);
     Livewire::actingAs($admin)->test(ServerSettings::class)->set('data.game.max_players', 7)->call('save')->assertHasErrors('data');
     app()->bind(DaemonFileRepository::class, FakeFiles::class);
+});
+step('the MOTD editor brings its script as a Livewire asset, and the Plugins and Settings pages keep to the width of the screen (TK-B4, TK-B6, TK-B7)', function () use ($admin, $paper) {
+    Filament::setCurrentPanel(Filament::getPanel('server'));
+    Filament::setTenant($paper);
+    // Livewire's test forgets the assets of a page once it is rendered, so they are collected while it renders.
+    $assets = '';
+    $forget = on('dehydrate', function ($component) use (&$assets) {
+        $assets .= implode('', store($component)->get('assets', [])).implode('', SupportScriptsAndAssets::$nonLivewireAssets);
+    });
+    $html = Livewire::actingAs($admin)->test(ServerSettings::class)->html();
+    $forget();
+    if (! str_contains($html, 'simplifyMotdEditor(')) {
+        throw new RuntimeException('the Settings page has no MOTD editor');
+    }
+    // Livewire does not run a <script> that arrives in the HTML of an update (a step of the Server Maker); its assets
+    // load once per page, before the update is shown.
+    if (str_contains($html, 'window.simplifyMotdEditor = function')) {
+        throw new RuntimeException('the script of the MOTD editor is a bare <script> in the component again');
+    }
+    if (! str_contains($assets, 'window.simplifyMotdEditor = function')) {
+        throw new RuntimeException('the script of the MOTD editor is not among the Livewire assets of the page');
+    }
+    // One column that cannot grow past the page: a long plugin name pushed the Install buttons off a phone's screen.
+    $css = view('simplify-toolkit::assets.pages-css')->render();
+    if (! str_contains($css, '.sm-columns { display: grid; grid-template-columns: minmax(0, 1fr);')) {
+        throw new RuntimeException('the columns of the Plugins page can grow wider than the screen again');
+    }
+    // The same for a section without a card on the Settings page: its one column grew as wide as its description.
+    if (! str_contains($css, '.sm-settings .fi-section.fi-section-not-contained { grid-template-columns: minmax(0, 1fr); }')) {
+        throw new RuntimeException('a section of the Settings page can grow wider than the screen again');
+    }
 });
 step('the server icon shows and can be removed', function () use ($admin) {
     $picture = imagecreatetruecolor(64, 64);
@@ -378,6 +422,15 @@ step('the Players page lists whitelist, operators and bans from their files', fu
         throw new RuntimeException('the lists on the Players page no longer scroll inside their own box');
     }
 });
+step('only OP, kick and ban ask first on the Players page; the other commands run at once (TK-B5)', function () use ($admin) {
+    $page = Livewire::actingAs($admin)->test(Players::class)->set('name', 'Steve');
+    foreach (['whitelist' => false, 'unwhitelist' => false, 'deop' => false, 'unban' => false, 'op' => true, 'kick' => true, 'ban' => true] as $command => $asks) {
+        $action = $page->instance()->playerAction()->livewire($page->instance())->arguments(['do' => $command]);
+        if ($action->shouldOpenModal() !== $asks) {
+            throw new RuntimeException($command.($asks ? ' does not ask first' : ' asks first, with the text of another command'));
+        }
+    }
+});
 step('a saved change leaves a restart reminder on the card until it is dismissed', function () use ($admin, $paper) {
     Livewire::actingAs($admin)->test(ServerSettings::class)->set('data.game.max_players', 24)->call('save')->assertHasNoErrors();
     // The card's badge reads the same reminder (ToolkitAddon::tileBadges, checked with Simplify further on).
@@ -391,6 +444,42 @@ step('a saved change leaves a restart reminder on the card until it is dismissed
     RestartReminder::forget($paper);
     if (RestartReminder::get($paper) !== null) {
         throw new RuntimeException('the reminder stayed');
+    }
+});
+step("the choices in the menus of the Settings page show their text, also with Pelican's icon buttons (TK-B8)", function () use ($admin, $paper) {
+    // Pelican makes every action an icon button for people with that button style (its default): in a menu that left
+    // six icons without a word. The reminder makes the Restart needed menu show.
+    RestartReminder::mark($paper);
+    try {
+        $html = Livewire::actingAs($admin)->test(ServerSettings::class)->html();
+    } finally {
+        RestartReminder::forget($paper);
+    }
+    foreach (['restart.now', 'restart.dismiss', 'toolkit.settings_page.copy_id'] as $key) {
+        if (! preg_match('/fi-dropdown-list-item-label[^>]*>\s*'.preg_quote(e(__('simplify-toolkit::'.$key)), '/').'\s*</', $html)) {
+            throw new RuntimeException('a choice in a menu of the Settings page has no text: '.$key);
+        }
+    }
+});
+step('while the files cannot be reached the MOTD editor is switched off as well, and Save says nothing was saved (TK-B9)', function () use ($admin) {
+    app()->bind(DaemonFileRepository::class, UnreachableFiles::class);
+    try {
+        $page = Livewire::actingAs($admin)->test(ServerSettings::class);
+        if (! $page->get('unreachable')) {
+            throw new RuntimeException('the page does not see that the files cannot be reached');
+        }
+        // The other fields are switched off by Filament; the editor is Toolkit's own and stayed open for typing.
+        if (! preg_match('/class="sm-motd"[^>]*\sinert\s/', $page->html())) {
+            throw new RuntimeException('the MOTD editor is still open while the files cannot be reached');
+        }
+        $page->set('data.game.motd', 'Changed while offline')->call('save')->assertHasErrors('data');
+        try {
+            $page->assertNotified(__('simplify-toolkit::minecraft.not_saved'));
+        } catch (Throwable) {
+            throw new RuntimeException('Save says nothing when the Minecraft part cannot be saved');
+        }
+    } finally {
+        app()->bind(DaemonFileRepository::class, FakeFiles::class);
     }
 });
 step('a file saved in the file manager of a running Minecraft server leaves the restart reminder, as in 0.7.0', function () use ($admin, $paper) {
@@ -520,6 +609,17 @@ step('installing, switching off and removing a plugin goes through Wings', funct
     $backups = array_filter(array_keys(FakeFiles::$files), fn (string $name) => str_starts_with($name, '/.simplify-toolkit-backups/'));
     if (isset(FakeFiles::$files['/plugins/SmokeEdit-1.0.jar.disabled']) || count($backups) !== 1 || Package::query()->where('server_id', $paper->id)->exists()) {
         throw new RuntimeException('not removed to the backup folder: '.json_encode(array_keys(FakeFiles::$files)));
+    }
+});
+step('Install asks first only for a release that is not made for the server\'s version (TK-B5)', function () use ($admin) {
+    $page = Livewire::actingAs($admin)->test(Packages::class)->call('load');
+    $install = fn (bool $fits) => $page->instance()->installAction()->livewire($page->instance())->arguments(['key' => 'modrinth:AAAA1111', 'fits' => $fits]);
+    if ($install(true)->shouldOpenModal()) {
+        throw new RuntimeException('a release that fits asks "Install anyway" before it installs');
+    }
+    $anyway = $install(false);
+    if (! $anyway->shouldOpenModal() || (string) $anyway->getModalSubmitActionLabel() !== __('simplify-toolkit::packages.install_anyway')) {
+        throw new RuntimeException('a release for another version does not ask first with an "Install anyway" button');
     }
 });
 step('updating a plugin installs its newest release, and asks first when that is for another version', function () use ($admin, $paper) {
@@ -732,7 +832,7 @@ step('Pelican\'s Settings and Startup and the former Minecraft page lead to the 
     }
 });
 // Every step must have run: a step that never ran is a failure too.
-$expected = 28;
+$expected = 33;
 if ($passed !== $expected) {
     echo "FAIL $passed of $expected steps passed\n";
     exit(1);

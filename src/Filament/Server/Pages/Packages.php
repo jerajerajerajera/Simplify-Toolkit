@@ -290,10 +290,12 @@ final class Packages extends Page implements HasActions
             ->icon('tabler-download')->size('sm')->button()
             ->color(fn (array $arguments) => ($arguments['fits'] ?? true) ? 'primary' : 'gray')
             ->visible(fn () => $this->can(SubuserPermission::FileCreate) && $this->ready())
-            // A release that is not made for this version may still work; installing it is the owner's choice.
+            // A release that is not made for this version may still work; installing it is the owner's choice. Only
+            // that release asks first: a heading or description on its own already opens the window (TK-B5).
             ->requiresConfirmation(fn (array $arguments) => ! ($arguments['fits'] ?? true))
-            ->modalHeading(__('simplify-toolkit::packages.install_anyway'))
-            ->modalDescription(fn () => __('simplify-toolkit::packages.not_for_version', ['version' => $this->context['minecraft']]))
+            ->modalHeading(fn (array $arguments) => ($arguments['fits'] ?? true) ? null : __('simplify-toolkit::packages.install_anyway'))
+            ->modalDescription(fn (array $arguments) => ($arguments['fits'] ?? true) ? null : __('simplify-toolkit::packages.not_for_version', ['version' => $this->context['minecraft']]))
+            ->modalSubmitActionLabel(__('simplify-toolkit::packages.install_anyway'))
             ->action(function (array $arguments): void {
                 $card = collect($this->results)->firstWhere('key', $arguments['key'] ?? '') ?? [];
                 $this->attempt(

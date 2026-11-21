@@ -1,6 +1,8 @@
 /* The Plugins/Mods page, and the log lines. Pelican's stylesheet only has the Tailwind classes
    the panel itself uses, so the layout of these views lives here. */
-.sm-columns { display: grid; gap: 1.5rem; align-items: start; }
+/* One column of at most the page's width: without it a long name or search field makes the column, and the Install
+   buttons with it, wider than a phone's screen (TK-B6). */
+.sm-columns { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.5rem; align-items: start; }
 @media (min-width: 1024px) { .sm-columns { grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); } }
 .sm-list { list-style: none; margin: 0; padding: 0; }
 .sm-list > li + li { border-top: 1px solid var(--ps-line, var(--gray-200)); }
@@ -118,6 +120,9 @@ html body:has(.ps-server-top) .fi-page:not(.fi-resource-list-records-page):has(f
 body:has(.ps-server-top) form.sm-settings .fi-section:not(.fi-section .fi-section) > .fi-section-header { padding-inline-end: 10rem; }
 /* Long names and commands wrap inside their column, so nothing pushes the card wider than the screen. */
 .sm-settings-body, .sm-settings :has(> .sm-settings-contents) { min-width: 0; }
+/* A section without a card is a grid of one column, and Filament makes its header as wide as the description on one
+   line: the column then grows past the page and its fields stick out (TK-B7). It keeps to the width it gets. */
+.sm-settings .fi-section.fi-section-not-contained { grid-template-columns: minmax(0, 1fr); }
 .sm-settings-body [id^=settings-] { scroll-margin-top: .5rem; }
 .sm-settings-icon-label { display: block; margin-bottom: -.75rem; font-size: .875rem; font-weight: 500; line-height: 1.5rem; color: var(--ps-ink, var(--gray-950)); }
 .sm-command { display: block; white-space: pre-wrap; overflow-wrap: anywhere; padding: .5rem .75rem; border-radius: var(--ps-radius-sm, .375rem); background: var(--ps-raised, var(--gray-100)); color: var(--ps-muted, var(--gray-600)); font-size: .75rem; }

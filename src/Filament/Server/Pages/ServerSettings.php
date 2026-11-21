@@ -476,9 +476,9 @@ final class ServerSettings extends Page implements HasSchemas
         return [
             ...($this->hasGame() ? [RestartActions::group()] : []),
             ActionGroup::make([
-                Action::make('copyId')->label(__('simplify-toolkit::toolkit.settings_page.copy_id'))->icon('tabler-copy')
+                Action::make('copyId')->label(__('simplify-toolkit::toolkit.settings_page.copy_id'))->icon('tabler-copy')->grouped()
                     ->alpineClickHandler('window.navigator.clipboard.writeText('.Js::from($server->uuid).'); new FilamentNotification().title('.Js::from(__('simplify-toolkit::toolkit.settings_page.id_copied')).').success().send()'),
-                Action::make('reinstall')->label(trans('server/setting.reinstall.action'))->icon('tabler-refresh')->color('danger')
+                Action::make('reinstall')->label(trans('server/setting.reinstall.action'))->icon('tabler-refresh')->color('danger')->grouped()
                     ->visible(fn () => $this->can(SubuserPermission::SettingsReinstall))
                     ->requiresConfirmation()
                     ->modalHeading(trans('server/setting.reinstall.modal'))
@@ -573,6 +573,11 @@ final class ServerSettings extends Page implements HasSchemas
     private function saveGame(array $state): bool
     {
         if (! $this->canChangeGame()) {
+            // The files could not be read when the page opened: say so, instead of a Save that seems to do nothing.
+            if ($this->unreachable) {
+                $this->failedNotification();
+            }
+
             return false;
         }
         $values = GameSettings::toProperties($state, $this->current);

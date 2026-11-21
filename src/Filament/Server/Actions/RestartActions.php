@@ -18,7 +18,9 @@ final class RestartActions
 {
     public static function group(): ActionGroup
     {
-        return ActionGroup::make([
+        // grouped(): Pelican makes every action an icon button for people with that button style (its default); in a
+        // menu that leaves a row of icons without a word.
+        return ActionGroup::make(array_map(fn (Action $action) => $action->grouped(), [
             Action::make('restartNow')->label(__('simplify-toolkit::restart.now'))->icon('tabler-refresh')
                 ->action(function (): void {
                     try {
@@ -40,7 +42,7 @@ final class RestartActions
                     RestartReminder::forget(self::server());
                     Notification::make()->title(__('simplify-toolkit::restart.dismissed'))->success()->send();
                 }),
-        ])->button()->color('warning')->icon('tabler-refresh-alert')
+        ]))->button()->color('warning')->icon('tabler-refresh-alert')
             ->label(fn () => __('simplify-toolkit::restart.'.(RestartReminder::get(self::server())['at'] ?? null ? 'scheduled' : 'needed')))
             ->tooltip(fn () => __('simplify-toolkit::restart.'.(RestartReminder::get(self::server())['at'] ?? null ? 'scheduled_help' : 'waiting_help')))
             ->visible(fn () => RestartReminder::get(self::server()) !== null && user()?->can(SubuserPermission::ControlRestart, self::server()));

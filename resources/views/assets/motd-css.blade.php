@@ -1,6 +1,7 @@
 /* Minecraft MOTD editor (components/motd-editor.blade.php). A transparent input sits on top of a mirror that
    renders the same text with its colours, so what you type is what players see in their server list. */
 .sm-motd { display: flex; flex-direction: column; gap: .75rem; max-width: 36rem; }
+.sm-motd[inert] { opacity: .6; }
 .sm-motd-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1rem; }
 .sm-motd-colors { display: grid; grid-template-columns: repeat(8, 1.375rem); gap: .3rem; }
 .sm-motd-swatch { width: 1.375rem; height: 1.375rem; border-radius: .375rem; border: 1px solid rgb(0 0 0 / .25); cursor: pointer; }

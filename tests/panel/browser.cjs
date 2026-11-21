@@ -5,7 +5,10 @@
 // - nothing makes the page scroll sideways (P-7);
 // - the server icon's buttons stand under a label, not as a loose icon;
 // - on a phone, the quick commands of a Minecraft console sit just above the command line, clear of the console's
-//   title row.
+//   title row;
+// - on every screen, nothing of the Settings page or the Plugins page sticks out of the screen (TK-B6, TK-B7: on a
+//   phone the Install buttons and the Minecraft fields did, in a box that is cut off instead of scrolled, so "nothing
+//   scrolls sideways" does not see it).
 // Writes a screenshot per screen to --out. The last line says "All steps passed" or lists the failures.
 // node tests/panel/browser.cjs --base http://127.0.0.1:8001 --urls panel/urls.json --out result
 const fs = require('fs'), path = require('path');
@@ -64,6 +67,18 @@ const measure = () => page.evaluate(() => {
   return { title: title ? title.textContent.trim() : null, titleBox: words(title), subtitleBox: words(subtitle), actionsBox: box(actions), sideways, upload: !!upload, iconLabel: field ? (field.querySelector('.sm-settings-icon-label')?.textContent.trim() || '') : null };
 });
 
+// What is cut off on the right of the page's content: wider than the content card or the screen, and not inside a box
+// that scrolls sideways. "Nothing scrolls sideways" does not see such a part, because a cut-off box does not scroll.
+const outside = () => page.evaluate(() => {
+  const shown = (el) => el.getClientRects().length > 0 && getComputedStyle(el).visibility !== 'hidden';
+  const main = document.querySelector('.fi-main');
+  const edge = Math.min(main ? main.getBoundingClientRect().right : window.innerWidth, window.innerWidth);
+  const scrolls = (el) => { for (let up = el.parentElement; up && up !== main; up = up.parentElement) { if (['auto', 'scroll'].includes(getComputedStyle(up).overflowX)) return true; } return false; };
+  return [...document.querySelectorAll('.fi-main .fi-section, .fi-main button, .fi-main input, .fi-main select')]
+    .filter((el) => shown(el) && !el.closest('.fi-modal, .fi-dropdown-panel') && el.getBoundingClientRect().right > edge + 1 && !scrolls(el))
+    .slice(0, 5).map((el) => ({ el: el.tagName.toLowerCase() + [...el.classList].slice(0, 2).map((c) => '.' + c).join(''), text: (el.innerText || '').trim().slice(0, 20), right: Math.round(el.getBoundingClientRect().right), edge: Math.round(edge) }));
+});
+
 async function run(browser, viewport) {
   stand = viewport.name;
   const context = await browser.newContext({ viewport: { width: viewport.width, height: viewport.height }, colorScheme: 'dark', deviceScaleFactor: 1 });
@@ -85,9 +100,23 @@ async function run(browser, viewport) {
   const clear = (text) => !text || text.right <= m.actionsBox.left || text.bottom <= m.actionsBox.top || text.top >= m.actionsBox.bottom;
   if (m.titleBox && m.actionsBox) say('the buttons do not cover the title or subtitle', clear(m.titleBox) && clear(m.subtitleBox), { title: m.titleBox, subtitle: m.subtitleBox, buttons: m.actionsBox });
   say('nothing scrolls sideways', m.sideways.length === 0, m.sideways.slice(0, 3));
+  const cut = await outside();
+  say('nothing of the Settings page sticks out of the screen', cut.length === 0, cut);
   say('the server icon has a label', !m.upload || !!m.iconLabel, { label: m.iconLabel });
+  await pluginsPage();
   if (stand === 'phone390') await quickCommands();
   await context.close();
+}
+
+async function pluginsPage() {
+  const entry = (urls.server[SERVER] || []).find((e) => e.class === 'Simplify\\Toolkit\\Filament\\Server\\Pages\\Packages');
+  say('the seed has the Plugins page of a Minecraft server', !!entry, { server: SERVER });
+  if (!entry) return;
+  await goto(entry.url);
+  await sleep(2500); // the lists load after the page (wire:init)
+  await page.screenshot({ path: path.join(out, `${stand}-plugins.png`) }).catch(() => {});
+  const cut = await outside();
+  say('nothing of the Plugins page sticks out of the screen', cut.length === 0, cut);
 }
 
 async function quickCommands() {
