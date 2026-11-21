@@ -171,6 +171,15 @@ final class OfflineFiles extends FakeFiles
     }
 }
 
+/** A node that does not answer at all: nothing can be read either. */
+final class UnreachableFiles extends FakeFiles
+{
+    public function getContent(string $path, ?int $notLargerThan = null): string
+    {
+        throw new RuntimeException('Wings is offline');
+    }
+}
+
 $passed = 0;
 
 $admin = User::where('email', 'smoke-mods@example.com')->first()
@@ -435,6 +444,42 @@ step('a saved change leaves a restart reminder on the card until it is dismissed
     RestartReminder::forget($paper);
     if (RestartReminder::get($paper) !== null) {
         throw new RuntimeException('the reminder stayed');
+    }
+});
+step("the choices in the menus of the Settings page show their text, also with Pelican's icon buttons (TK-B8)", function () use ($admin, $paper) {
+    // Pelican makes every action an icon button for people with that button style (its default): in a menu that left
+    // six icons without a word. The reminder makes the Restart needed menu show.
+    RestartReminder::mark($paper);
+    try {
+        $html = Livewire::actingAs($admin)->test(ServerSettings::class)->html();
+    } finally {
+        RestartReminder::forget($paper);
+    }
+    foreach (['restart.now', 'restart.dismiss', 'toolkit.settings_page.copy_id'] as $key) {
+        if (! preg_match('/fi-dropdown-list-item-label[^>]*>\s*'.preg_quote(e(__('simplify-toolkit::'.$key)), '/').'\s*</', $html)) {
+            throw new RuntimeException('a choice in a menu of the Settings page has no text: '.$key);
+        }
+    }
+});
+step('while the files cannot be reached the MOTD editor is switched off as well, and Save says nothing was saved (TK-B9)', function () use ($admin) {
+    app()->bind(DaemonFileRepository::class, UnreachableFiles::class);
+    try {
+        $page = Livewire::actingAs($admin)->test(ServerSettings::class);
+        if (! $page->get('unreachable')) {
+            throw new RuntimeException('the page does not see that the files cannot be reached');
+        }
+        // The other fields are switched off by Filament; the editor is Toolkit's own and stayed open for typing.
+        if (! preg_match('/class="sm-motd"[^>]*\sinert\s/', $page->html())) {
+            throw new RuntimeException('the MOTD editor is still open while the files cannot be reached');
+        }
+        $page->set('data.game.motd', 'Changed while offline')->call('save')->assertHasErrors('data');
+        try {
+            $page->assertNotified(__('simplify-toolkit::minecraft.not_saved'));
+        } catch (Throwable) {
+            throw new RuntimeException('Save says nothing when the Minecraft part cannot be saved');
+        }
+    } finally {
+        app()->bind(DaemonFileRepository::class, FakeFiles::class);
     }
 });
 step('a file saved in the file manager of a running Minecraft server leaves the restart reminder, as in 0.7.0', function () use ($admin, $paper) {
@@ -787,7 +832,7 @@ step('Pelican\'s Settings and Startup and the former Minecraft page lead to the 
     }
 });
 // Every step must have run: a step that never ran is a failure too.
-$expected = 31;
+$expected = 33;
 if ($passed !== $expected) {
     echo "FAIL $passed of $expected steps passed\n";
     exit(1);

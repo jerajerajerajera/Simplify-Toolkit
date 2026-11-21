@@ -25,7 +25,8 @@
 @endassets
 <x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
     {{-- The editor keeps its own state; Livewire only receives the finished MOTD text. --}}
-    <div wire:ignore class="sm-motd" x-data="simplifyMotdEditor({ value: $wire.$entangle(@js($getStatePath())), texts: @js($texts), name: () => @js($getServerName()), icon: () => @js($getIconUrl()) })">
+    {{-- inert: while the field is switched off (the server's files cannot be reached) the editor takes no clicks or keys. --}}
+    <div wire:ignore class="sm-motd" @if ($isDisabled()) inert @endif x-data="simplifyMotdEditor({ value: $wire.$entangle(@js($getStatePath())), texts: @js($texts), name: () => @js($getServerName()), icon: () => @js($getIconUrl()) })">
         <div class="sm-motd-toolbar" role="toolbar" aria-label="{{ __('simplify-toolkit::motd.toolbar') }}">
             <div class="sm-motd-colors">
                 <template x-for="color in colors" :key="color[0]">
