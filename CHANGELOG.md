@@ -9,6 +9,7 @@
 - On Pelican 1.0.0-rc.4 the Minecraft part of the Settings page keeps to the width of the content card, on a phone and on a narrow computer screen. Before, the ends of the MOTD buttons and of the fields were cut off.
 - The choices in the **Restart needed** menu and the ⋯ menu of the Settings page show their text again, instead of only an icon.
 - While the server's files cannot be reached, the MOTD editor is switched off like the other Minecraft fields, and Save says "Not saved" instead of nothing.
+- Checks: the panel smoke and the browser check also run on Pelican 1.0.0-rc.4.
 
 ## 2.0.0-beta.10
 
