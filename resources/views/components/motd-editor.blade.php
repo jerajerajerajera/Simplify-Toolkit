@@ -17,10 +17,12 @@
         'k' => ['tabler-blur', __('simplify-toolkit::motd.obfuscated')],
     ];
 @endphp
-@once
+{{-- As Livewire assets, not a bare <script>: the editor can first show in a Livewire update (a step of the Server
+     Maker), and Livewire does not run a script that arrives there. Assets load once per page, before the update. --}}
+@assets
     <style>@include('simplify-toolkit::assets.motd-css')</style>
     <script>@include('simplify-toolkit::assets.motd-js')</script>
-@endonce
+@endassets
 <x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
     {{-- The editor keeps its own state; Livewire only receives the finished MOTD text. --}}
     <div wire:ignore class="sm-motd" x-data="simplifyMotdEditor({ value: $wire.$entangle(@js($getStatePath())), texts: @js($texts), name: () => @js($getServerName()), icon: () => @js($getIconUrl()) })">

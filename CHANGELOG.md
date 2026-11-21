@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- Install no longer asks "Install anyway" for a release that is made for the server's version; only a release for another version asks first, with an "Install anyway" button.
+- On the Players page only OP, Kick and Ban ask first. Whitelist, Unwhitelist, DeOP and Unban run at once again, instead of asking with the text of Kick.
+- The MOTD editor also works the first time it shows inside another page's step (the Minecraft step of the Server Maker); before, its colours and buttons only worked after a reload.
+- On a phone the Plugins (or Mods) page keeps to the width of the screen, so the Install buttons are in view.
+- On Pelican 1.0.0-rc.4 the Minecraft part of the Settings page keeps to the width of the content card, on a phone and on a narrow computer screen. Before, the ends of the MOTD buttons and of the fields were cut off.
+
 ## 2.0.0-beta.10
 
 - Released together with Simplify 2.0.0-beta.10, which runs the new code right after an update (no "Unable to find component" error).
