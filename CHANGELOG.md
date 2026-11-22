@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 2.0.0-beta.15
+
 - Install no longer asks "Install anyway" for a release that is made for the server's version; only a release for another version asks first, with an "Install anyway" button.
 - On the Players page only OP, Kick and Ban ask first. Whitelist, Unwhitelist, DeOP and Unban run at once again, instead of asking with the text of Kick.
 - The MOTD editor also works the first time it shows inside another page's step (the Minecraft step of the Server Maker); before, its colours and buttons only worked after a reload.
