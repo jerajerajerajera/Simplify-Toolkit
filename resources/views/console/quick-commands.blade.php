@@ -7,7 +7,7 @@
     @media (max-width: 600px) {
         #terminal:has(> .sm-quick-commands) { position: relative; }
         #terminal:has(> .sm-quick-commands) > .xterm { padding-bottom: 62px; }
-        #terminal > .sm-quick-commands { position: absolute; inset: auto 0 0; z-index: 11; display: flex; gap: 6px; padding: 8px 12px; overflow-x: auto; scrollbar-width: none; border-top: 1px solid var(--ps-console-line, rgb(255 255 255 / .1)); background: #131a20; /* the console card's own colour (Simplify's dashboard.css) */ }
+        #terminal > .sm-quick-commands { position: absolute; inset: auto 0 0; z-index: 11; display: flex; gap: 6px; padding: 8px 12px; overflow-x: auto; scrollbar-width: none; border-top: 1px solid var(--ps-console-line, rgb(255 255 255 / .1)); background: var(--ps-console-card, #131a20); /* the console card's own colour (Simplify's dashboard.css), which a theme can change */ }
         .sm-quick-commands::-webkit-scrollbar { display: none; }
         .sm-quick-command { flex: none; min-height: 36px; padding: 0 12px; border: 1px solid var(--ps-console-line, rgb(255 255 255 / .12)); border-radius: 999px; background: var(--ps-console-raised, rgb(255 255 255 / .06)); color: var(--ps-console-ink, #e5e7eb); font: 12px var(--ps-mono, ui-monospace, Menlo, Consolas, monospace); white-space: nowrap; }
         .sm-quick-command:focus-visible { outline: 2px solid var(--ps-accent, var(--primary-500)); outline-offset: 1px; }
