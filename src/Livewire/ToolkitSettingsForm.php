@@ -60,6 +60,9 @@ final class ToolkitSettingsForm extends Component implements HasActions, HasSche
      */
     public array $eggCounts = [];
 
+    /** The egg whose Edit window is open. */
+    public int $editingEgg = 0;
+
     public static function canView(): bool
     {
         return (bool) user()?->can('view settings');
@@ -158,7 +161,11 @@ final class ToolkitSettingsForm extends Component implements HasActions, HasSche
             ->modalDescription(__('simplify-toolkit::counts.edit_help'))
             ->modalSubmitActionLabel(__('simplify-toolkit::counts.apply'))
             ->modalWidth('lg')
-            ->fillForm(fn (array $arguments) => PlayerCounts::clean((array) ($this->eggCounts['egg'.(int) ($arguments['egg'] ?? 0)] ?? [])))
+            ->fillForm(function (array $arguments): array {
+                $this->editingEgg = (int) ($arguments['egg'] ?? 0);
+
+                return PlayerCounts::clean((array) ($this->eggCounts['egg'.$this->editingEgg] ?? []));
+            })
             ->schema(fn (array $arguments) => [
                 Select::make('protocol')->label(__('simplify-toolkit::counts.protocol'))->required()->selectablePlaceholder(false)->live()
                     ->options([PlayerCounts::AUTOMATIC => __('simplify-toolkit::counts.automatic').' ('.__('simplify-toolkit::counts.automatic_note').')']
@@ -177,7 +184,7 @@ final class ToolkitSettingsForm extends Component implements HasActions, HasSche
             ])
             ->action(function (array $data, array $arguments): void {
                 abort_unless(self::canChange(), 403);
-                $egg = 'egg'.(int) ($arguments['egg'] ?? 0);
+                $egg = 'egg'.(int) ($arguments['egg'] ?? $this->editingEgg);
                 if (! isset($this->eggCounts[$egg])) {
                     return;
                 }

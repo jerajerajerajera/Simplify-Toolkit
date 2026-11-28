@@ -221,7 +221,7 @@ step('the admin settings page renders', function () use ($admin) {
     }
     // With Simplify the admin page never scrolls: its form gets the window's height and scrolls inside (style audit laag1366).
     // Livewire puts its own attributes on the form's root element first.
-    if (! str_contains($response->getContent(), 'class="s-fit"') || ! str_contains($response->getContent(), 'data-simplify-unsaved="data" data-simplify-save="save"')) {
+    if (! str_contains($response->getContent(), 'class="s-fit"') || ! str_contains($response->getContent(), 'data-simplify-unsaved="data,eggCounts" data-simplify-save="save"')) {
         throw new RuntimeException('the settings are not marked s-fit and unsaved-changes');
     }
 });
@@ -764,10 +764,11 @@ step('Player counts: an egg\'s protocol and query port are chosen in its Edit wi
     $id = (string) $egg->id;
     $form = Livewire::actingAs($admin)->test(ToolkitSettingsForm::class)
         ->assertSee(__('simplify-toolkit::counts.title'))->assertSee('Smoke FiveM')
-        ->callAction('editEgg', data: ['protocol' => 'fivem', 'port' => 'variable', 'port_variable' => 'QUERY_PORT'], arguments: ['egg' => $egg->id])
-        ->assertHasNoActionErrors();
+        ->mountAction('editEgg', ['egg' => $egg->id]);
+    $mounted = $form->instance()->mountedActions;
+    $form->setActionData(['protocol' => 'fivem', 'port' => 'variable', 'port_variable' => 'QUERY_PORT'])->callMountedAction()->assertHasNoActionErrors();
     if (($form->get('eggCounts')['egg'.$id]['protocol'] ?? '') !== 'fivem') {
-        throw new RuntimeException('the Edit window did not apply: '.json_encode($form->get('eggCounts')['egg'.$id] ?? null));
+        throw new RuntimeException('the Edit window did not apply: '.json_encode(['counts' => $form->get('eggCounts')['egg'.$id] ?? null, 'mounted' => $mounted, 'editing' => $form->get('editingEgg'), 'errors' => $form->errors()->toArray()]));
     }
     $form->assertSee('FiveM / RedM')->assertSee('Variable QUERY_PORT');
     PlayerCounts::forget();
