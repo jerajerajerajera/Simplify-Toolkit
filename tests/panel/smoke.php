@@ -765,8 +765,11 @@ step('Player counts: an egg\'s protocol and query port are chosen in its Edit wi
     $form = Livewire::actingAs($admin)->test(ToolkitSettingsForm::class)
         ->assertSee(__('simplify-toolkit::counts.title'))->assertSee('Smoke FiveM')
         ->callAction('editEgg', data: ['protocol' => 'fivem', 'port' => 'variable', 'port_variable' => 'QUERY_PORT'], arguments: ['egg' => $egg->id])
-        ->assertHasNoActionErrors()
-        ->assertSet("data.players.eggs.$id.protocol", 'fivem')->assertSee('FiveM / RedM')->assertSee('Variable QUERY_PORT');
+        ->assertHasNoActionErrors();
+    if (($form->get('eggCounts')['egg'.$id]['protocol'] ?? '') !== 'fivem') {
+        throw new RuntimeException('the Edit window did not apply: '.json_encode($form->get('eggCounts')['egg'.$id] ?? null));
+    }
+    $form->assertSee('FiveM / RedM')->assertSee('Variable QUERY_PORT');
     PlayerCounts::forget();
     if (PlayerCounts::forEgg($egg->id)['protocol'] !== PlayerCounts::AUTOMATIC) {
         throw new RuntimeException('the Edit window saved before Save');

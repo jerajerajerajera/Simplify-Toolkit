@@ -53,6 +53,13 @@ final class ToolkitSettingsForm extends Component implements HasActions, HasSche
 
     public bool $hasKey = false;
 
+    /**
+     * How each egg counts players, by "egg<id>", as the Edit windows left it; stored with Save.
+     *
+     * @var array<string, array{protocol: string, port: string, port_offset: int, port_variable: string}>
+     */
+    public array $eggCounts = [];
+
     public static function canView(): bool
     {
         return (bool) user()?->can('view settings');
@@ -77,11 +84,10 @@ final class ToolkitSettingsForm extends Component implements HasActions, HasSche
             'players' => ['use_alias' => PlayerCounts::useAlias()],
         ]);
         // The eggs' choices are no fields of the form: the Edit window of each row changes them, Save stores them.
-        $eggs = [];
+        $this->eggCounts = [];
         foreach (Egg::query()->orderBy('id')->pluck('id') as $egg) {
-            $eggs[(string) $egg] = PlayerCounts::forEgg((int) $egg);
+            $this->eggCounts['egg'.$egg] = PlayerCounts::forEgg((int) $egg);
         }
-        $this->data['players']['eggs'] = $eggs;
     }
 
     /**
@@ -106,7 +112,7 @@ final class ToolkitSettingsForm extends Component implements HasActions, HasSche
 
                 continue;
             }
-            $choice = PlayerCounts::clean((array) ($this->data['players']['eggs'][(string) $id] ?? []));
+            $choice = PlayerCounts::clean((array) ($this->eggCounts['egg'.$id] ?? []));
             $protocol = $choice['protocol'];
             $rows[] = [
                 'id' => $id,
@@ -152,7 +158,7 @@ final class ToolkitSettingsForm extends Component implements HasActions, HasSche
             ->modalDescription(__('simplify-toolkit::counts.edit_help'))
             ->modalSubmitActionLabel(__('simplify-toolkit::counts.apply'))
             ->modalWidth('lg')
-            ->fillForm(fn (array $arguments) => PlayerCounts::clean((array) ($this->data['players']['eggs'][(string) (int) ($arguments['egg'] ?? 0)] ?? [])))
+            ->fillForm(fn (array $arguments) => PlayerCounts::clean((array) ($this->eggCounts['egg'.(int) ($arguments['egg'] ?? 0)] ?? [])))
             ->schema(fn (array $arguments) => [
                 Select::make('protocol')->label(__('simplify-toolkit::counts.protocol'))->required()->selectablePlaceholder(false)->live()
                     ->options([PlayerCounts::AUTOMATIC => __('simplify-toolkit::counts.automatic').' ('.__('simplify-toolkit::counts.automatic_note').')']
@@ -171,11 +177,11 @@ final class ToolkitSettingsForm extends Component implements HasActions, HasSche
             ])
             ->action(function (array $data, array $arguments): void {
                 abort_unless(self::canChange(), 403);
-                $egg = (string) (int) ($arguments['egg'] ?? 0);
-                if (! isset($this->data['players']['eggs'][$egg])) {
+                $egg = 'egg'.(int) ($arguments['egg'] ?? 0);
+                if (! isset($this->eggCounts[$egg])) {
                     return;
                 }
-                $this->data['players']['eggs'][$egg] = PlayerCounts::clean($data + PlayerCounts::default());
+                $this->eggCounts[$egg] = PlayerCounts::clean($data + PlayerCounts::default());
             });
     }
 
@@ -237,7 +243,11 @@ final class ToolkitSettingsForm extends Component implements HasActions, HasSche
         abort_unless(self::canChange(), 403);
         $state = $this->form->getState();
         AutomaticBackups::save(null, $state['backups'] ?? []);
-        PlayerCounts::save((array) ($this->data['players']['eggs'] ?? []), (bool) ($state['players']['use_alias'] ?? true));
+        $eggs = [];
+        foreach ($this->eggCounts as $key => $choice) {
+            $eggs[(int) substr((string) $key, 3)] = (array) $choice;
+        }
+        PlayerCounts::save($eggs, (bool) ($state['players']['use_alias'] ?? true));
         if (trim((string) ($state['curseforge'] ?? '')) === '') {
             Notification::make()->title(__('simplify-toolkit::minecraft.saved'))->success()->send();
 
