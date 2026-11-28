@@ -19,7 +19,7 @@ final class EmbedDetails
     {
         try {
             if (! ServerKind::forServer($server)['minecraft']) {
-                $status = $running ? GameStatus::get($server) : [];
+                $status = $running ? (GameStatus::chosen($server) ?? GameStatus::get($server)) : [];
 
                 return $status === [] ? [] : ['players' => $status['players'], 'max_players' => $status['max_players']];
             }
@@ -36,11 +36,11 @@ final class EmbedDetails
                     $details['icon'] = $pack['icon'];
                 }
             }
-            $status = $running ? StatusPing::get($server) : [];
+            $status = $running ? (GameStatus::chosen($server) ?? StatusPing::get($server)) : [];
             if ($status !== []) {
-                $details += ['players' => $status['players'], 'max_players' => $status['max_players'], 'motd' => $status['motd']];
+                $details += ['players' => $status['players'], 'max_players' => $status['max_players'], 'motd' => $status['motd'] ?? ''];
                 // The running server knows its version best, also when the egg says "latest".
-                if ($status['version'] !== '' && preg_match('/\d+\.\d+(\.\d+)?/', $status['version'], $match) === 1) {
+                if (($status['version'] ?? '') !== '' && preg_match('/\d+\.\d+(\.\d+)?/', $status['version'], $match) === 1) {
                     $details['version'] = $match[0];
                 }
             }

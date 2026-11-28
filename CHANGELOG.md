@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- **Player counts** under Simplify › Toolkit: choose per egg how the server cards count players (Minecraft Java or Bedrock, Steam, FiveM/RedM, Palworld's REST API or remote console, or Off) and on which query port (the game port, the game port plus a number, or an egg variable). An allocation on 0.0.0.0 or a local address is also asked on its alias, unless that is switched off. With Boy132's Player Counter installed, an egg with a game query there takes its count from Player Counter.
 - Server cards also show the players of other Steam games, such as Valheim, Enshrouded and V Rising, from Steam's server query; Palworld's from its remote console. A game that does not answer shows no player count.
 - The quick commands' row on a phone takes the console's colour from Simplify (`--ps-console-card`), so it follows a theme.
 

@@ -20,12 +20,17 @@ use Filament\View\PanelsRenderHook;
 use GuzzleHttp\Psr7\Response as Psr7Response;
 use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Testing\Concerns\InteractsWithAuthentication;
 use Illuminate\Foundation\Testing\Concerns\InteractsWithSession;
 use Illuminate\Foundation\Testing\Concerns\MakesHttpRequests;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Testing\TestResponse;
 use Livewire\Features\SupportScriptsAndAssets\SupportScriptsAndAssets;
 use Livewire\Livewire;
@@ -41,6 +46,8 @@ use Simplify\Toolkit\Models\ApiKey;
 use Simplify\Toolkit\Models\Package;
 use Simplify\Toolkit\Services\AutomaticBackups;
 use Simplify\Toolkit\Services\Keys;
+use Simplify\Toolkit\Services\PlayerCounter;
+use Simplify\Toolkit\Services\PlayerCounts;
 use Simplify\Toolkit\Services\RestartReminder;
 use Simplify\Toolkit\Services\ServerInfo;
 use Simplify\Toolkit\Services\ServerKind;
@@ -747,6 +754,88 @@ step('other Steam games show players on their card from Steam\'s server query, a
         throw new RuntimeException('the card does not get the players: '.json_encode($info));
     }
 });
+step('Player counts: an egg\'s protocol and query port are chosen in its Edit window, kept until Save, and used by the card', function () use ($admin) {
+    $egg = Egg::factory()->create(['name' => 'Smoke FiveM', 'features' => []]);
+    EggVariable::query()->create([
+        'egg_id' => $egg->id, 'name' => 'Query port', 'description' => 'The query port', 'env_variable' => 'QUERY_PORT',
+        'default_value' => '30121', 'user_viewable' => true, 'user_editable' => false, 'rules' => ['nullable', 'integer'], 'sort' => 1,
+    ]);
+    $server = Server::factory()->create(['owner_id' => $admin->id, 'egg_id' => $egg->id]);
+    $id = (string) $egg->id;
+    $form = Livewire::actingAs($admin)->test(ToolkitSettingsForm::class)
+        ->assertSee(__('simplify-toolkit::counts.title'))->assertSee('Smoke FiveM')
+        ->callAction('editEgg', data: ['protocol' => 'fivem', 'port' => 'variable', 'port_variable' => 'QUERY_PORT'], arguments: ['egg' => $egg->id])
+        ->assertHasNoActionErrors()
+        ->assertSet("data.players.eggs.$id.protocol", 'fivem')->assertSee('FiveM / RedM')->assertSee('Variable QUERY_PORT');
+    PlayerCounts::forget();
+    if (PlayerCounts::forEgg($egg->id)['protocol'] !== PlayerCounts::AUTOMATIC) {
+        throw new RuntimeException('the Edit window saved before Save');
+    }
+    $form->set('data.players.use_alias', false)->call('save')->assertHasNoErrors();
+    PlayerCounts::forget();
+    if (PlayerCounts::forEgg($egg->id) !== ['protocol' => 'fivem', 'port' => 'variable', 'port_offset' => 1, 'port_variable' => 'QUERY_PORT'] || PlayerCounts::useAlias()) {
+        throw new RuntimeException('Save did not store the choice: '.json_encode([PlayerCounts::forEgg($egg->id), PlayerCounts::useAlias()]));
+    }
+    // FiveM's answer on the query port from the variable, through the panel's HTTP client.
+    Http::fake(['*:30121/dynamic.json' => Http::response(['clients' => 5, 'sv_maxclients' => 32, 'hostname' => 'x'])]);
+    Cache::forget('simplify-toolkit.game-status.'.$server->uuid);
+    $info = ServerInfo::for($server);
+    if (($info['players'] ?? null) !== 5 || ($info['max_players'] ?? null) !== 32) {
+        throw new RuntimeException('the card does not get FiveM\'s players: '.json_encode($info));
+    }
+    // Off: no player count, without asking anything.
+    $form->callAction('editEgg', data: ['protocol' => 'off', 'port' => 'game'], arguments: ['egg' => $egg->id])->call('save');
+    PlayerCounts::forget();
+    Cache::forget('simplify-toolkit.game-status.'.$server->uuid);
+    if (ServerInfo::for($server) !== [] || array_filter(event('simplify.embed.server', [$server, true])) !== []) {
+        throw new RuntimeException('an egg switched off still gets a player count');
+    }
+    PlayerCounts::save([$id => PlayerCounts::default()], true);
+    PlayerCounts::forget();
+});
+step('with Boy132\'s Player Counter installed, an egg with a game query there takes its count from Player Counter', function () use ($admin) {
+    Schema::create('game_queries', function ($table) {
+        $table->increments('id');
+        $table->string('query_type');
+        $table->integer('query_port_offset')->nullable();
+        $table->string('query_port_variable')->nullable();
+        $table->timestamps();
+    });
+    Schema::create('egg_game_query', function ($table) {
+        $table->unsignedInteger('egg_id')->unique();
+        $table->unsignedInteger('game_query_id');
+    });
+    // Player Counter's model as it is: a game query linked to eggs, that asks the server.
+    $model = new class extends Model
+    {
+        protected $table = 'game_queries';
+
+        protected $guarded = [];
+
+        public function eggs(): BelongsToMany
+        {
+            return $this->belongsToMany(Egg::class, 'egg_game_query', 'game_query_id', 'egg_id');
+        }
+
+        /** @return array{hostname: string, map: string, current_players: int, max_players: int, players: null} */
+        public function runQuery(Server $server): array
+        {
+            return ['hostname' => 'Smoke', 'map' => 'x', 'current_players' => 7, 'max_players' => 50, 'players' => null];
+        }
+    };
+    class_alias($model::class, 'Boy132\PlayerCounter\Models\GameQuery');
+    $egg = Egg::factory()->create(['name' => 'Smoke Rust', 'features' => []]);
+    $query = $model::query()->create(['query_type' => 'source', 'query_port_offset' => 1]);
+    DB::table('egg_game_query')->insert(['egg_id' => $egg->id, 'game_query_id' => $query->id]);
+    PlayerCounter::forget();
+    $server = Server::factory()->create(['owner_id' => $admin->id, 'egg_id' => $egg->id]);
+    $info = ServerInfo::for($server);
+    if (! PlayerCounter::installed() || ($info['players'] ?? null) !== 7 || ($info['max_players'] ?? null) !== 50) {
+        throw new RuntimeException('the card does not take Player Counter\'s count: '.json_encode($info));
+    }
+    Livewire::actingAs($admin)->test(ToolkitSettingsForm::class)
+        ->assertSee(__('simplify-toolkit::counts.player_counter'))->assertSee(__('simplify-toolkit::counts.in_player_counter'))->assertSee('Game port + 1');
+});
 step('CurseForge keys are tested, stored encrypted, and a user\'s own key goes first', function () use ($admin) {
     if (Keys::curseForgeWorks('bad-key') || ! Keys::curseForgeWorks('good-key')) {
         throw new RuntimeException('the key test does not tell good from bad');
@@ -854,7 +943,7 @@ step('Pelican\'s Settings and Startup and the former Minecraft page lead to the 
     }
 });
 // Every step must have run: a step that never ran is a failure too.
-$expected = 34;
+$expected = 36;
 if ($passed !== $expected) {
     echo "FAIL $passed of $expected steps passed\n";
     exit(1);

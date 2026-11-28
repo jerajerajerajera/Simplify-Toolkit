@@ -1,15 +1,19 @@
 <?php
 
-// Players of other Steam games without a panel: Steam's server query (A2S_INFO) against a small server on this
-// machine, the ports to ask, and Palworld's remote console.
+// Players of other games without a panel: Steam's server query (A2S_INFO), Bedrock's unconnected ping, FiveM's and
+// Palworld's answers, the ports to ask and the choice per egg, against small servers on this machine.
 declare(strict_types=1);
 
 require __DIR__.'/../src/Services/SteamQuery.php';
 require __DIR__.'/../src/Services/SourceRcon.php';
 require __DIR__.'/../src/Services/StatusPing.php';
 require __DIR__.'/../src/Services/GameStatus.php';
+require __DIR__.'/../src/Services/BedrockQuery.php';
+require __DIR__.'/../src/Services/PlayerCounts.php';
 
+use Simplify\Toolkit\Services\BedrockQuery;
 use Simplify\Toolkit\Services\GameStatus;
+use Simplify\Toolkit\Services\PlayerCounts;
 use Simplify\Toolkit\Services\SourceRcon;
 use Simplify\Toolkit\Services\SteamQuery;
 
@@ -41,6 +45,26 @@ check(GameStatus::isSteamGame([], ['SRCDS_APPID' => '2278520']) && GameStatus::i
 check(! GameStatus::isSteamGame(['eula'], ['SERVER_JARFILE' => 'server.jar', 'SRCDS_APPID' => ' ']), 'Minecraft is not a Steam game');
 check(GameStatus::palworldPlayers("name,playeruid,steamid\nAlice,123,7656\nBob,456,7657\n") === 2 && GameStatus::palworldPlayers("name,playeruid,steamid\n") === 0 && GameStatus::palworldPlayers('') === 0, 'players in Palworld\'s ShowPlayers');
 
+// The protocol and query port chosen per egg (Simplify › Toolkit › Player counts).
+check(PlayerCounts::clean(['protocol' => 'nope', 'port' => 'x', 'port_offset' => 0, 'port_variable' => 'A B']) === PlayerCounts::default(), 'unknown choices are automatic on the game port');
+check(PlayerCounts::clean(['protocol' => 'steam', 'port' => 'offset', 'port_offset' => '19378']) === ['protocol' => 'steam', 'port' => 'offset', 'port_offset' => 19378, 'port_variable' => ''], 'a known choice is kept');
+check(PlayerCounts::port(['port' => 'game', 'port_offset' => 1, 'port_variable' => ''], 2456, []) === 2456
+    && PlayerCounts::port(['port' => 'offset', 'port_offset' => 1, 'port_variable' => ''], 2456, []) === 2457
+    && PlayerCounts::port(['port' => 'offset', 'port_offset' => 9000, 'port_variable' => ''], 60000, []) === 60000
+    && PlayerCounts::port(['port' => 'variable', 'port_offset' => 1, 'port_variable' => 'QUERY_PORT'], 15636, ['QUERY_PORT' => '15637']) === 15637
+    && PlayerCounts::port(['port' => 'variable', 'port_offset' => 1, 'port_variable' => 'QUERY_PORT'], 15636, ['QUERY_PORT' => '']) === 15636, 'the query port: game port, plus a distance, from a variable, and the game port when that holds none');
+check(GameStatus::fivem(['clients' => 4, 'sv_maxclients' => '48', 'hostname' => 'x']) === ['players' => 4, 'max_players' => 48, 'version' => ''] && GameStatus::fivem([]) === [], 'FiveM\'s dynamic.json');
+check(GameStatus::palworldRest(['currentplayernum' => 2, 'maxplayernum' => 32]) === ['players' => 2, 'max_players' => 32, 'version' => ''] && GameStatus::palworldRest(['error' => 'x']) === [], 'Palworld\'s REST API metrics');
+
+/** A Bedrock server's unconnected pong. */
+function pong(string $text): string
+{
+    return "\x1c".pack('J', 1).pack('J', 99)."\x00\xff\xff\x00\xfe\xfe\xfe\xfe\xfd\xfd\xfd\xfd\x12\x34\x56\x78".pack('n', strlen($text)).$text;
+}
+check(BedrockQuery::read(pong('MCPE;§aMy world;748;1.21.40;3;10;123;Sub;Survival;1;19132;19133;')) === ['players' => 3, 'max_players' => 10, 'version' => '1.21.40', 'motd' => 'My world'], 'a Bedrock pong: players, max, version, MOTD without colours');
+check(BedrockQuery::read(pong('MCPE;x;1;1;a;b')) === [] && BedrockQuery::read('') === [] && BedrockQuery::read("\x1c".str_repeat("\x00", 40)) === [], 'no Bedrock answer from anything else');
+check(strlen(BedrockQuery::ping()) === 33 && BedrockQuery::ping()[0] === "\x01", 'a Bedrock unconnected ping');
+
 $packet = SourceRcon::packet(7, 2, 'ShowPlayers');
 check(strlen($packet) === 4 + 8 + 11 + 2 && unpack('V', $packet)[1] === 8 + 11 + 2, 'an RCON packet: size, id, type, body, two zero bytes');
 check(SourceRcon::parse(substr($packet, 4)) === ['id' => 7, 'type' => 2, 'body' => 'ShowPlayers'], 'an RCON packet read back');
@@ -63,6 +87,18 @@ if (function_exists('pcntl_fork')) {
     $answer = SteamQuery::ask(['127.0.0.1'], [$port + 1 === 65536 ? 1 : $port + 1, $port], 2.0);
     pcntl_waitpid($child, $status);
     check($answer === ['players' => 5, 'max_players' => 16, 'version' => '0.219.16'], 'a real exchange with a challenge, after a port without a server: '.json_encode($answer));
+    // Bedrock's unconnected ping.
+    $server = stream_socket_server('udp://127.0.0.1:0', $code, $error, STREAM_SERVER_BIND);
+    $port = (int) substr((string) stream_socket_get_name($server, false), strrpos((string) stream_socket_get_name($server, false), ':') + 1);
+    $child = pcntl_fork();
+    if ($child === 0) {
+        $request = stream_socket_recvfrom($server, 1400, 0, $peer);
+        stream_socket_sendto($server, $request[0] === "\x01" ? pong('MCPE;Hi;748;1.21.40;1;5;1;;Survival;') : '', 0, $peer);
+        exit(0);
+    }
+    $answer = BedrockQuery::ask(['127.0.0.1'], $port, 2.0);
+    pcntl_waitpid($child, $status);
+    check(($answer['players'] ?? null) === 1 && ($answer['max_players'] ?? null) === 5, 'a real Bedrock exchange: '.json_encode($answer));
     // Palworld's remote console: an empty answer before the login's result, then the players.
     $server = stream_socket_server('tcp://127.0.0.1:0', $code, $error);
     $name = (string) stream_socket_get_name($server, false);
@@ -97,9 +133,10 @@ if (function_exists('pcntl_fork')) {
 }
 check(SourceRcon::run('127.0.0.1', 9, 'secret', 'ShowPlayers', 0.3) === null, 'no remote console on a port without a server');
 check(SteamQuery::ask(['127.0.0.1'], [9], 0.3) === [], 'no answer from a port without a server');
+check(BedrockQuery::ask(['127.0.0.1'], 9, 0.3) === [], 'no Bedrock answer from a port without a server');
 
 if ($failures !== []) {
     echo 'FAIL Steam query: '.implode('; ', $failures)."\n";
     exit(1);
 }
-echo "PASS other Steam games: Steam's server query with its challenge, the ports to ask, Palworld's remote console\n";
+echo "PASS other games: Steam's server query with its challenge, Bedrock, FiveM, Palworld, the ports to ask and the egg's choice\n";

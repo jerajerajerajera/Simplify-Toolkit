@@ -20,7 +20,10 @@ function check(bool $ok, string $what): void
 }
 
 check(StatusPing::varint(0) === "\x00" && StatusPing::varint(300) === "\xac\x02" && StatusPing::varint(25565) === "\xdd\xc7\x01", 'lengths as Minecraft writes them');
-check(StatusPing::targets('10.0.0.5', 'play.example.com', 'node.example.com') === ['10.0.0.5'], 'an allocation with its own address');
+check(StatusPing::targets('8.8.8.8', 'play.example.com', 'node.example.com') === ['8.8.8.8'], 'an allocation with its own public address');
+check(StatusPing::targets('10.0.0.5', 'play.example.com', 'node.example.com') === ['10.0.0.5', 'play.example.com'], 'a local address, then its alias');
+check(StatusPing::targets('192.168.1.20', 'play.example.com', 'node.example.com', false) === ['192.168.1.20'], 'a local address without the alias when that is switched off');
+check(StatusPing::targets('0.0.0.0', 'play.example.com', 'node.example.com', false) === ['127.0.0.1', 'node.example.com'], 'a wildcard without the alias when that is switched off');
 check(StatusPing::targets('0.0.0.0', 'play.example.com', 'node.example.com') === ['127.0.0.1', 'play.example.com', 'node.example.com'], 'a wildcard: loopback, alias, node');
 check(StatusPing::targets('::', 'not a host', '') === ['::1'], 'IPv6 wildcard, invalid alias skipped');
 
