@@ -77,7 +77,11 @@ written through Wings, like Pelican's own file manager. Outside services, only w
 | `api.feed-the-beast.com` and its image host | "Use the modpack's icon"; the name and version of an FTB modpack | the modpack's id |
 
 The player count comes from the Minecraft server itself: the panel asks the server's own port what every Minecraft
-client asks it for the server list, at most every 30 seconds.
+client asks it for the server list, at most every 30 seconds. For other Steam games (Valheim, Enshrouded, V Rising,
+Counter-Strike, …) the panel asks Steam's server query (A2S_INFO) on the query port the egg names, the port after the
+game's port or the game's port itself. Palworld does not answer that query: its players come from its remote console
+(`ShowPlayers`, with the egg's admin password), only while the remote console is on and its port is given to the
+server. Nothing leaves the panel and the game servers; a game that does not answer is asked again after two minutes.
 
 Installing a plugin or mod asks Wings to download the file itself, only from `cdn.modrinth.com`,
 `hangarcdn.papermc.io`, `api.spiget.org`, `edge.forgecdn.net` or `mediafilez.forgecdn.net`. A plugin that the site

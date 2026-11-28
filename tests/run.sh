@@ -10,6 +10,7 @@ php tests/modpack.php
 php tests/sources.php
 php tests/start-check.php
 php tests/status-ping.php
+php tests/game-status.php
 php tests/addon.php
 php tests/automatic-backups.php
 php tests/lang.php

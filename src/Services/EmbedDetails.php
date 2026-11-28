@@ -9,7 +9,8 @@ use Throwable;
 
 /**
  * What Simplify Toolkit adds to a server in Simplify Embed's public server list (the event "simplify.embed.server"):
- * software, version and modpack always, and players and MOTD while it runs.
+ * for Minecraft software, version and modpack always, and players and MOTD while it runs; for another Steam game its
+ * players while it runs.
  */
 final class EmbedDetails
 {
@@ -18,7 +19,9 @@ final class EmbedDetails
     {
         try {
             if (! ServerKind::forServer($server)['minecraft']) {
-                return [];
+                $status = $running ? GameStatus::get($server) : [];
+
+                return $status === [] ? [] : ['players' => $status['players'], 'max_players' => $status['max_players']];
             }
             $software = Software::of($server);
             $details = array_filter([
