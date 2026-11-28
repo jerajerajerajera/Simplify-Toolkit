@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Simplify\Toolkit\Services;
 
 use App\Models\Server;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Throwable;
@@ -73,9 +73,9 @@ final class PlayerCounter
             return null;
         }
         try {
-            /** @var class-string<Model> $model */
-            $model = self::MODEL;
-            $query = $model::query()->whereHas('eggs', fn ($eggs) => $eggs->whereKey($server->egg_id))->first();
+            // Player Counter's own model, through a name: Toolkit does not need the plugin to be installed.
+            $builder = call_user_func([self::MODEL, 'query']);
+            $query = $builder instanceof Builder ? $builder->whereHas('eggs', fn ($eggs) => $eggs->whereKey($server->egg_id))->first() : null;
             $answer = $query !== null && method_exists($query, 'runQuery') ? $query->runQuery($server) : null;
             if (! is_array($answer) || ! isset($answer['current_players'])) {
                 return [];

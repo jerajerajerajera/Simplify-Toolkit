@@ -40,7 +40,7 @@ final class EmbedDetails
             if ($status !== []) {
                 $details += ['players' => $status['players'], 'max_players' => $status['max_players'], 'motd' => $status['motd'] ?? ''];
                 // The running server knows its version best, also when the egg says "latest".
-                if (($status['version'] ?? '') !== '' && preg_match('/\d+\.\d+(\.\d+)?/', $status['version'], $match) === 1) {
+                if ($status['version'] !== '' && preg_match('/\d+\.\d+(\.\d+)?/', $status['version'], $match) === 1) {
                     $details['version'] = $match[0];
                 }
             }

@@ -196,7 +196,7 @@ final class ToolkitSettingsForm extends Component implements HasActions, HasSche
     private static function variablesOf(int $egg): array
     {
         $variables = [];
-        foreach (Egg::query()->find($egg)?->variables ?? [] as $variable) {
+        foreach (Egg::query()->find($egg)->variables ?? [] as $variable) {
             $variables[(string) $variable->env_variable] = (string) $variable->env_variable;
         }
         ksort($variables);
