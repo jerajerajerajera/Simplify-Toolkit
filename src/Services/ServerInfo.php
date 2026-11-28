@@ -8,8 +8,9 @@ use App\Models\Server;
 use Throwable;
 
 /**
- * What Simplify 1.1 and later show on a Minecraft server's card and page (Addon::serverInfo): players, MOTD,
- * version and icon from the status ping, with the modpack's icon when the server sends none.
+ * What Simplify 1.1 and later show on a server's card and page (Addon::serverInfo). For Minecraft: players, MOTD,
+ * version and icon from the status ping, with the modpack's icon when the server sends none. For another Steam game:
+ * players and version from Steam's server query (GameStatus).
  */
 final class ServerInfo
 {
@@ -18,7 +19,8 @@ final class ServerInfo
     {
         try {
             if (! ServerKind::forServer($server)['minecraft']) {
-                return [];
+                // Another Steam game: players and version from Steam's server query (or Palworld's remote console).
+                return self::from(GameStatus::get($server), null);
             }
             $status = StatusPing::get($server);
 

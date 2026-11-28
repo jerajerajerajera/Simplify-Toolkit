@@ -96,7 +96,7 @@ final class ToolkitAddon extends Addon
         return [...($label !== '' ? [$label] : []), ...(RestartReminder::get($server) !== null ? [__('simplify-toolkit::restart.needed')] : [])];
     }
 
-    /** Players, MOTD, version and icon of a running Minecraft server, for Simplify 1.1 and later (API 2). */
+    /** Players, MOTD, version and icon of a running Minecraft server, and players of another Steam game (API 2). */
     public function serverInfo(Server $server): array
     {
         return ServerInfo::for($server);

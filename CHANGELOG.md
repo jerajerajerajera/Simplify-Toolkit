@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Server cards also show the players of other Steam games, such as Valheim, Enshrouded and V Rising, from Steam's server query; Palworld's from its remote console. A game that does not answer shows no player count.
+- The quick commands' row on a phone takes the console's colour from Simplify (`--ps-console-card`), so it follows a theme.
+
 ## 2.0.0-beta.15
 
 - Install no longer asks "Install anyway" for a release that is made for the server's version; only a release for another version asks first, with an "Install anyway" button.

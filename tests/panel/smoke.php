@@ -25,6 +25,7 @@ use Illuminate\Foundation\Testing\Concerns\InteractsWithAuthentication;
 use Illuminate\Foundation\Testing\Concerns\InteractsWithSession;
 use Illuminate\Foundation\Testing\Concerns\MakesHttpRequests;
 use Illuminate\Http\Client\Response;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Testing\TestResponse;
 use Livewire\Features\SupportScriptsAndAssets\SupportScriptsAndAssets;
 use Livewire\Livewire;
@@ -41,6 +42,7 @@ use Simplify\Toolkit\Models\Package;
 use Simplify\Toolkit\Services\AutomaticBackups;
 use Simplify\Toolkit\Services\Keys;
 use Simplify\Toolkit\Services\RestartReminder;
+use Simplify\Toolkit\Services\ServerInfo;
 use Simplify\Toolkit\Services\ServerKind;
 use Simplify\Toolkit\Services\SettingsSections;
 use Simplify\Toolkit\Services\Software;
@@ -725,6 +727,26 @@ step('Simplify Embed gets the software of Minecraft servers, and nothing for oth
         throw new RuntimeException('other games got Minecraft details');
     }
 });
+step('other Steam games show players on their card from Steam\'s server query, and nothing while they do not answer', function () use ($admin) {
+    $egg = Egg::factory()->create(['name' => 'Valheim', 'features' => ['steam_disk_space']]);
+    EggVariable::query()->create([
+        'egg_id' => $egg->id, 'name' => 'App id', 'description' => 'Steam app id', 'env_variable' => 'SRCDS_APPID',
+        'default_value' => '896660', 'user_viewable' => false, 'user_editable' => false, 'rules' => ['required', 'string'], 'sort' => 1,
+    ]);
+    $valheim = Server::factory()->create(['owner_id' => $admin->id, 'egg_id' => $egg->id]);
+    $started = microtime(true);
+    if (ServerInfo::for($valheim) !== [] || microtime(true) - $started > 3) {
+        throw new RuntimeException('a game that does not answer gave details, or took too long');
+    }
+    if (Cache::get('simplify-toolkit.game-status.'.$valheim->uuid) !== []) {
+        throw new RuntimeException('no answer is not kept, so every page would ask again');
+    }
+    Cache::put('simplify-toolkit.game-status.'.$valheim->uuid, ['players' => 2, 'max_players' => 10, 'version' => '0.219.16'], 30);
+    $info = ServerInfo::for($valheim);
+    if (($info['players'] ?? null) !== 2 || ($info['max_players'] ?? null) !== 10 || ($info['version'] ?? '') !== '0.219.16') {
+        throw new RuntimeException('the card does not get the players: '.json_encode($info));
+    }
+});
 step('CurseForge keys are tested, stored encrypted, and a user\'s own key goes first', function () use ($admin) {
     if (Keys::curseForgeWorks('bad-key') || ! Keys::curseForgeWorks('good-key')) {
         throw new RuntimeException('the key test does not tell good from bad');
@@ -832,7 +854,7 @@ step('Pelican\'s Settings and Startup and the former Minecraft page lead to the 
     }
 });
 // Every step must have run: a step that never ran is a failure too.
-$expected = 33;
+$expected = 34;
 if ($passed !== $expected) {
     echo "FAIL $passed of $expected steps passed\n";
     exit(1);
