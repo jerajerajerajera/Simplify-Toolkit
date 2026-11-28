@@ -31,33 +31,49 @@ final class StatusPing
                 return [];
             }
             $node = (string) parse_url($server->node->getConnectionAddress(), PHP_URL_HOST);
-            foreach (self::targets($allocation->ip, $allocation->ip_alias, $node) as $host) {
-                $answer = self::ask($host, $allocation->port);
-                if ($answer !== null) {
-                    return self::read($answer);
-                }
-            }
 
-            return [];
+            return self::at(self::targets($allocation->ip, $allocation->ip_alias, $node, PlayerCounts::useAlias()), $allocation->port);
         });
     }
 
     /**
+     * The first of the hosts that answers on the port, or [] when none does.
+     *
+     * @param  list<string>  $hosts
+     * @return array{players: int, max_players: int, version: string, motd: string, favicon: string, names: list<string>}|array{}
+     */
+    public static function at(array $hosts, int $port): array
+    {
+        foreach ($hosts as $host) {
+            $answer = self::ask($host, $port);
+            if ($answer !== null) {
+                return self::read($answer);
+            }
+        }
+
+        return [];
+    }
+
+    /**
      * Hosts to try, in order. A wildcard allocation (0.0.0.0 or ::) has no address of its own: loopback first (panel
-     * and Wings on one machine), then its alias (the address players use), then the node's host name.
+     * and Wings on one machine), then its alias (the address players use), then the node's host name. A local address
+     * (10.x, 192.168.x, …) is asked first, then its alias, for a panel outside that network. The alias is only asked
+     * while the admin leaves "Ask the allocation alias" on (Simplify › Toolkit › Player counts).
      *
      * @return list<string>
      */
-    public static function targets(?string $ip, ?string $alias, string $nodeHost): array
+    public static function targets(?string $ip, ?string $alias, string $nodeHost, bool $useAlias = true): array
     {
-        if (! in_array($ip, ['', '0.0.0.0', '::', null], true)) {
-            return [$ip];
-        }
         $valid = fn (string $host): bool => $host !== '' && (filter_var($host, FILTER_VALIDATE_IP) !== false
             || (filter_var($host, FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME) !== false && str_contains($host, '.')));
-        $alias = trim((string) $alias);
+        $alias = $useAlias && $valid(trim((string) $alias)) ? trim((string) $alias) : '';
+        if (! in_array($ip, ['', '0.0.0.0', '::', null], true)) {
+            $local = filter_var($ip, FILTER_VALIDATE_IP) !== false && filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) === false;
 
-        return array_values(array_unique(array_filter([$ip === '::' ? '::1' : '127.0.0.1', $valid($alias) ? $alias : '', $valid($nodeHost) ? $nodeHost : ''])));
+            return array_values(array_unique(array_filter([$ip, $local ? $alias : ''])));
+        }
+
+        return array_values(array_unique(array_filter([$ip === '::' ? '::1' : '127.0.0.1', $alias, $valid($nodeHost) ? $nodeHost : ''])));
     }
 
     /** The JSON status the server sends, null when it does not answer like a Minecraft server. */

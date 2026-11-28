@@ -14,6 +14,8 @@ the [Simplify](https://github.com/jerajerajerajera/Simplify) core. New tools are
 - **Players**: who is online, the whitelist, operators and bans, with whitelist, OP, kick and ban.
 - **Automatic backups**: a backup every so many minutes per server, keeping a set number of recovery points. Only
   these automatic backups are ever deleted.
+- **Player counts**: players on Simplify's server cards for Minecraft and other games, with the protocol and query
+  port per egg under Simplify › Toolkit, or from Boy132's Player Counter when it is installed.
 
 On a modpack server the modpack is one row in the installed mods, with its mods folded under it.
 
@@ -82,6 +84,10 @@ Counter-Strike, …) the panel asks Steam's server query (A2S_INFO) on the query
 game's port or the game's port itself. Palworld does not answer that query: its players come from its remote console
 (`ShowPlayers`, with the egg's admin password), only while the remote console is on and its port is given to the
 server. Nothing leaves the panel and the game servers; a game that does not answer is asked again after two minutes.
+Under Simplify › Toolkit › Player counts an admin can choose per egg the protocol (Minecraft Java or Bedrock, Steam,
+FiveM/RedM, Palworld's REST API or remote console, or Off) and the query port (the game port, the game port plus a
+number, or an egg variable). With Boy132's [Player Counter](https://hub.pelican.dev/plugins/player-counter) installed,
+an egg that has a game query there takes its count from Player Counter.
 
 Installing a plugin or mod asks Wings to download the file itself, only from `cdn.modrinth.com`,
 `hangarcdn.papermc.io`, `api.spiget.org`, `edge.forgecdn.net` or `mediafilez.forgecdn.net`. A plugin that the site

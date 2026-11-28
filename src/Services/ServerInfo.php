@@ -18,6 +18,11 @@ final class ServerInfo
     public static function for(Server $server): array
     {
         try {
+            // The count the admin chose for the egg, or Player Counter's (Simplify › Toolkit › Player counts).
+            $chosen = GameStatus::chosen($server);
+            if ($chosen !== null) {
+                return self::from($chosen, null);
+            }
             if (! ServerKind::forServer($server)['minecraft']) {
                 // Another Steam game: players and version from Steam's server query (or Palworld's remote console).
                 return self::from(GameStatus::get($server), null);
