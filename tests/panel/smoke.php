@@ -766,7 +766,9 @@ step('Player counts: an egg\'s protocol and query port are chosen in its Edit wi
         ->assertSee(__('simplify-toolkit::counts.title'))->assertSee('Smoke FiveM')
         ->mountAction('editEgg', ['egg' => $egg->id]);
     $mounted = $form->instance()->mountedActions;
-    $form->setActionData(['protocol' => 'fivem', 'port' => 'variable', 'port_variable' => 'QUERY_PORT'])->callMountedAction()->assertHasNoActionErrors();
+    // The window's fields by their path: this component has its own form too, which a plain fillForm() would fill.
+    $form->set('mountedActions.0.data.protocol', 'fivem')->set('mountedActions.0.data.port', 'variable')
+        ->set('mountedActions.0.data.port_variable', 'QUERY_PORT')->callMountedAction()->assertHasNoActionErrors();
     if (($form->get('eggCounts')['egg'.$id]['protocol'] ?? '') !== 'fivem') {
         throw new RuntimeException('the Edit window did not apply: '.json_encode(['counts' => $form->get('eggCounts')['egg'.$id] ?? null, 'mounted' => $mounted, 'editing' => $form->get('editingEgg'), 'errors' => $form->errors()->toArray()]));
     }
@@ -788,7 +790,7 @@ step('Player counts: an egg\'s protocol and query port are chosen in its Edit wi
         throw new RuntimeException('the card does not get FiveM\'s players: '.json_encode($info));
     }
     // Off: no player count, without asking anything.
-    $form->callAction('editEgg', data: ['protocol' => 'off', 'port' => 'game'], arguments: ['egg' => $egg->id])->call('save');
+    $form->mountAction('editEgg', ['egg' => $egg->id])->set('mountedActions.0.data.protocol', 'off')->callMountedAction()->call('save');
     PlayerCounts::forget();
     Cache::forget('simplify-toolkit.game-status.'.$server->uuid);
     if (ServerInfo::for($server) !== [] || array_filter(event('simplify.embed.server', [$server, true])) !== []) {
